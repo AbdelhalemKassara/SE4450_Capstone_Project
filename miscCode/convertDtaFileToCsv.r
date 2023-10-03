@@ -5,6 +5,6 @@
 #install.packages("haven")
 
 library(haven)
-yourData = read_dta("/home/tomato/Documents/UniversityGithub/SE4450_Capstone_Project/Data/rawData/2021/CES21_dictionarycoding_public_release_final.dta")
-write.csv(yourData, file = "CES21_dictionarycoding_public_release_final.csv")
+yourData = read_dta("/home/tomato/Documents/UniversityGithub/SE4450_Capstone_Project/Data/rawData/2020/Democracy Checkup 2020 v1.0.dta")
+write.csv(yourData, file = "Democracy Checkup 2020 v1.0.csv")
 
