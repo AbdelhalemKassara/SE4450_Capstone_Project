@@ -1,0 +1,6 @@
+*.dta
+*.qsf
+
+.DS_Store
+
+node_modules
