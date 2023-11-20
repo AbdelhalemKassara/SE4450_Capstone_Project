@@ -44,7 +44,7 @@ class csvQuery {
     let response = await fetch("datasets/" + fileName);
     let data = await response.text();
 
-    let output = this.Papa.parse(data, {header : true});
+    let output = this.Papa.parse(data, {header : true});//in data object there is a 2d array [response n] [question ID]
     this.datasets.set(fileName, output);
   }
 
