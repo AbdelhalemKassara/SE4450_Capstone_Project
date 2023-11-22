@@ -10,6 +10,7 @@ console.log(jsonDataset.data[0]["dc22_quota_weight"]);
 
 
 //get independent variables
+//what we care about is located in indVar.SurveyElements[]
 let indVar = JSON.parse(fs.readFileSync('inputFiles/independentVariables.json'));
 //notes about indvar file:
   //some other things in the word doc like feduid and fedname
@@ -29,6 +30,7 @@ let output : {independent: question[], dependent: question[]} = {
   "dependent" : []
 }
 
+//get all question ids from survey
 
 
 
