@@ -20,3 +20,23 @@ let indVar = JSON.parse(fs.readFileSync('inputFiles/independentVariables.json'))
 let survey = JSON.parse(fs.readFileSync('inputFiles/DC_2022.json'));
 
 
+//output file
+interface answers { id: string, answer: string }
+interface question{ id: string, question: string, answers: answers[] }
+
+let output : {independent: question[], dependent: question[]} = {
+  "independent" : [],
+  "dependent" : []
+}
+
+
+
+
+
+
+//save to json file
+fs.writeFile("output.json", JSON.stringify(output), (err: any) => {
+  if(err) {
+    console.log(err);
+  }
+});
