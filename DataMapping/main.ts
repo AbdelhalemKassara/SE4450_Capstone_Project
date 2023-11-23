@@ -21,7 +21,8 @@ let survey = JSON.parse(fs.readFileSync('inputFiles/DC_2022.json'));
 
 
 //output file
-type answer = { id: string, answer: string } | { pointer: string}
+type questionType = "MC" | "DB" | "MATRIX";//survey.SurveyElements[i].Payload.QuestionType
+type answer = { id: string, answer: string, type: questionType } | { pointer: string, type: questionType}
 interface question{ id: string, question: string, answers: answer[] }
 
 let output : {independent: question[], dependent: question[]} = {
