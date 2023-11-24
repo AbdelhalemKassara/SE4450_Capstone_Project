@@ -59,7 +59,6 @@ survey.SurveyElements.forEach((row: any) => {
     if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
       sliceStr.shift();//removes first element in array
     }
-    console.log(row.Payload.DataExportTag,sliceStr.join(''))
     hashSurvey.set(sliceStr.join(''), row);
   }
 });
@@ -86,11 +85,11 @@ for(let i = 0; i < questions.length; i++) {
     continue;
   }
   ////////////////////////////////////
-  // if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
-  //   sliceStr[1] = sliceStr[1].substring(1, sliceStr.length);
-  //   sliceStr.shift();//removes first element in array
-  // }
-
+  if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
+    sliceStr[1] = sliceStr[1].substring(1, sliceStr[1].length);
+    sliceStr.shift();//removes first element in array
+  }
+  quest = sliceStr.join('');
   //removes the number or "TEXT" tag at the end for matrix and Text entry
   sliceStr.pop();
   let slicedQuest: string = sliceStr.length > 0 ? sliceStr.join('') : quest;
@@ -107,7 +106,7 @@ for(let i = 0; i < questions.length; i++) {
 
   } 
   else {
-    console.log(`"${quest}" and "${slicedQuest}" isn't contained within the QSF file. (The second one is a slice of the first)`)
+    console.log(`"for "${questions[i]}" in the raw csv file. "${quest}" and "${slicedQuest}"(substring of the first) isn't contained within the QSF file.`)
   }
 }
 
