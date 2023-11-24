@@ -6,11 +6,12 @@ let csvFile = fs.readFileSync('inputFiles/Democracy Checkup 22_V1.csv');////////
 csvFile = csvFile.toString();
 const jsonDataset = Papa.parse(csvFile, {header : true});//in data object there is a 2d array [response n] [question ID]
 
-console.log(jsonDataset.data[0]["dc22_quota_weight"]);
+//console.log(jsonDataset.data[0]["dc22_quota_weight"]);
 
 
 //get independent variables
-let indVar = JSON.parse(fs.readFileSync('inputFiles/parameters.json'));
+const parameters = JSON.parse(fs.readFileSync('inputFiles/parameters.json'));
+
 //notes about indvar file:
   //some other things in the word doc like feduid and fedname
   //also postal code isn't listed in the word doc
@@ -21,7 +22,7 @@ let survey = JSON.parse(fs.readFileSync('inputFiles/DC_2022.json'));
 
 
 //output file
-type questionType = "MC" | "DB" | "MATRIX";//survey.SurveyElements[i].Payload.QuestionType
+type questionType = 'DB' | 'MC' | 'Slider' | 'Matrix' | 'Captcha' | 'TE' | 'Timing' | 'CS';//survey.SurveyElements[i].Payload.QuestionType
 type answer = { id: string, answer: string, type: questionType } | { pointer: string, type: questionType}
 interface question{ id: string, question: string, answers: answer[] }
 
@@ -30,13 +31,101 @@ let output : {independent: question[], dependent: question[]} = {
   "dependent" : []
 }
 
+//columns in the dataset we should ignore
+let colToIgnore = new Map();
+parameters.metadata.forEach((val: string) => {
+  colToIgnore.set(val, null);
+});
+parameters.variablesToIgnore.forEach((val: string) => {
+  colToIgnore.set(val, null);
+});
+
+
 //get an array of all question ids from survey
-let questionsTemp = Object.keys(jsonDataset.data[0]);
-questionsTemp = questionsTemp.slice(1, questionsTemp.length);
-console.dir(questionsTemp, { maxArrayLength : null});
-const questions = questionsTemp;
+const questions: string[] = Object.keys(jsonDataset.data[0]).filter((col: string) => !colToIgnore.has(col));
+
+// console.dir(questions, { maxArrayLength : null});
+
+//if we run into a question type that we haven't implemented throw an error
+//try to make this program dynamic where the user can define new question types in a json file using basic categorization (i.e set of answers, dynamic answer, set of questions)
 
 //get and hash all question ids from the qsf file
+
+const hashSurvey = new Map();//key is survey.SurveyElements[i].Payload.DataExportTag, value is reference to row i.e. survey.SurveyElements[i]
+
+survey.SurveyElements.forEach((row: any) => {
+  if(row?.Payload?.DataExportTag) {
+    let sliceStr: string[] = row.Payload.DataExportTag.split(/(?<=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+    if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
+      sliceStr.shift();//removes first element in array
+    }
+    console.log(row.Payload.DataExportTag,sliceStr.join(''))
+    hashSurvey.set(sliceStr.join(''), row);
+  }
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//the code below for sliceStr is broken
+//it is not removing dc_22 properly
+/////////////////////////////////////////////////////////////////
+
+
+
+for(let i = 0; i < questions.length; i++) {
+  let quest = questions[i];
+  let sliceStr: string[] = quest.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+  
+  //ignores everything that contins D0 since that is just the display order
+  if(sliceStr.includes("_DO")) {
+    continue;
+  }
+
+  ////////////////////////////remove this later (don't want to deal with these ones now)
+  if(sliceStr.includes("_TEXT")) {
+    continue;
+  }
+  ////////////////////////////////////
+  // if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
+  //   sliceStr[1] = sliceStr[1].substring(1, sliceStr.length);
+  //   sliceStr.shift();//removes first element in array
+  // }
+
+  //removes the number or "TEXT" tag at the end for matrix and Text entry
+  sliceStr.pop();
+  let slicedQuest: string = sliceStr.length > 0 ? sliceStr.join('') : quest;
+
+  if(hashSurvey.has(quest)) {
+    let row = hashSurvey.get(quest);
+    if(parameters.questionTypes.filter((qType: any ) => qType?.type === row.Payload.QuestionType)) {//checks if this row's question type is in the paramters document
+
+    } else {
+      console.log(`"${row.Payload.QuestionType}" is not included in the paramaters file, please add it.`);
+    }
+  } else if(slicedQuest !== quest && hashSurvey.has(slicedQuest)) {
+    let row = hashSurvey.get(slicedQuest);
+
+  } 
+  else {
+    console.log(`"${quest}" and "${slicedQuest}" isn't contained within the QSF file. (The second one is a slice of the first)`)
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //dc22_religion has mc then an other category which won't work here. See codebook for information how prof handeled it
@@ -47,7 +136,7 @@ const questions = questionsTemp;
 //for standard mc question
 //check if "survey.SurveyElements[i].Payload.DataExportTag" exists and is a question id we are looking for
 //The question is located at "survey.SurveyElements[i].Payload.QuestionText".
-//The answers are located in "survey.SurveyElements[i].Payload.Choices" in the format { "answerID" : { "Display" : "answer"}}
+//The answers are located in "survey.SurveyElements[i].Payload.Choices" in the format { "index" : { "Display" : "answer"}}
 // function mc(): answer {
 
 // }
@@ -85,13 +174,16 @@ const questions = questionsTemp;
 //The main question is located at "survey.SurveyElements[i].Payload.QuestionText".
 //The sub questions are located in "survey.SurveyElements[i].Payload.Choices.'number'" in the format where number is "question_number" in question id. ex number = "1"
 //The answers are located in "survey.SurveyElements[i].Payload.Answers" in the format { "answerID" : { "Display" : "answer"}}
+// The slider range is in "survey.SurveyElements[i].Payload.Configuration.CSSliderMin" and "survey.SurveyElements[i].Payload.Configuration.CSSliderMax"
 // function boxSlider(): answer {
 
 // }
-//for slider questions 
+//for slider questions (same as box pretty much)
 //check if "survey.SurveyElements[i].Payload.DataExportTag" exists and is a question id we are looking for. The remove the number at the end of the id and the underscore i.e. "question_323" to "question"
 //The question is located at "survey.SurveyElements[i].Payload.QuestionText".
 //The answers are located in "survey.SurveyElements[i].Payload.Choices" in the format { "answerID" : { "Display" : "answer"}}
+// The slider range is in "survey.SurveyElements[i].Payload.Configuration.CSSliderMin" and "survey.SurveyElements[i].Payload.Configuration.CSSliderMax"
+
 // function slider(): answer {
 
 // }
