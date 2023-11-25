@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 import fs from 'fs';
-import { getFilteredQuestions, hashSurveyTemplateQuestions } from './processGlobalVars';
+import { getFilteredQuestions, hashSurveyTemplateQuestions, getQuestionMapping } from './processGlobalVars';
 import { addQuestionMapping, addQuestionMappingMultiQuestion } from './helperFunctions';
 //read and convert csv file to json
 const jsonDataset: any = Papa.parse(fs.readFileSync('./inputFiles/Democracy Checkup 22_V1.csv').toString());
@@ -24,7 +24,7 @@ let output : {independent: any, dependent: any} = {
 
 //get an array of all question ids from survey
 const questions: string[] = getFilteredQuestions(jsonDataset, parameters);
-
+const questionsMapping: Map<string, number> = getQuestionMapping(questions, jsonDataset);
 
 
 
@@ -53,7 +53,7 @@ for(let i = 0; i < questions.length; i++) {
   let slicedQuest: string = sliceStr.length > 0 ? sliceStr.join('') : quest;
 
   if(surveyTemplate.hashSurvey.has(quest)) {
-    addQuestionMapping(output, questions, parameters, surveyTemplate, quest, i);
+    addQuestionMapping(output, questions, parameters, surveyTemplate, quest, i, jsonDataset, questionsMapping);
   } else if(slicedQuest !== quest && surveyTemplate.hashSurvey.has(slicedQuest)) {
     addQuestionMappingMultiQuestion(slicedQuest, surveyTemplate);
   } 

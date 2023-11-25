@@ -7,11 +7,20 @@ export function getFilteredQuestions(jsonDataset: any, parameters: any): string[
   parameters.variablesToIgnore.forEach((val: string) => {
     colToIgnore.set(val, null);
   });
-
+  
   //get an array of all question ids from survey
   return jsonDataset.data[0].filter((col: string) => !colToIgnore.has(col));
 }
 
+export function getQuestionMapping(questions: string[], jsonDataset: any) : Map<string, number> {
+  let out: Map<string, number> = new Map();
+
+  questions.forEach((quest: string) => {
+    out.set(quest, jsonDataset.data[0].indexOf(quest));
+  });
+
+  return out;
+}
 
 export function hashSurveyTemplateQuestions(surveyTemplate: any) {
   //key is survey.SurveyElements[i].Payload.DataExportTag (i.e. the question id), value is reference to row i.e. survey.SurveyElements[i]

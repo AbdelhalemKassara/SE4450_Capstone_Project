@@ -1,4 +1,4 @@
-export function addQuestionMapping(output: {independent: any, dependent: any}, questions: string[], parameters: any, surveyTemplate: {survey: any, hashSurvey: Map<string,any>}, quest: string, i: number): void {
+export function addQuestionMapping(output: {independent: any, dependent: any}, questions: string[], parameters: any, surveyTemplate: {survey: any, hashSurvey: Map<string,any>}, quest: string, i: number, jsonDataset: any, questionsMapping: Map<string, number>): void {
       
   let row = surveyTemplate.hashSurvey.get(quest);
   if(parameters.questionTypes.filter((qType: any ) => qType?.type === row.Payload.QuestionType)) {//checks if this row's question type is in the paramters document
@@ -21,8 +21,20 @@ export function addQuestionMapping(output: {independent: any, dependent: any}, q
 
     //fetchDataset for questions[i] and get all unique values
     if(questTypeParam.fetchDataset) {
+      let uniqueAnswers = new Map();
 
-      // console.log(Object.keys(jsonDataset.data[1][questions[i]]));
+      for(let d = 1; d < jsonDataset.data.length; d++) {
+        let index = questionsMapping.get(questions[i]);
+        if(index) {
+          if(!uniqueAnswers.has(jsonDataset.data[d][index])) {
+            uniqueAnswers.set(jsonDataset.data[d][index], null);
+          }
+        } else {
+          console.log(`There was an issue with the questionMapping where we couldn't find the index for "${questions[i]}".`);
+        }
+      }
+
+      output[questIndOrDep][questions[i]]["uniqueAnswers"] = Array.from(uniqueAnswers.keys());
     }
   } else {
     console.log(`"${row.Payload.QuestionType}" is not included in the paramaters file, please add it.`);
