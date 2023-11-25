@@ -22,13 +22,10 @@ let survey = JSON.parse(fs.readFileSync('inputFiles/DC_2022.json'));
 
 
 //output file
-type questionType = 'DB' | 'MC' | 'Slider' | 'Matrix' | 'Captcha' | 'TE' | 'Timing' | 'CS';//survey.SurveyElements[i].Payload.QuestionType
-type answer = { id: string, answer: string, type: questionType } | { pointer: string, type: questionType}
-interface question{ id: string, question: string, answers: answer[] }
-
-let output : {independent: question[], dependent: question[]} = {
-  "independent" : [],
-  "dependent" : []
+//question : {type: string, ...} | {pointer : string}
+let output : {independent: any, dependent: any} = {
+  "independent" : {},
+  "dependent" : {}
 }
 
 //columns in the dataset we should ignore
@@ -64,15 +61,8 @@ survey.SurveyElements.forEach((row: any) => {
 });
 
 
-///////////////////////////////////////////////////////////////////////////////////////////
-//the code below for sliceStr is broken
-//it is not removing dc_22 properly
-/////////////////////////////////////////////////////////////////
-
-
-
 for(let i = 0; i < questions.length; i++) {
-  let quest = questions[i];
+  let quest: string = questions[i];
   let sliceStr: string[] = quest.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
   
   //ignores everything that contins D0 since that is just the display order
@@ -85,11 +75,13 @@ for(let i = 0; i < questions.length; i++) {
     continue;
   }
   ////////////////////////////////////
+
   if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
     sliceStr[1] = sliceStr[1].substring(1, sliceStr[1].length);
     sliceStr.shift();//removes first element in array
   }
   quest = sliceStr.join('');
+
   //removes the number or "TEXT" tag at the end for matrix and Text entry
   sliceStr.pop();
   let slicedQuest: string = sliceStr.length > 0 ? sliceStr.join('') : quest;
@@ -97,6 +89,23 @@ for(let i = 0; i < questions.length; i++) {
   if(hashSurvey.has(quest)) {
     let row = hashSurvey.get(quest);
     if(parameters.questionTypes.filter((qType: any ) => qType?.type === row.Payload.QuestionType)) {//checks if this row's question type is in the paramters document
+      let questIndOrDep: "independent" | "dependent" = parameters.independentVariables.includes(questions[i]) ? "independent" : "dependent";
+
+      output[questIndOrDep][questions[i]]  = {type : row.Payload.QuestionType};
+
+      //fetchQSF
+      let questTypeParam = parameters.questionTypes.find((val : any) => val.type === row.Payload.QuestionType);
+
+      questTypeParam.fetchQSF.forEach((elem: any) => {
+        let data = row;
+
+        elem.path.forEach((curObj: any) => {
+          data = data[curObj];
+        });
+
+        output[questIndOrDep][questions[i]][elem.name] = data; 
+      });
+      //fetchDataset for questions[i] and get all unique values
 
     } else {
       console.log(`"${row.Payload.QuestionType}" is not included in the paramaters file, please add it.`);
@@ -104,6 +113,10 @@ for(let i = 0; i < questions.length; i++) {
   } else if(slicedQuest !== quest && hashSurvey.has(slicedQuest)) {
     let row = hashSurvey.get(slicedQuest);
 
+
+      //fetchQSF
+
+      //fetchDataset for all questions[i] where everything before the last _ matches and get all unique values
   } 
   else {
     console.log(`"for "${questions[i]}" in the raw csv file. "${quest}" and "${slicedQuest}"(substring of the first) isn't contained within the QSF file.`)
@@ -118,8 +131,7 @@ for(let i = 0; i < questions.length; i++) {
 
 
 
-
-
+console.log(output);
 
 
 
