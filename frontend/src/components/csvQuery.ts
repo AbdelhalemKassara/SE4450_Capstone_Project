@@ -1,30 +1,42 @@
-'use client'
 let instance : csvQuery;
 
 class csvQuery {
-  private datasets : any;
+  private datasets : Map<string, any> = new Map();
+  
+  //bottom two are to avoid race conditions
+  private resolve: any;
+  private initialized = new Promise((res, reject) => {
+    this.resolve = res;
+  });
+
+  private promises: any = [this.initialized];
+
 
   constructor() {
-    console.log("started");
     //making this a singleton class
     if(instance) {
       return instance;
     }
     instance = this;    
 
-    this.datasets = new Map();
-
-    this.fetchDatasetNames().then(data => {
-      data.forEach((file: any) => {
-        this.fetchDatasets(file);
-      });
-    }).catch(err => {
-      console.log(err);
-    });
-
-    console.log(this.datasets, "test");
+    this.init();
   }
 
+  private async init() {
+    try {
+      let datasetNames = await this.fetchDatasetNames();
+      this.promises.push(...datasetNames);
+      this.resolve();//to avoid race conditions
+
+      datasetNames.forEach((file: any) => {
+        this.promises.push(this.fetchDatasets(file));
+      });
+
+    } catch(err) {
+      console.log(err);
+    };
+
+  }
   private async fetchDatasetNames() {
     let data: any = await fetch('datasets/fileNames.json');
     data = await data.json();
@@ -47,34 +59,35 @@ class csvQuery {
     this.datasets.set(files.dataset, {"dataset": data, "mapping" : mapping});
   }
 
-  public getDatasetsNames(): string[] {
+
+  //dataset query methods
+  public async getDatasetsNames(): Promise<string[]> {
+    await Promise.all(this.promises);
     return Array.from(this.datasets.keys());
   }
-  public getQuestions(dataset: string): {key : string, value : string}[] {
-    return [...this.getIndependentQuestions(dataset), ...this.getDependentQuestions(dataset)];
+  public async getQuestions(dataset: string): Promise<{key : string, value : string}[]> {
+    await Promise.all(this.promises);
+    return [...await this.getIndependentQuestions(dataset), ...await this.getDependentQuestions(dataset)];
   }
 
-  public getIndependentQuestions(dataset: string): {key : string, value : any}[] {
-    let out: {key : string, value : string}[] = [];
-    for(let [key, value] of Object.entries(this.datasets.get(dataset).mapping.independent)) {
-      if(value && value.hasOwnProperty('mainQuestion')) {
-        out.push({
-          key : key,
-          //@ts-ignore: can't figure out how to fix the typescript error
-          value: value.mainQuestion
-        });
-      }
+  public async getIndependentQuestions(dataset: string): Promise<{key : string, value : any}[]> {
+    await Promise.all(this.promises);
+    return this.getQuestionsMethod(dataset, "independent");
+  }
 
+  public async getDependentQuestions(dataset: string) : Promise<{key : string, value : string}[]> {
+    await Promise.all(this.promises);
+    return this.getQuestionsMethod(dataset, "dependent");
+  }
+  private async getQuestionsMethod(dataset: string, questionsType: "independent" | "dependent"): Promise<{key : string, value : string}[]> {
+    await Promise.all(this.promises);
+    //invalid question type
+    if(questionsType !== "independent" && questionsType !== "dependent") {
+      return [];
     }
 
-    return out;
-  }
-  public test(dataset: string) {
-    return this.datasets.get(dataset).mapping.dependent;
-  }
-  public getDependentQuestions(dataset: string) : {key : string, value : string}[] {
     let out: {key : string, value : string}[] = [];
-    for(let [key, value] of Object.entries(this.datasets.get(dataset).mapping.dependent)) {
+    for(let [key, value] of Object.entries(this.datasets.get(dataset).mapping[questionsType])) {
       if(value && value.hasOwnProperty('mainQuestion')) {
         out.push({
           key : key,
@@ -82,12 +95,15 @@ class csvQuery {
           value: value.mainQuestion
         });
       }
-
     }
 
     return out;
   }
   
+  public async getAnswers(dataset: string) {
+    await Promise.all(this.promises);
+
+  }
 }
 
 export default csvQuery;

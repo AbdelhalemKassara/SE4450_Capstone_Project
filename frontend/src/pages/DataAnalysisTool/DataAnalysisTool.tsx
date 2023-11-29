@@ -7,12 +7,12 @@ export default function DataAnalysisTool() {
   useEffect(() => {
     // let test = new csvQuery();
 
-    setTimeout(() => {
-      console.log(database.getDatasetsNames());
-      console.log(database.getIndependentQuestions("2022-dataset.json"));
-      console.log(database.getDependentQuestions("2022-dataset.json"));
-      // console.log(database.getQuestions("2022-dataset.json"))
-    }, 1000)
+      (async () => {
+        console.log(await database.getDatasetsNames());
+        console.log(await database.getIndependentQuestions("2022-dataset.json"));
+        console.log(await database.getDependentQuestions("2022-dataset.json"));
+        console.log(await database.getQuestions("2022-dataset.json"))
+      })();
   }, []);
 
 
