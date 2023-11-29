@@ -1,11 +1,11 @@
-
+'use client'
 let instance : csvQuery;
 
 class csvQuery {
   private datasets : any;
-  private Papa = require("papaparse");
 
   constructor() {
+    console.log("started");
     //making this a singleton class
     if(instance) {
       return instance;
@@ -15,39 +15,78 @@ class csvQuery {
     this.datasets = new Map();
 
     this.fetchDatasetNames().then(data => {
-      data.forEach(file => {
+      data.forEach((file: any) => {
         this.fetchDatasets(file);
       });
     }).catch(err => {
       console.log(err);
     });
 
-    console.log(this.datasets);
+    console.log(this.datasets, "test");
   }
 
   private async fetchDatasetNames() {
-    let data = await fetch('datasets/fileNames.json');
+    let data: any = await fetch('datasets/fileNames.json');
     data = await data.json();
     
-    //checks if data is an array and if all elements are a string
-    if(Array.isArray(data) && data.reduce((acc, cur) => acc && typeof cur === "string", 1)) {
+    //checks if the format is valid
+    if(true) {
       return data;
     } else {
       throw Error("The dataset names json file is invalid.")
     }
   }
 
-  //the parsing should probably use web workers and have it fetch and parse at the same time (this is already built in to papaparse)
-  //also when doing this make sure to prevent the query methods from running (since the data won't be ready yet).
-  //converting to json ahead of time and using gzip results in a file that 3.74x as large (for our largest file), where getting all 4 files at the same time would take nearly 12 minutes (Fast 3G) (currently it takes around 3.1min)
-  private async fetchDatasets(fileName : string) {    
-    let response = await fetch("datasets/" + fileName);
-    let data = await response.text();
+  //sending the json version of the dataset is ~20% larger but no processing is required which can take at best a couple of seconds (on good hardware on a desktop) 
+  private async fetchDatasets(files : any) {    
+    let response = await fetch("datasets/" + files.dataset);
+    let data = await response.json();
 
-    let output = this.Papa.parse(data, {header : true});//in data object there is a 2d array [response n] [question ID]
-    this.datasets.set(fileName, output);
+    let mapping: any = await fetch("datasets/" + files.mapping);
+    mapping = await mapping.json();
+    this.datasets.set(files.dataset, {"dataset": data, "mapping" : mapping});
   }
 
+  public getDatasetsNames(): string[] {
+    return Array.from(this.datasets.keys());
+  }
+  public getQuestions(dataset: string): {key : string, value : string}[] {
+    return [...this.getIndependentQuestions(dataset), ...this.getDependentQuestions(dataset)];
+  }
+
+  public getIndependentQuestions(dataset: string): {key : string, value : any}[] {
+    let out: {key : string, value : string}[] = [];
+    for(let [key, value] of Object.entries(this.datasets.get(dataset).mapping.independent)) {
+      if(value && value.hasOwnProperty('mainQuestion')) {
+        out.push({
+          key : key,
+          //@ts-ignore: can't figure out how to fix the typescript error
+          value: value.mainQuestion
+        });
+      }
+
+    }
+
+    return out;
+  }
+  public test(dataset: string) {
+    return this.datasets.get(dataset).mapping.dependent;
+  }
+  public getDependentQuestions(dataset: string) : {key : string, value : string}[] {
+    let out: {key : string, value : string}[] = [];
+    for(let [key, value] of Object.entries(this.datasets.get(dataset).mapping.dependent)) {
+      if(value && value.hasOwnProperty('mainQuestion')) {
+        out.push({
+          key : key,
+          //@ts-ignore: can't figure out how to fix the typescript error
+          value: value.mainQuestion
+        });
+      }
+
+    }
+
+    return out;
+  }
   
 }
 

@@ -11,16 +11,20 @@ const parameters = JSON.parse(fs.readFileSync('./inputFiles/parameters.json').to
 //get the qsf survey
 let surveyTemplate : {survey: any, hashSurvey: Map<string,any>} = {survey : {}, hashSurvey : new Map()};
 
-surveyTemplate.survey = JSON.parse(fs.readFileSync('./inputFiles/DC_2022.json').toString());
+surveyTemplate.survey = JSON.parse(fs.readFileSync('./inputFiles/DC_2022.qsf').toString());
 //get and hash all question ids from the qsf file
 surveyTemplate.hashSurvey = hashSurveyTemplateQuestions(surveyTemplate.survey);//key is the question, value is reference to it's row i.e. survey.SurveyElements[i]
 
 //output file
 //question : {type: string, ...} | {pointer : string}
-let output : {independent: any, dependent: any} = {
+let output : {independent: any, dependent: any, questionTypes: any} = {
   "independent" : {},
-  "dependent" : {}
+  "dependent" : {},
+  "questionTypes" : []
 }
+
+//adding the question types
+output.questionTypes = parameters.questionTypes;
 
 //get an array of all question ids from survey
 const questions: string[] = getFilteredQuestions(jsonDataset, parameters);
@@ -63,10 +67,14 @@ for(let i = 0; i < questions.length; i++) {
 }
 
 //remove the unused questions/columns from the json version of the dataset and save the json version
-
+fs.writeFile("./outputFiles/2022-dataset.json", JSON.stringify(jsonDataset), (err: any) => {
+  if(err) {
+    console.log(err);
+  }
+});
 
 //save the output to json file
-fs.writeFile("./outputFiles/output.json", JSON.stringify(output), (err: any) => {
+fs.writeFile("./outputFiles/2022-mapping.json", JSON.stringify(output), (err: any) => {
   if(err) {
     console.log(err);
   }
