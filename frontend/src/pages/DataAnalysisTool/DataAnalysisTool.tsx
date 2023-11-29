@@ -1,10 +1,7 @@
-'use client'
-import csvQuery from "@/components/csvQuery";
-
 import { useContext, useEffect } from "react";
-import { DatabaseContext } from "@/components/DatabaseContext";
+import { DatabaseContext } from "../../components/DatabaseContext";
 
-export default function Home() {
+export default function DataAnalysisTool() {
   const database = useContext(DatabaseContext);
 
   useEffect(() => {
@@ -17,7 +14,10 @@ export default function Home() {
       // console.log(database.getQuestions("2022-dataset.json"))
     }, 1000)
   }, []);
+
+
   return (<>
     <p>test</p>
   </>)
 }
+

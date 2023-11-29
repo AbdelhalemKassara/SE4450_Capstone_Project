@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './landingPage.css'
 
-function landingPage() {
+export default function LandingPage() {
   const [count, setCount] = useState(0)
 
   return (
@@ -32,4 +32,3 @@ function landingPage() {
   )
 }
 
-export default landingPage
