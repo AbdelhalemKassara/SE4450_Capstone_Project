@@ -2,7 +2,8 @@ let instance : csvQuery;
 
 class csvQuery {
   private datasets : Map<string, any> = new Map();
-  
+  private questionCol: Map<string, number> = new Map();
+
   //bottom two are to avoid race conditions
   private resolve: any;
   private initialized = new Promise((res, reject) => {
@@ -26,7 +27,6 @@ class csvQuery {
     try {
       let datasetNames = await this.fetchDatasetNames();
       this.promises.push(...datasetNames);
-      this.resolve();//to avoid race conditions
 
       datasetNames.forEach((file: any) => {
         this.promises.push(this.fetchDatasets(file));
@@ -35,7 +35,9 @@ class csvQuery {
     } catch(err) {
       console.log(err);
     };
+    
 
+    this.resolve();//to avoid race conditions
   }
   private async fetchDatasetNames() {
     let data: any = await fetch('datasets/fileNames.json');
@@ -53,7 +55,12 @@ class csvQuery {
   private async fetchDatasets(files : any) {    
     let response = await fetch("datasets/" + files.dataset);
     let data = await response.json();
-
+    
+    //set the question to row number mapping
+    data.data[0].forEach((question: string, i: number) => {
+      this.questionCol.set(question, i);
+    });
+    
     let mapping: any = await fetch("datasets/" + files.mapping);
     mapping = await mapping.json();
     this.datasets.set(files.dataset, {"dataset": data, "mapping" : mapping});
@@ -100,9 +107,68 @@ class csvQuery {
     return out;
   }
   
-  public async getAnswers(dataset: string) {
+  public async getAnswers(dataset: string, questionId: string): Promise<Object> {
+    await Promise.all(this.promises);
+    let mapping = this.datasets.get(dataset).mapping;
+
+    if(mapping?.dependent[questionId]?.uniqueAnswers) {
+        return mapping?.dependent[questionId]?.uniqueAnswers;
+      } else if(mapping?.dependent[questionId]?.answersMapping) {
+        return mapping.dependent[questionId].answersMapping;
+      } else if (mapping?.independent[questionId]?.answersMapping){
+        return mapping.independent[questionId].answersMapping;
+      } else if (mapping?.independent[questionId]?.uniqueAnswers){
+        return mapping.independent[questionId].uniqueAnswers;
+      } else {
+        return {};
+      }
+  }
+
+  public async getAnswersCount(dataset: string, questionId: string): Promise<any> {
     await Promise.all(this.promises);
 
+    let col = this.questionCol.get(questionId);
+    let answersMapping = await this.getAnswers(dataset, questionId);
+
+
+    if(col) {
+      let out: any = {};
+      let data = this.datasets.get(dataset).dataset.data;
+      let valueToAnswerId = new Map();
+
+      for(let [key, value] of Object.entries(answersMapping)) {
+        valueToAnswerId.set(value.Display, key);
+      }
+
+      for(let i = 1; i < data.length; i++) {
+        let curAnswer = valueToAnswerId.get(data[i][col]);
+        if(out[curAnswer]) {
+          out[curAnswer]++;
+        } else {
+          out[curAnswer] = 1;
+        }
+      }
+
+      return out;
+    } else {
+      return {};
+    }
+
+  }
+
+  public async getAnswerCount(dataset: string, questionId: string, answerId: string) {
+    await Promise.all(this.promises);
+    let val = await this.getAnswersCount(dataset, questionId);
+    console.log("test", val);
+    return val[answerId];
+  }
+
+  public async getTotalResponses(dataset: string, questionId: string) {
+    await Promise.all(this.promises);
+    let val = await this.getAnswersCount(dataset, questionId);
+    
+    //@ts-ignore: can't figure out how to fix the typescript error
+    return (Object.values(val)).reduce((partialSum: number, cur: number) => partialSum + cur, 0);
   }
 }
 
