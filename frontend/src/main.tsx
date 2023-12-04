@@ -1,11 +1,11 @@
 // import React from 'react'
 import { useState } from 'react'
-import ReactDOM from 'react-dom/client'
-import LandingPage from './pages/LandingPage/landingPage.tsx'
+import * as ReactDOM from 'react-dom/client'
+import LandingPage from './pages/LandingPage/landingPage'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import DataAnalysisTool from './pages/DataAnalysisTool/DataAnalysisTool.tsx';
-import PageNotFound from './pages/404/PageNotFound.tsx';
-import SelectionTool from './pages/SelectionTool/selectionTool.tsx';
+import DataAnalysisTool from './pages/DataAnalysisTool/DataAnalysisTool';
+import PageNotFound from './pages/404/PageNotFound';
+import SelectionTool from './pages/SelectionTool/selectionTool';
 import './index.css'
 import * as React from 'react';
 
