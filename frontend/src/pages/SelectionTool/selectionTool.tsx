@@ -15,7 +15,7 @@ import { DatabaseContext } from "../../components/DatabaseContext";
 
 
 
-export default function selectionTool() {
+export default function SelectionTool() {
     const [value, setValue] = React.useState('');
     const [error, setError] = React.useState(false);
     const [helperText, setHelperText] = React.useState('Choose wisely');
