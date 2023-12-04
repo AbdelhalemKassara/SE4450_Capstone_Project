@@ -5,8 +5,11 @@ import './landingPage.css'
 const HomePage = () => {
 
   return (
-    <div>
-    </div>
+    <>
+      <div>
+      </div>
+    </>
+
   )
 }
 

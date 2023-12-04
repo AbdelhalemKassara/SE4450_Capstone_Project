@@ -9,9 +9,16 @@ export default function LandingPage() {
   //const [count, setCount] = useState(0)
 
   return (
-    <div>
-      
-    </div>
+
+    <>
+      <div>
+        Hello World
+      </div>
+
+    </>
+
   )
 }
+
+
 
