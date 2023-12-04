@@ -1,4 +1,3 @@
-
 import * as React from 'react'
 import * as ReactDOM from 'react-dom/client'
 import LandingPage from './pages/LandingPage/landingPage.tsx'
@@ -7,7 +6,6 @@ import DataAnalysisTool from './pages/DataAnalysisTool/DataAnalysisTool';
 import PageNotFound from './pages/404/PageNotFound';
 import SelectionTool from './pages/SelectionTool/selectionTool';
 import './index.css'
-import * as React from 'react';
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
