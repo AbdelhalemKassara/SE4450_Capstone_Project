@@ -1,7 +1,7 @@
-// import React from 'react'
-import { useState } from 'react'
+
+import * as React from 'react'
 import * as ReactDOM from 'react-dom/client'
-import LandingPage from './pages/LandingPage/landingPage'
+import LandingPage from './pages/LandingPage/landingPage.tsx'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DataAnalysisTool from './pages/DataAnalysisTool/DataAnalysisTool';
 import PageNotFound from './pages/404/PageNotFound';
