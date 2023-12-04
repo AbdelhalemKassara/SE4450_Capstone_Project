@@ -4,11 +4,13 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import mapleLeaf from "./Maple_Leaf.png";
+import { useNavigate } from 'react-router-dom';
 
 import "./index.scss";
 
 const CdemHeader = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const navigateTo = useNavigate();
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -16,6 +18,11 @@ const CdemHeader = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleNextPage = () => {
+    handleClose();
+    navigateTo("/cdemMap")
+  }
 
   return (
     <div className="cdem_header">
@@ -42,7 +49,7 @@ const CdemHeader = () => {
             "aria-labelledby": "basic-button",
           }}
         >
-          <MenuItem onClick={handleClose}>Map</MenuItem>
+          <MenuItem onClick={handleNextPage}>Map</MenuItem>
         </Menu>
       </div>
     </div>
