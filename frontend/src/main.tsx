@@ -1,9 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import * as React from 'react'
+import * as ReactDOM from 'react-dom/client'
 import CdemPage from "./pages/CdemPage/CdemPage.tsx";
 import HomePage from "./pages/HomePage/HomePage.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DataAnalysisTool from "./pages/DataAnalysisTool/DataAnalysisTool.tsx";
+import SelectionTool from './pages/SelectionTool/selectionTool';
 import PageNotFound from "./pages/404/PageNotFound.tsx";
 import "./index.css";
 
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/dataAnalysisTool" element={<DataAnalysisTool />} />
         <Route path="/*" element={<PageNotFound />} />
         <Route path="/cdemMap" element={<CdemPage />} />
+        <Route path="/selection" element={<SelectionTool />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
