@@ -7,7 +7,7 @@ const HomePage = () => {
     <div id = 'cdem_homepage'>
       <CdemHeader/>
       <div className = 'homePage_body'>
-        Layout to be decided
+        asdasdsa
       </div>
     </div>
   )

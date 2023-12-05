@@ -12,6 +12,8 @@ export interface IndependentQuestions {
 export interface IndependentSelectionProps {
     independentQuestions: Array<IndependentQuestions>;
     answerKey: QuestionAnswers;
+    inputSelections: IndependentVariableSelection;
+    handleInputSelections: (variable: IndependentVariableSelection) => void;
 }
 
 export interface IndependentVariableSelection {
