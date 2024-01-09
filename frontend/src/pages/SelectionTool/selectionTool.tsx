@@ -30,6 +30,28 @@ export default function SelectionTool() {
             console.error('Error fetching dataset names:', error);
         }
     };
+
+    const handleSendClick = async () => {
+        console.log("Selected Year:", Year);
+        const selectedYear = parseInt(Year, 10);
+
+        if (selectedYear === 2020) {
+            console.log("Year 2020");
+            //create database logic 
+
+        } else if (selectedYear === 2021) {
+            console.log("Year 2021");
+            //create database logic
+        } else if (selectedYear === 2022) {
+            console.log("Year 2022");
+            //create database logic
+            await fetchData();
+            console.log(database.getDatasetsNames());
+            setError(false);
+        }
+    };
+
+
     return (
         <div>
             <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
@@ -44,30 +66,12 @@ export default function SelectionTool() {
                     <MenuItem value="">
                         <em>None</em>
                     </MenuItem>
-                    <MenuItem value={10}>2020</MenuItem>
-                    <MenuItem value={20}>2021</MenuItem>
-                    <MenuItem value={30}>2022</MenuItem>
+                    <MenuItem value={2020}>2020</MenuItem>
+                    <MenuItem value={2021}>2021</MenuItem>
+                    <MenuItem value={2022}>2022</MenuItem>
                 </Select>
             </FormControl>
-            <FormControl variant="filled" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-filled-label">Year</InputLabel>
-                <Select
-                    labelId="demo-simple-select-filled-label"
-                    id="demo-simple-select-filled"
-                    value={Year}
-                    onChange={handleChange}
-                >
-                    <MenuItem value="">
-                        <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={10}>2020</MenuItem>
-                    <MenuItem value={20}>2021</MenuItem>
-                    <MenuItem value={30}>2022</MenuItem>
-
-
-                </Select>
-            </FormControl>
-            <Button variant="contained" >
+            <Button variant="contained" onClick={handleSendClick} >
                 Send
             </Button>
         </div>
