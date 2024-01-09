@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { DatabaseContext } from './DatabaseContext';
 
-function DropdownMenu() {
+function DropdownMenu({dataset: string}) {
   const [questions, setQuestions] = useState<{ key: string; value: string; }[]>([]);
   const [selectedQuestion, setSelectedQuestion] = useState<string>('');
   const database = useContext(DatabaseContext);
