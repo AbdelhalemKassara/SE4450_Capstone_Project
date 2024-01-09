@@ -3,6 +3,7 @@ let instance : csvQuery;
 class csvQuery {
   private datasets : Map<string, any> = new Map();
   private questionCol: Map<string, number> = new Map();
+  private datasetNames : string[] = [];
 
   //bottom two are to avoid race conditions
   private resolve: any;
@@ -26,7 +27,12 @@ class csvQuery {
   private async init() {
     try {
       let datasetNames = await this.fetchDatasetNames();
+
+      //janky solution for fixing issue when getting empty array when using the getDatasetsNames function
       this.promises.push(...datasetNames);
+      datasetNames.forEach((value: any) => {
+        this.datasetNames.push(value.dataset);
+      });
 
       datasetNames.forEach((file: any) => {
         this.promises.push(this.fetchDatasets(file));
@@ -36,7 +42,6 @@ class csvQuery {
       console.log(err);
     };
     
-
     this.resolve();//to avoid race conditions
   }
   private async fetchDatasetNames() {
@@ -54,23 +59,31 @@ class csvQuery {
   //sending the json version of the dataset is ~20% larger but no processing is required which can take at best a couple of seconds (on good hardware on a desktop) 
   private async fetchDatasets(files : any) {    
     let response = await fetch("datasets/" + files.dataset);
+    this.promises.push(response);
     let data = await response.json();
-    
+    this.promises.push(data);
     //set the question to row number mapping
     data.data[0].forEach((question: string, i: number) => {
       this.questionCol.set(question, i);
     });
     
     let mapping: any = await fetch("datasets/" + files.mapping);
+    this.promises.push(mapping);
     mapping = await mapping.json();
+    this.promises.push(mapping);
     this.datasets.set(files.dataset, {"dataset": data, "mapping" : mapping});
+    return;
   }
 
 
   //dataset query methods
   public async getDatasetsNames(): Promise<string[]> {
     await Promise.all(this.promises);
-    return Array.from(this.datasets.keys());
+
+    //previous way of getting the datasets name see comment above about this function
+    //return Array.from(this.datasets.keys());
+
+    return this.datasetNames;
   }
   public async getQuestions(dataset: string): Promise<{key : string, value : string}[]> {
     await Promise.all(this.promises);
@@ -159,7 +172,6 @@ class csvQuery {
   public async getAnswerCount(dataset: string, questionId: string, answerId: string) {
     await Promise.all(this.promises);
     let val = await this.getAnswersCount(dataset, questionId);
-    console.log("test", val);
     return val[answerId];
   }
 
