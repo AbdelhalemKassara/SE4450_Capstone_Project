@@ -4,8 +4,9 @@
   gap: 2rem;
   align-items: center;
   height: 6rem;
-  background: #f9a825;
+  background: rgb(255, 255, 255);
   width: 100%;
+  box-shadow: 10px 5px 5px rgb(231, 231, 231);
   .mapleLeaf_header {
     margin: 0rem 2rem;
     display: flex;
@@ -19,8 +20,9 @@
   }
   .title_header{
     margin: 0rem 2rem;
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: bold;
+    color: black;
   }
   .header_menu{
     margin-right: 1rem;

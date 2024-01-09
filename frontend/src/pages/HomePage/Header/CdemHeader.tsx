@@ -38,7 +38,7 @@ const CdemHeader = () => {
           aria-expanded={open ? "true" : undefined}
           onClick={handleClick}
         >
-          <MenuIcon fontSize="large" style={{ color: "white" }} />
+          <MenuIcon fontSize="large" style={{ color: "black" }} />
         </Button>
         <Menu
           id="basic-menu"
