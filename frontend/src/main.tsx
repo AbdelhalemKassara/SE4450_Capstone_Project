@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DataAnalysisTool from "./pages/DataAnalysisTool/DataAnalysisTool.tsx";
 import SelectionTool from './pages/SelectionTool/selectionTool';
 import PageNotFound from "./pages/404/PageNotFound.tsx";
+import LandingPage from "./pages/LandingPage/landingPage.tsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/*" element={<PageNotFound />} />
         <Route path="/cdemMap" element={<CdemPage />} />
         <Route path="/selection" element={<SelectionTool />} />
+        <Route path="/bar" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
