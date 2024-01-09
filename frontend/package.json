@@ -15,6 +15,10 @@
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.19",
     "@mui/types": "^7.2.10",
+<<<<<<< HEAD
+=======
+    "chart.js": "^4.4.1",
+>>>>>>> ce050ba5cb0b533cb23fd78eba14f8ea195c5871
     "install": "^0.13.0",
     "npm": "^10.2.4",
     "react": "^18.2.0",
