@@ -28,7 +28,7 @@ class csvQuery {
     try {
       let datasetNames = await this.fetchDatasetNames();
 
-      //janky solution for fixing issue when getting empty array when using the getDatasetsNames function
+      //janky solution for fixing issue where the getDatasetsNames function returns an empty array
       this.promises.push(...datasetNames);
       datasetNames.forEach((value: any) => {
         this.datasetNames.push(value.dataset);

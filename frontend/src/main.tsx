@@ -7,6 +7,7 @@ import DataAnalysisTool from "./pages/DataAnalysisTool/DataAnalysisTool.tsx";
 import SelectionTool from './pages/SelectionTool/selectionTool';
 // import DropdownMenu from './components/DropdownMenu.tsx';
 import PageNotFound from "./pages/404/PageNotFound.tsx";
+import LandingPage from "./pages/LandingPage/landingPage.tsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -18,8 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/*" element={<PageNotFound />} />
         <Route path="/cdemMap" element={<CdemPage />} />
         <Route path="/selection" element={<SelectionTool />} />
-        {/* <Route path="/dropdownmenu" element={<DropdownMenu />} /> */}
-
+        <Route path="/bar" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
