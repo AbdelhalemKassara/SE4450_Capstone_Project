@@ -39,9 +39,16 @@ export default function SelectionTool({ dataset, setDataset }: SelectionToolProp
     };
 
     //based on what year the user chose, call the dataset. 
-    const onYearChange = () => {
-        //setDataset(database);
-        console.log("Year:", Year);
+    const onYearChange = async () => {
+        try {
+            const datasetsNames = await database.getDatasetsNames();
+            const concatenatedDatasets = datasetsNames.join(', '); // Convert array to string
+            setDataset(concatenatedDatasets);
+            setError(false);
+        } catch (error) {
+            console.error('Error fetching dataset names:', error);
+            setError(true);
+        }
     };
 
     //Alignment CSS
