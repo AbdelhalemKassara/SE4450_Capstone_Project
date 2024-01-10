@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { DatabaseContext } from './DatabaseContext';
 
-function DropdownMenu({dataset: string}) {
+function DropdownMenu({ dataset }: { dataset: string }) {
   const [questions, setQuestions] = useState<{ key: string; value: string; }[]>([]);
   const [selectedQuestion, setSelectedQuestion] = useState<string>('');
   const database = useContext(DatabaseContext);
@@ -10,7 +10,7 @@ function DropdownMenu({dataset: string}) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const questionsData = await database.getDependentQuestions('2022-dataset.json');
+        const questionsData = await database.getDependentQuestions(dataset);
         setQuestions(questionsData);
       } catch (error) {
         console.error('Error fetching questions:', error);
