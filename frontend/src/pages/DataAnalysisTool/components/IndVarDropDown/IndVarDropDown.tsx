@@ -33,7 +33,7 @@ export default function IndVarDropDown({setIndVar, indVar, dataset}:
         {(() => {
             let out: JSX.Element[] = [];
             indVars.forEach(({key, value}) => {
-              out.push(<MenuItem id={key} value={key}>{value}</MenuItem>)
+              out.push(<MenuItem key={key} value={key}>{value}</MenuItem>)
             })
             return out;
         })()}

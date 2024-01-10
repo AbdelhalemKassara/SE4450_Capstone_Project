@@ -9,14 +9,9 @@ import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 export default function DataAnalysisTool() {
   const database = useContext(DatabaseContext);
   const [dataset, setDataset] = useState<string>("2022-dataset.json");//this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error 
-  const [depVar, setDepVar] = useState<string>(""); //dependent variable
-  const [indVar, setIndVar] = useState<string>("");//demographic variable
+  const [depVar, setDepVar] = useState<string>("dc22_provvote"); //dependent variable
+  const [indVar, setIndVar] = useState<string>("dc22_province");//demographic variable
 
-  useEffect(() => {
-    setDepVar("dc22_democratic_sat");
-    setDataset("2022-dataset.json")
-
-  }, []);
   
   useEffect(() => {
     // let test = new csvQuery();
@@ -24,7 +19,7 @@ export default function DataAnalysisTool() {
       (async () => {
         // console.log(await database.getDatasetsNames());
         console.log(await database.getIndependentQuestions("2022-dataset.json"));
-        // console.log(await database.getDependentQuestions("2022-dataset.json"));
+        console.log(await database.getDependentQuestions("2022-dataset.json"));
         // console.log(await database.getQuestions("2022-dataset.json"));
         // console.log(await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
         // console.log(await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"));
