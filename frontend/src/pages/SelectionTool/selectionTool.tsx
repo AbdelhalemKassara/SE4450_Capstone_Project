@@ -19,21 +19,10 @@ interface SelectionToolProps {
     setDataset: Dispatch<SetStateAction<string>>;
 }
 
-
 export default function SelectionTool({ dataset, setDataset }: SelectionToolProps) {
-    const [Year, setYear] = useState('');
-    const [error, setError] = useState(false);
+    const [Year, setYear] = useState<string>('');
     const database = useContext(DatabaseContext);
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setYear(event.target.value);
-        onYearChange(event.target.value);
-    };
-
-    const onYearChange = (selectedYear: string) => {
-        setDataset(selectedYear);
-    };
-
+    //fetch function 
     const fetchData = async () => {
         try {
             const datasetsNames = await database.getDatasetsNames();
@@ -43,6 +32,18 @@ export default function SelectionTool({ dataset, setDataset }: SelectionToolProp
         }
     };
 
+    //function that sets the setDataset
+    const handleChange = (event: SelectChangeEvent) => {
+        setYear(event.target.value);
+    };
+
+    //based on what year the user chose, call the dataset. 
+    const onYearChange = () => {
+        setDataset(database);
+        console.log("Year:", Year);
+    };
+
+    //Alignment CSS
     const containerStyle = {
         display: "flex",
         flexDirection: "column",
@@ -70,7 +71,7 @@ export default function SelectionTool({ dataset, setDataset }: SelectionToolProp
                     <MenuItem value={2022}>2022</MenuItem>
                 </Select>
             </FormControl>
-            <Button variant="contained" onClick={() => onYearChange(Year)} >
+            <Button variant="contained" onClick={onYearChange}>
                 Send
             </Button>
         </div>
