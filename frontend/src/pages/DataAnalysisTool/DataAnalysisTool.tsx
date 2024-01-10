@@ -24,7 +24,11 @@ export default function DataAnalysisTool(): JSX.Element {
         // console.log(await database.getIndependentQuestions("2022-dataset.json"));
         // console.log(await database.getDependentQuestions("2022-dataset.json"));
         // console.log(await database.getQuestions("2022-dataset.json"));
-        // console.log(await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
+        // console.log("dc22_age_in_years", await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
+        // console.log()
+        // console.log("dc22_age_in_years", await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"), await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
+
+        // console.log("dc22_provvote", await database.getAnswersCount("2022-dataset.json", "dc22_provvote"), await database.getAnswers("2022-dataset.json", "dc22_provvote"));
         // console.log(await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"));
         // console.log(await database.getAnswerCount("2022-dataset.json", "dc22_age_in_years", "12"));
         // console.log(await database.getTotalResponses("2022-dataset.json", "dc22_age_in_years"));
@@ -40,7 +44,6 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     database.getAnswersCount(dataset, depVar).then(val => {
       setDepVarAnswrCnt(val);
-      console.log(val);
     });
   }, [dataset, depVar]);
   
@@ -63,7 +66,7 @@ function test(obj:any, title:any) {
   let out: JSX.Element[] = [];
   for(let [key, value] of Object.entries(obj)) {
     //@ts-ignore
-    out.push((<p>{key} : {value}</p>))
+    out.push((<p key={key}>{key} : {value}</p>))
    }
 
   return (<>

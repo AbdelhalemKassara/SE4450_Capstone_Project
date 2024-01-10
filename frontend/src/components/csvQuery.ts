@@ -155,8 +155,14 @@ class csvQuery {
         valueToAnswerId.set(value.Display, key);
       }
 
+      let once = true;
       for(let i = 1; i < data.length; i++) {
         let curAnswer = valueToAnswerId.get(data[i][col]);
+        if(once) {
+          console.log("test", valueToAnswerId);
+          console.log('first', data[i][col])
+          once= false;
+        }
         if(out[curAnswer]) {
           out[curAnswer]++;
         } else {
@@ -188,3 +194,4 @@ class csvQuery {
 }
 
 export default csvQuery;
+
