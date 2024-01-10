@@ -13,76 +13,39 @@ import { DatabaseContext } from "../../components/DatabaseContext";
 import Button from '@mui/material/Button';
 
 
+export default function SelectionTool({ dataset, setDataset }: { setDataset: React.Dispatch<React.SetStateAction<string>>, dataset: string }): JSX.Element {
 
-interface SelectionToolProps {
-    dataset: string;
-    setDataset: Dispatch<SetStateAction<string>>;
-}
-
-export default function SelectionTool({ dataset, setDataset }: SelectionToolProps) {
-    const [Year, setYear] = useState<string>('');
     const database = useContext(DatabaseContext);
-    const [error, setError] = useState(false);
-    //fetch function 
-    const fetchData = async () => {
-        try {
-            const datasetsNames = await database.getDatasetsNames();
-            setError(false);
-        } catch (error) {
-            console.error('Error fetching dataset names:', error);
-        }
-    };
+    const [datasets, setDatasets] = useState<string[]>([]);
 
-    //function that sets the setDataset
-    const handleChange = (event: SelectChangeEvent) => {
-        setYear(event.target.value);
-    };
+    useEffect(() => {
+        database.getDatasetsNames().then((val) => {
+            setDatasets(val);
+        });
+    }, []);
 
-    //based on what year the user chose, call the dataset. 
-    const onYearChange = async () => {
-        try {
-            const datasetsNames = await database.getDatasetsNames();
-            const concatenatedDatasets = datasetsNames.join(', '); // Convert array to string
-            setDataset(concatenatedDatasets);
-            setError(false);
-        } catch (error) {
-            console.error('Error fetching dataset names:', error);
-            setError(true);
-        }
-    };
-
-    //Alignment CSS
-    const containerStyle = {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh", // Adjust the height as needed
-    };
 
     return (
-        <div>
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-standard-label">Selected Year</InputLabel>
-                <Select
-                    labelId="demo-simple-select-standard-label"
-                    id="demo-simple-select-standard"
-                    value={Year}
-                    onChange={handleChange}
-                    label="Year"
-                >
-                    <MenuItem value="">
-                        <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={2020}>2020</MenuItem>
-                    <MenuItem value={2021}>2021</MenuItem>
-                    <MenuItem value={2022}>2022</MenuItem>
-                </Select>
-            </FormControl>
-            <Button variant="contained" onClick={onYearChange}>
-                Send
-            </Button>
-        </div>
+        <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">DataSet Year</InputLabel>
+            <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={dataset}
+                label="DataSet Years"
+                onChange={(event: SelectChangeEvent) => {
+                    setDataset(event.target.value);
+                }}>
+                {(() => {
+                    let out: JSX.Element[] = [];
+                    datasets.forEach((value) => {
+                        out.push(<MenuItem value={value} key={value}>{value}</MenuItem>)
+                    })
+                    return out;
+                })()}
+
+            </Select>
+        </FormControl>
     );
 }
 
