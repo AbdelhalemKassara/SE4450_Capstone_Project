@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { DatabaseContext } from "../../components/DatabaseContext";
 import DropdownMenu from "../../components/DropdownMenu";
+import SelectionTool from "../SelectionTool/selectionTool";
 
 export default function DataAnalysisTool() {
   const database = useContext(DatabaseContext);
@@ -9,8 +10,8 @@ export default function DataAnalysisTool() {
 
 
   return (<>
-    <SelectionTool dataset={dataset} setdataset={setDataset}/>
-    <DropdownMenu dataset={dataset}/>
+    <SelectionTool dataset={dataset} setDataset={setDataset} />
+    <DropdownMenu dataset={dataset} />
   </>)
 }
 
