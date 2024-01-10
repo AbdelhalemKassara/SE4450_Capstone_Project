@@ -22,6 +22,7 @@ interface SelectionToolProps {
 export default function SelectionTool({ dataset, setDataset }: SelectionToolProps) {
     const [Year, setYear] = useState<string>('');
     const database = useContext(DatabaseContext);
+    const [error, setError] = useState(false);
     //fetch function 
     const fetchData = async () => {
         try {
@@ -39,7 +40,7 @@ export default function SelectionTool({ dataset, setDataset }: SelectionToolProp
 
     //based on what year the user chose, call the dataset. 
     const onYearChange = () => {
-        setDataset(database);
+        //setDataset(database);
         console.log("Year:", Year);
     };
 
