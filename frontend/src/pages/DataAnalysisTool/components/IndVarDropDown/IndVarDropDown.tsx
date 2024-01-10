@@ -20,7 +20,7 @@ export default function IndVarDropDown({setIndVar, indVar, dataset}:
 
   return (
     <FormControl fullWidth>
-      <InputLabel id="demo-simple-select-label">Age</InputLabel>
+      <InputLabel id="demo-simple-select-label">Independent Variables</InputLabel>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
