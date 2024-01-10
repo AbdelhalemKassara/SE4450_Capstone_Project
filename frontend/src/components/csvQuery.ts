@@ -120,6 +120,8 @@ class csvQuery {
     return out;
   }
   
+  //the mapping is incorrect because there is a property called "RecodeValues" that maps the numbers this is currenly using to the correct numbers 
+  //(i.e. the issue is with the DataMapping code. I think all questions have this property so you can just remap all of them)
   public async getAnswers(dataset: string, questionId: string): Promise<Object> {
     await Promise.all(this.promises);
 
@@ -149,17 +151,19 @@ class csvQuery {
     if(col) {
       let out: any = {};
       let data = this.datasets.get(dataset).dataset.data;
-      let valueToAnswerId = new Map();
+      let valueToAnswerId: Map<string, any> = new Map();
 
       for(let [key, value] of Object.entries(answersMapping)) {
-        valueToAnswerId.set(value.Display, key);
+        valueToAnswerId.set(key, value.Display);
       }
+
+      console.log("test", valueToAnswerId);
 
       let once = true;
       for(let i = 1; i < data.length; i++) {
         let curAnswer = valueToAnswerId.get(data[i][col]);
-        if(once) {
-          console.log("test", valueToAnswerId);
+        if(i < 10) {
+          //console.log("test", valueToAnswerId);
           console.log('first', data[i][col])
           once= false;
         }

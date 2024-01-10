@@ -9,13 +9,15 @@ import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 export default function DataAnalysisTool(): JSX.Element {
   const database = useContext(DatabaseContext);
   const [dataset, setDataset] = useState<string>("2022-dataset.json");//this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error 
-  const [depVar, setDepVar] = useState<string>("dc22_children1"); //dependent variable
+  const [depVar, setDepVar] = useState<string>("dc22_democratic_sat"); //dependent variable
   const [indVar, setIndVar] = useState<string>("dc22_age_in_years");//demographic variable
 
   //these are used for the temporary display output (might not )
   const [indVarAnswrCnt, setIndVarAnswrCnt] = useState([]);
   const [depVarAnswrCnt, setDepVarAnswrCnt] = useState([]);
-
+  useEffect(() => {
+    console.log("current independent variable", indVar);
+  }, [indVar])
   useEffect(() => {
     // let test = new csvQuery();
 
