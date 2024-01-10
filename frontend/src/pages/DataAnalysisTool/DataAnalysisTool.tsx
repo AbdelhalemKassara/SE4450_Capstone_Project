@@ -6,20 +6,23 @@ import StatsBar from "./components/StatsBar/StatsBar";
 import styles from "./styles.module.css";
 import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 
-export default function DataAnalysisTool() {
+export default function DataAnalysisTool(): JSX.Element {
   const database = useContext(DatabaseContext);
   const [dataset, setDataset] = useState<string>("2022-dataset.json");//this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error 
-  const [depVar, setDepVar] = useState<string>("dc22_provvote"); //dependent variable
-  const [indVar, setIndVar] = useState<string>("dc22_province");//demographic variable
+  const [depVar, setDepVar] = useState<string>("dc22_children1"); //dependent variable
+  const [indVar, setIndVar] = useState<string>("dc22_age_in_years");//demographic variable
 
-  
+  //these are used for the temporary display output (might not )
+  const [indVarAnswrCnt, setIndVarAnswrCnt] = useState([]);
+  const [depVarAnswrCnt, setDepVarAnswrCnt] = useState([]);
+
   useEffect(() => {
     // let test = new csvQuery();
 
       (async () => {
         // console.log(await database.getDatasetsNames());
-        console.log(await database.getIndependentQuestions("2022-dataset.json"));
-        console.log(await database.getDependentQuestions("2022-dataset.json"));
+        // console.log(await database.getIndependentQuestions("2022-dataset.json"));
+        // console.log(await database.getDependentQuestions("2022-dataset.json"));
         // console.log(await database.getQuestions("2022-dataset.json"));
         // console.log(await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
         // console.log(await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"));
@@ -28,11 +31,43 @@ export default function DataAnalysisTool() {
       })();
   }, []);
 
-  return (<>
+  useEffect(() => { 
+    database.getAnswersCount(dataset, indVar).then(val => {
+      setIndVarAnswrCnt(val);
+    });
+  }, [dataset, indVar]);
+
+  useEffect(() => {
+    database.getAnswersCount(dataset, depVar).then(val => {
+      setDepVarAnswrCnt(val);
+      console.log(val);
+    });
+  }, [dataset, depVar]);
+  
+  return (<div className={styles.text}>
     <StatsBar dataset={dataset} depVar={depVar} />
     <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} />
     <SelectionTool dataset={dataset} setdataset={setDataset}/>
     <DropdownMenu dataset={dataset}/>
-  </>)
+    
+    <br/>
+    <br/>
+    {test(depVarAnswrCnt, "Dependent Variables Answer count")}
+    <br/>
+    <br/>
+    {test(indVarAnswrCnt, "Indepenent Variables Answer count")}
+  </div>)
 }
 
+function test(obj:any, title:any) {
+  let out: JSX.Element[] = [];
+  for(let [key, value] of Object.entries(obj)) {
+    //@ts-ignore
+    out.push((<p>{key} : {value}</p>))
+   }
+
+  return (<>
+    <p>{title}</p>
+    {out}
+    </>)
+}

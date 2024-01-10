@@ -138,6 +138,7 @@ class csvQuery {
       }
   }
 
+  //this function doesn't seem to work when the key is not a number in the output(format: {key1: val1, key2: val2})
   public async getAnswersCount(dataset: string, questionId: string): Promise<any> {
     await Promise.all(this.promises);
 
