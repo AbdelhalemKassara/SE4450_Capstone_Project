@@ -4,7 +4,6 @@
     flex-direction: column;
     width: 100vw;
     height: 100vh;
-    background-color: rgb(250, 250, 250);
 
     .homePage_body{
         display: flex;
@@ -16,41 +15,49 @@
         color: black;
         height: 100%;
         .background_bar {
-            display:grid;
-            grid-template-columns: 80% 20%;
-            width:100%;
-            background-color: rgb(255, 208, 0);
-            box-shadow: 0 0 5rem rgb(192, 192, 192);
-            height:70vh;
+            display:flex;
+            flex-direction: column;
+            background-image: url("./darkFlag.jpg");
+            background-position: right;
+            width: 100%;
+            height: 80vh;
+            background-repeat: no-repeat;
+            background-size:cover;
+            gap: 2rem;
+
             >.background_text{
                 display:flex;
                 justify-content: center;
-                flex-direction: column;
+                align-items: end;
+                flex-direction: row;
+                flex: 1;
                 
                 >span{
-                    font-size: 9rem;
-                    color:rgb(43, 43, 43);
+                    font-size: 4rem;
+                    color:rgb(255, 255, 255);
                     font-weight: bold;
-                    margin-left: 20rem;
                     
                 }
                 >span:nth-child(2){
-                    padding-left: 20rem;
+                    color: #fbc02d;
+
                 }
                 >span:nth-child(3){
-                    padding-left: 30rem;
+                    color: #fbc02d;
+                    margin-left: 1rem;
                 }
-                
-                
+                >span:last-child{
+                    margin-left: 1rem;;
+                }
             }
-            >.mapleLeaf_header{
-                background-image: url("./Background_leaf.png");
-                background-position: right;
-                width: 100%;
-                height: auto;
-                background-repeat: no-repeat;
-                background-size: contain;
+            >.started_button{
+                display:flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: start;
+                flex: 1;
             }
+            
         }
     }
 

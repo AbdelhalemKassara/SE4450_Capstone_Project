@@ -5,6 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import mapleLeaf from "./Maple_Leaf.png";
 import { useNavigate } from 'react-router-dom';
+import { yellow } from '@mui/material/colors';
 
 import "./index.scss";
 
@@ -29,7 +30,11 @@ const CdemHeader = () => {
       <div className="mapleLeaf_header">
         <img src={mapleLeaf} className="leaf" alt="maple leaf" />
       </div>
-      <div className ='title_header'>Canadian Democracy Research</div>
+      <div className ='title_header'>
+        <span>Canadian</span>
+        <span>Democracy</span>
+        <span>Research</span>
+      </div>
       <div className="header_menu">
         <Button
           id="basic-button"
@@ -38,7 +43,7 @@ const CdemHeader = () => {
           aria-expanded={open ? "true" : undefined}
           onClick={handleClick}
         >
-          <MenuIcon fontSize="large" style={{ color: "black" }} />
+          <MenuIcon fontSize="large" style={{ color: yellow[700] }} />
         </Button>
         <Menu
           id="basic-menu"

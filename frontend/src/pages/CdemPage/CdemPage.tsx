@@ -3,7 +3,6 @@ import { DatabaseContext } from "../../components/DatabaseContext";
 import Button from "@mui/material/Button";
 
 import CdemHeader from "../HomePage/Header/CdemHeader";
-<<<<<<< Updated upstream
 import SelectionTool from "../SelectionTool/selectionTool";
 import IndependentSelection from "./IndependentSelection/IndependentSelection";
 import DropdownMenu from "./DependentSelection/DropdownMenu";
@@ -13,12 +12,6 @@ import {
   Answers,
   IndependentVariableSelection,
 } from "./interface";
-=======
-import CdemMap from "./Cdemmap/CdemMap";
-import IndependentSelection from "./IndependentSelection/IndependentSelection";
-import SelectionTool from "../SelectionTool/selectionTool";
-import { IndependentQuestions, QuestionAnswers, Answers } from "./interface";
->>>>>>> Stashed changes
 
 import "./index.scss";
 
