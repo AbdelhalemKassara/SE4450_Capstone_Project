@@ -22,7 +22,7 @@ const CdemHeader = () => {
 
   const handleNextPage = () => {
     handleClose();
-    navigateTo("/cdemMap")
+    navigateTo("/dataAnalysisTool")
   }
 
   return (
