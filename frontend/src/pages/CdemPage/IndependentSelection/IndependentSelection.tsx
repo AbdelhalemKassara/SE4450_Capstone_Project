@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   InputLabel,
   TextField,
@@ -17,56 +16,61 @@ import "./index.scss";
 const IndependentSelection = ({
   independentQuestions,
   answerKey,
+  inputSelections,
+  handleInputSelections,
 }: IndependentSelectionProps) => {
-  const [inputSelections, setInputSelections] =
-    useState<IndependentVariableSelection>({
-      dc22_age_in_years: "",
-      dc22_genderid: "",
-      dc22_province: "",
-      dc22_education: "",
-      dc22_canada_born: "",
-    });
+  const questionMapping: IndependentVariableSelection = {
+    dc22_age_in_years: "Age",
+    dc22_genderid: "Gender",
+    dc22_province: "Province",
+    dc22_education: "Education",
+    dc22_canada_born: "Canadian",
+  };
 
   const ageTextFieldProps = {
     size: "small",
   };
 
-  const handleInputSelections = (key: string, value: string) => {
-    setInputSelections({ ...inputSelections, [key]: value });
+  const inputSelectionsHandler = (key: string, value: string) => {
+    handleInputSelections({ ...inputSelections, [key]: value });
   };
 
   return (
     <div id="independent_selection">
       <div className="input_label">
-        <InputLabel htmlFor="input_age" size="small">
-          {independentQuestions?.[0]?.value}
-        </InputLabel>
-        <TextField
-          id="input_age"
-          type="number"
-          inputProps={ageTextFieldProps}
-          onChange={(e) => {
-            setInputSelections({
-              ...inputSelections,
-              dc22_age_in_years: e.target.value,
-            });
-          }}
-        />
+        <FormControl fullWidth>
+          <TextField
+            id="input_age"
+            type="number"
+            label={questionMapping?.dc22_age_in_years}
+            inputProps={ageTextFieldProps}
+            onChange={(e) => {
+              inputSelectionsHandler(
+                "dc22_age_in_years",
+                e.target.value.toString()
+              );
+            }}
+          />
+        </FormControl>
       </div>
-      {Object.entries(answerKey).map(([key, value], index) => {
+      {Object.entries(answerKey).map(([key, value]) => {
         return (
           <div className="input_label">
-            <InputLabel id="demo-simple-select-label">
-              {independentQuestions?.[index + 1]?.value}
-            </InputLabel>
             <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                {questionMapping?.[key as keyof IndependentVariableSelection]}
+              </InputLabel>
               <Select
                 labelId={key}
                 id={key}
-                value={inputSelections?.[key as keyof IndependentVariableSelection]}
-                label={key}
+                value={
+                  inputSelections?.[key as keyof IndependentVariableSelection]
+                }
+                label={
+                  questionMapping?.[key as keyof IndependentVariableSelection]
+                }
                 onChange={(e) => {
-                  handleInputSelections(key, e.target.value.toString());
+                  inputSelectionsHandler(key, e.target.value.toString());
                 }}
               >
                 {value.map((e: string) => (

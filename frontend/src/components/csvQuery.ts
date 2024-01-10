@@ -122,7 +122,8 @@ class csvQuery {
   
   public async getAnswers(dataset: string, questionId: string): Promise<Object> {
     await Promise.all(this.promises);
-    let mapping = this.datasets.get(dataset).mapping;
+
+    let mapping = this.datasets.get(dataset)?.mapping;
 
     if(mapping?.dependent[questionId]?.uniqueAnswers) {
         return mapping?.dependent[questionId]?.uniqueAnswers;
@@ -137,6 +138,7 @@ class csvQuery {
       }
   }
 
+  //this function doesn't seem to work when the key is not a number in the output(format: {key1: val1, key2: val2})
   public async getAnswersCount(dataset: string, questionId: string): Promise<any> {
     await Promise.all(this.promises);
 
@@ -175,11 +177,12 @@ class csvQuery {
     return val[answerId];
   }
 
-  public async getTotalResponses(dataset: string, questionId: string) {
+  public async getTotalResponses(dataset: string, questionId: string): Promise<number>  {
     await Promise.all(this.promises);
     let val = await this.getAnswersCount(dataset, questionId);
     
     //@ts-ignore: can't figure out how to fix the typescript error
+    
     return (Object.values(val)).reduce((partialSum: number, cur: number) => partialSum + cur, 0);
   }
 }
