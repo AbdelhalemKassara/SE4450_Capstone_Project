@@ -11,7 +11,7 @@ export default function DataAnalysisTool() {
 
   return (<>
     <SelectionTool dataset={dataset} setDataset={setDataset}/>
-    <DropdownMenu dataset={dataset}/>
+    <DropdownMenu dataset={dataset} setDependentQuestion={setDataset}/>
   </>)
 }
 
