@@ -122,7 +122,8 @@ class csvQuery {
   
   public async getAnswers(dataset: string, questionId: string): Promise<Object> {
     await Promise.all(this.promises);
-    let mapping = this.datasets.get(dataset).mapping;
+
+    let mapping = this.datasets.get(dataset)?.mapping;
 
     if(mapping?.dependent[questionId]?.uniqueAnswers) {
         return mapping?.dependent[questionId]?.uniqueAnswers;
@@ -175,11 +176,12 @@ class csvQuery {
     return val[answerId];
   }
 
-  public async getTotalResponses(dataset: string, questionId: string) {
+  public async getTotalResponses(dataset: string, questionId: string): Promise<number>  {
     await Promise.all(this.promises);
     let val = await this.getAnswersCount(dataset, questionId);
     
     //@ts-ignore: can't figure out how to fix the typescript error
+    
     return (Object.values(val)).reduce((partialSum: number, cur: number) => partialSum + cur, 0);
   }
 }
