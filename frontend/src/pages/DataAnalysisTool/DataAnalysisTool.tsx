@@ -21,23 +21,23 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     // let test = new csvQuery();
 
-      (async () => {
-        // console.log(await database.getDatasetsNames());
-        // console.log(await database.getIndependentQuestions("2022-dataset.json"));
-        // console.log(await database.getDependentQuestions("2022-dataset.json"));
-        // console.log(await database.getQuestions("2022-dataset.json"));
-        // console.log("dc22_age_in_years", await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
-        // console.log()
-        // console.log("dc22_age_in_years", await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"), await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
+    (async () => {
+      // console.log(await database.getDatasetsNames());
+      // console.log(await database.getIndependentQuestions("2022-dataset.json"));
+      // console.log(await database.getDependentQuestions("2022-dataset.json"));
+      // console.log(await database.getQuestions("2022-dataset.json"));
+      // console.log("dc22_age_in_years", await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
+      // console.log()
+      // console.log("dc22_age_in_years", await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"), await database.getAnswers("2022-dataset.json", "dc22_age_in_years"));
 
-        // console.log("dc22_provvote", await database.getAnswersCount("2022-dataset.json", "dc22_provvote"), await database.getAnswers("2022-dataset.json", "dc22_provvote"));
-        // console.log(await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"));
-        // console.log(await database.getAnswerCount("2022-dataset.json", "dc22_age_in_years", "12"));
-        // console.log(await database.getTotalResponses("2022-dataset.json", "dc22_age_in_years"));
-      })();
+      // console.log("dc22_provvote", await database.getAnswersCount("2022-dataset.json", "dc22_provvote"), await database.getAnswers("2022-dataset.json", "dc22_provvote"));
+      // console.log(await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"));
+      // console.log(await database.getAnswerCount("2022-dataset.json", "dc22_age_in_years", "12"));
+      // console.log(await database.getTotalResponses("2022-dataset.json", "dc22_age_in_years"));
+    })();
   }, []);
 
-  useEffect(() => { 
+  useEffect(() => {
     database.getAnswersCount(dataset, indVar).then(val => {
       setIndVarAnswrCnt(val);
     });
@@ -48,31 +48,31 @@ export default function DataAnalysisTool(): JSX.Element {
       setDepVarAnswrCnt(val);
     });
   }, [dataset, depVar]);
-  
+
   return (<div className={styles.text}>
     <StatsBar dataset={dataset} depVar={depVar} />
     <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} />
-    <SelectionTool dataset={dataset} setdataset={setDataset}/>
-    <DropdownMenu dataset={dataset}/>
-    
-    <br/>
-    <br/>
+    <SelectionTool dataset={dataset} setDataset={setDataset} />
+    <DropdownMenu dataset={dataset} />
+
+    <br />
+    <br />
     {test(depVarAnswrCnt, "Dependent Variables Answer count")}
-    <br/>
-    <br/>
+    <br />
+    <br />
     {test(indVarAnswrCnt, "Indepenent Variables Answer count")}
   </div>)
 }
 
-function test(obj:any, title:any) {
+function test(obj: any, title: any) {
   let out: JSX.Element[] = [];
-  for(let [key, value] of Object.entries(obj)) {
+  for (let [key, value] of Object.entries(obj)) {
     //@ts-ignore
     out.push((<p key={key}>{key} : {value}</p>))
-   }
+  }
 
   return (<>
     <p>{title}</p>
     {out}
-    </>)
+  </>)
 }
