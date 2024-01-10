@@ -53,7 +53,7 @@ export default function DataAnalysisTool(): JSX.Element {
     <StatsBar dataset={dataset} depVar={depVar} />
     <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} />
     <SelectionTool dataset={dataset} setDataset={setDataset}/>
-    <DropdownMenu dataset={dataset} setDependentQuestion={setDataset}/>
+    <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar}/>
     
     <br/>
     <br/>
