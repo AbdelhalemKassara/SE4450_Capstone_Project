@@ -1,10 +1,16 @@
 import CdemHeader from "./Header/CdemHeader";
+import { useNavigate } from 'react-router-dom';
 import "./index.scss";
 import Button from "@mui/material/Button";
 import CDemFooter from "./Footer/CdemFooter";
 import { yellow } from "@mui/material/colors";
 
 const HomePage = () => {
+  const navigateTo = useNavigate();
+
+  const handleNextPage = () => {
+    navigateTo("/dataAnalysisTool")
+  }
   return (
     <div id="cdem_homepage">
       <CdemHeader />
@@ -21,6 +27,7 @@ const HomePage = () => {
               id="basic-button"
               variant="contained"
               style={{ backgroundColor: yellow[700] }}
+              onClick ={handleNextPage}
             >
               <span>View Democratic Data</span>
             </Button>
