@@ -29,9 +29,9 @@ export function hashSurveyTemplateQuestions(surveyTemplate: any) {
   surveyTemplate.SurveyElements.forEach((row: any) => {
     if(row?.Payload?.DataExportTag) {
       let sliceStr: string[] = row.Payload.DataExportTag.split(/(?<=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
-      if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
-        sliceStr.shift();//removes first element in array
-      }
+      // if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
+      //   sliceStr.shift();//removes first element in array
+      // }
       hashSurvey.set(sliceStr.join(''), row);
     }
   });

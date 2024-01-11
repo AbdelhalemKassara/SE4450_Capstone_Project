@@ -120,6 +120,7 @@ class csvQuery {
     return out;
   }
   
+  
   //the mapping is incorrect because there is a property called "RecodeValues" that maps the numbers this is currenly using to the correct numbers 
   //(i.e. the issue is with the DataMapping code. I think all questions have this property so you can just remap all of them)
   public async getAnswers(dataset: string, questionId: string): Promise<Object> {

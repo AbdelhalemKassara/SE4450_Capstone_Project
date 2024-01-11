@@ -16,9 +16,27 @@ export function addQuestionMapping(output: {independent: any, dependent: any}, q
         data = data[curObj];
       });
 
+   
       output[questIndOrDep][questions[i]][elem.name] = data; 
     });
 
+    if(row?.Payload?.ChoiceOrder && output[questIndOrDep][questions[i]]?.answersMapping) {
+      let answersMapping = output[questIndOrDep][questions[i]].answersMapping;
+      let newAnswersMapping:any = {};
+
+      row.Payload.ChoiceOrder.forEach((val:any, i:number) => {
+        newAnswersMapping[i+1] = answersMapping[val];
+      })
+      
+      if(questions[i] === "dc22_genderid") {
+        console.log(output[questIndOrDep][questions[i]].answersMapping, newAnswersMapping);
+      }
+      output[questIndOrDep][questions[i]].answersMapping = newAnswersMapping;
+      console.log();
+      if(questions[i] === "dc22_genderid") {
+        console.log(output[questIndOrDep][questions[i]].answersMapping, newAnswersMapping);
+      }
+    }
     //fetchDataset for questions[i] and get all unique values
     if(questTypeParam.fetchDataset) {
       let uniqueAnswers = new Map();

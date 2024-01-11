@@ -46,11 +46,11 @@ for(let i = 0; i < questions.length; i++) {
     continue;
   }
 
-  if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
-    sliceStr[1] = sliceStr[1].substring(1, sliceStr[1].length);
-    sliceStr.shift();//removes first element in array
-  }
-  quest = sliceStr.join('');
+  // if(new RegExp(/dc[0-9][0-9]/).test(sliceStr[0])) {//test to see if the string starts with ds22 and/or any other year
+  //   sliceStr[1] = sliceStr[1].substring(1, sliceStr[1].length);
+  //   sliceStr.shift();//removes first element in array
+  // }
+  // quest = sliceStr.join('');
 
   //removes the number or "TEXT" tag at the end for matrix and Text entry
   sliceStr.pop();
