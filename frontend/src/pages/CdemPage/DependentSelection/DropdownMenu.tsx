@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { DatabaseContext } from "../../../components/DatabaseContext";
 
-function DropdownMenu({ dataset }: { dataset: string }) {
+function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: string, setDependentQuestion: React.Dispatch<React.SetStateAction<string>>, depVar: string}) {
   const [questions, setQuestions] = useState<{ key: string; value: string; }[]>([]);
   const [selectedQuestion, setSelectedQuestion] = useState<string>('');
   const database = useContext(DatabaseContext);
@@ -20,11 +20,11 @@ function DropdownMenu({ dataset }: { dataset: string }) {
   }, [database]);
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
-    setSelectedQuestion(event.target.value);
+    setDependentQuestion(event.target.value);
   };
 
   return (
-    <Select value={selectedQuestion} onChange={handleSelectChange}>
+    <Select value={depVar} onChange={handleSelectChange}>
       {questions.map((question, index) => (
         <MenuItem key={index} value={question.key}>
           {question.value}
