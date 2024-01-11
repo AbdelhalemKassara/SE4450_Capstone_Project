@@ -163,14 +163,20 @@ class csvQuery {
       let once = true;
       for(let i = 1; i < data.length; i++) {
         let curAnswer = valueToAnswerId.get(data[i][col]);
-        if(i < 10) {
+        if(data[i][col] !== "1" && data[i][col] !== "2" && data[i][col] !== "3" && data[i][col] !== "4") {
           //console.log("test", valueToAnswerId);
           console.log('first', data[i][col])
+
           once= false;
         }
+        
+        if(curAnswer === undefined) {
+          console.log("curAnswer is undefined");
+        }
+
         if(out[curAnswer]) {
           out[curAnswer]++;
-        } else {
+        } else if(curAnswer !== undefined) {//removes the -99 or no response
           out[curAnswer] = 1;
         }
       }
