@@ -9,6 +9,7 @@ import SelectionTool from './pages/SelectionTool/selectionTool';
 import PageNotFound from "./pages/404/PageNotFound.tsx";
 import LandingPage from "./pages/LandingPage/landingPage.tsx";
 import "./index.css";
+import Export from "./pages/chart/export.tsx"
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/cdemMap" element={<CdemPage />} />
         <Route path="/selection" element={<SelectionTool />} />
         <Route path="/bar" element={<LandingPage />} />
+        <Route path="/chart" element={<Export />}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
