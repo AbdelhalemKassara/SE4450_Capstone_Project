@@ -23,7 +23,11 @@
     "npm": "^10.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+<<<<<<< HEAD
     "react-leaflet": "^4.2.1",
+=======
+    "react-google-charts": "^4.0.1",
+>>>>>>> main
     "react-router-dom": "^6.20.1"
   },
   "devDependencies": {
@@ -38,6 +42,6 @@
     "eslint-plugin-react-refresh": "^0.4.4",
     "sass": "^1.69.7",
     "typescript": "^5.3.2",
-    "vite": "^5.0.0"
+    "vite": "^5.1.5"
   }
 }
