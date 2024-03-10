@@ -7,7 +7,6 @@ export default function Export() {
   const database = useContext(DatabaseContext);
 
   const [data, setData] = useState([
-    ['Category', 'Profit'],
     ['Household', 5000],
     ['Cosmetics', 3100]
     
