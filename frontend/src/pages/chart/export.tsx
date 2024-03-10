@@ -33,8 +33,8 @@ function handleDataUpdate() {
 return  (
     <div className='py-10 flex flex-col items-center justify-center'>
         <Chart
-            width={'150%'}
-            chartType='BarChart'
+            width={'100%'}
+            chartType='PieChart'
             data={data}
         />
     </div>

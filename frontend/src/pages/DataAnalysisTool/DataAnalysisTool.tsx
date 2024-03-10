@@ -6,6 +6,7 @@ import StatsBar from "./components/StatsBar/StatsBar";
 import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 import CdemHeader from "../HomePage/Header/CdemHeader";
 import CDemFooter from "../HomePage/Footer/CdemFooter";
+import { Chart } from 'react-google-charts';
 
 import "./index.scss";
 
@@ -16,6 +17,16 @@ export default function DataAnalysisTool(): JSX.Element {
   const [depVar, setDepVar] = useState<string>("dc22_democratic_sat"); //dependent variable
   const [indVar, setIndVar] = useState<string>("dc22_age_in_years"); //demographic variable
 
+<<<<<<< Updated upstream
+=======
+  const [data, setData] = useState([
+    ["key","value"]
+  ]);
+
+  // Inside your component function
+  const [selectedButton, setSelectedButton] = useState<string>("");
+
+>>>>>>> Stashed changes
   //these are used for the temporary display output (might not )
   const [indVarAnswrCnt, setIndVarAnswrCnt] = useState([]);
   const [depVarAnswrCnt, setDepVarAnswrCnt] = useState([]);
@@ -43,13 +54,30 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     database.getAnswersCount(dataset, indVar).then((val) => {
       setIndVarAnswrCnt(val);
+
     });
   }, [dataset, indVar]);
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 
   useEffect(() => {
     database.getAnswersCount(dataset, depVar).then((val) => {
       setDepVarAnswrCnt(val);
+      //@ts-ignore
+      let dataParse = []
+      for (let [key, value] of Object.entries(val)) {
+        dataParse.push(
+          key, value
+        )
+      }
+      
+      console.log(dataParse)
+      setData(dataParse)
     });
+<<<<<<< Updated upstream
   }, [dataset, depVar]);
 
   return (
@@ -94,6 +122,47 @@ function test(obj: any, title: any) {
     );
   }
 
+=======
+}, [dataset, depVar, indVar, selectedButton]);
+
+function handleButtonClick(value: string) {
+  console.log("Button Clicked:", value);
+  setSelectedButton(value);
+}
+
+
+function test(obj: any, title: any) {
+  let out: JSX.Element[] = [];
+  for (let [key, value] of Object.entries(obj)) {
+    //@ts-ignore
+    out.push(
+      <p key={key}>
+        {key} : {value}
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <p>{title}</p>
+      {out}
+    </>
+  );
+  // setData(out)
+}
+
+function createButtons(obj: any, title: any) {
+  let out: JSX.Element[] = [];
+  for (let [key, value] of Object.entries(obj)) {
+    //@ts-ignore
+
+    out.push(
+      <button key={key} onClick={() => handleButtonClick(key)}>
+        {key} : {value}
+      </button>
+    );
+  }
+>>>>>>> Stashed changes
   return (
     <>
       <p>{title}</p>
@@ -101,3 +170,41 @@ function test(obj: any, title: any) {
     </>
   );
 }
+<<<<<<< Updated upstream
+=======
+
+return (
+  <div id="data_page">
+    <CdemHeader />
+    <div className='text'>
+      <StatsBar dataset={dataset} depVar={depVar} />
+      <IndVarDropDown
+        indVar={indVar}
+        setIndVar={setIndVar}
+        dataset={dataset}
+      />
+      {createButtons(indVarAnswrCnt, "Select a filter: ")}
+      <SelectionTool dataset={dataset} setDataset={setDataset} />
+      <br />
+      <br />
+      <DropdownMenu
+        dataset={dataset}
+        setDependentQuestion={setDepVar}
+        depVar={depVar}
+      />
+      {test(depVarAnswrCnt, "Depenent Variables Answer count")}
+
+      <Chart
+        width={'100%'}
+        chartType='PieChart'
+        data={data}
+      />
+
+    </div>
+    {/* < CDemFooter /> */}
+  </div>
+
+
+);
+}
+>>>>>>> Stashed changes
