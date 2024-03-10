@@ -16,6 +16,9 @@ export default function DataAnalysisTool(): JSX.Element {
   const [depVar, setDepVar] = useState<string>("dc22_democratic_sat"); //dependent variable
   const [indVar, setIndVar] = useState<string>("dc22_age_in_years"); //demographic variable
 
+  // Inside your component function
+const [selectedButton, setSelectedButton] = useState<string>("");
+
   //these are used for the temporary display output (might not )
   const [indVarAnswrCnt, setIndVarAnswrCnt] = useState([]);
   const [depVarAnswrCnt, setDepVarAnswrCnt] = useState([]);
@@ -41,16 +44,64 @@ export default function DataAnalysisTool(): JSX.Element {
   }, []);
 
   useEffect(() => {
+    console.log("Dataset, DepVar, IndVar, SelectedButton:", dataset, depVar, indVar, selectedButton);
     database.getAnswersCount(dataset, indVar).then((val) => {
+      console.log("IndVarAnswrCnt after getAnswersCount:", val);
       setIndVarAnswrCnt(val);
     });
   }, [dataset, indVar]);
+  
 
   useEffect(() => {
-    database.getAnswersCount(dataset, depVar).then((val) => {
+    console.log("DepVarAnswrCnt before getFilteredAnswersCount:", depVarAnswrCnt);
+    database.getFilteredAnswersCount(dataset, depVar, indVar, selectedButton).then((val) => {
+      console.log("DepVarAnswrCnt after getFilteredAnswersCount:", val);
       setDepVarAnswrCnt(val);
     });
-  }, [dataset, depVar]);
+  }, [dataset, depVar, indVar, selectedButton]);
+
+  function handleButtonClick(value: string) {
+    console.log("Button Clicked:", value);
+    setSelectedButton(value);
+  }
+
+  function test(obj: any, title: any) {
+    let out: JSX.Element[] = [];
+    for (let [key, value] of Object.entries(obj)) {
+      //@ts-ignore
+      out.push(
+        <p key={key}>
+          {key} : {value}
+        </p>
+      );
+    }
+  
+    return (
+      <>
+        <p>{title}</p>
+        {out}
+      </>
+    );
+  }
+  
+  function createButtons(obj: any, title: any) {
+    let out: JSX.Element[] = [];
+    for (let [key, value] of Object.entries(obj)) {
+      //@ts-ignore
+      out.push(
+        <button key={key} onClick={() => handleButtonClick(key)}>
+          {key} : {value}
+        </button>
+      );
+    }
+  
+    return (
+      <>
+        <p>{title}</p>
+        {out}
+      </>
+    );
+  }
 
   return (
     <div id="data_page">
@@ -62,42 +113,20 @@ export default function DataAnalysisTool(): JSX.Element {
           setIndVar={setIndVar}
           dataset={dataset}
         />
-
+<br />
+        {createButtons(indVarAnswrCnt, "Select a filter: ")}
         <SelectionTool dataset={dataset} setDataset={setDataset} />
         <DropdownMenu
           dataset={dataset}
           setDependentQuestion={setDepVar}
           depVar={depVar}
         />
-
         <br />
         <br />
-
-        {test(depVarAnswrCnt, "Dependent Variables Answer count")}
+        {test(depVarAnswrCnt, "Depenent Variables Answer count")}
         <br />
-        <br />
-        {test(indVarAnswrCnt, "Indepenent Variables Answer count")}
       </div>
       <CDemFooter />
     </div>
-  );
-}
-
-function test(obj: any, title: any) {
-  let out: JSX.Element[] = [];
-  for (let [key, value] of Object.entries(obj)) {
-    //@ts-ignore
-    out.push(
-      <p key={key}>
-        {key} : {value}
-      </p>
-    );
-  }
-
-  return (
-    <>
-      <p>{title}</p>
-      {out}
-    </>
   );
 }
