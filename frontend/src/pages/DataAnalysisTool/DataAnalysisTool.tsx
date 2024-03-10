@@ -113,18 +113,16 @@ const [selectedButton, setSelectedButton] = useState<string>("");
           setIndVar={setIndVar}
           dataset={dataset}
         />
-<br />
         {createButtons(indVarAnswrCnt, "Select a filter: ")}
         <SelectionTool dataset={dataset} setDataset={setDataset} />
+        <br/>
+        <br/>
         <DropdownMenu
           dataset={dataset}
           setDependentQuestion={setDepVar}
           depVar={depVar}
         />
-        <br />
-        <br />
         {test(depVarAnswrCnt, "Depenent Variables Answer count")}
-        <br />
       </div>
       <CDemFooter />
     </div>
