@@ -3,24 +3,6 @@ import fs from 'fs';
 import { getFilteredQuestions, hashSurveyTemplateQuestions, getQuestionMapping } from './processGlobalVars';
 import { addQuestionMapping, addQuestionMappingMultiQuestion } from './helperFunctions';
 
-function getDirectories(source: fs.PathLike) {
-  return fs.readdirSync(source, { withFileTypes: true }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
-}
-
-//type needs to be lowercase
-function getAFileTypesPaths(source: fs.PathLike, type: String) {
-  return fs.readdirSync(source, { withFileTypes: true }).filter(dirent => dirent.isFile()).map(dirent => dirent.name).filter(file => {
-    let split = file.split(".");
-    return split[split.length - 1].toLowerCase() === type;
-  }).map(str => source + "/" + str)[0];
-}
-function getQsfFileInDir(source: fs.PathLike) {
-  return getAFileTypesPaths(source, "qsf");
-}
-
-function getCsvFileInDir(source: fs.PathLike) {
-  return getAFileTypesPaths(source, "csv");
-}
 
 
 
@@ -85,8 +67,10 @@ function processAYearsFiles(folderPath: fs.PathLike, year: String) {
     sliceStr.pop();
     let slicedQuest: string = sliceStr.length > 0 ? sliceStr.join('') : quest;
 
+ 
     if(surveyTemplate.hashSurvey.has(quest)) {
       addQuestionMapping(output, questions, parameters, surveyTemplate, quest, i, jsonDataset, questionsMapping);
+      
     } else if(slicedQuest !== quest && surveyTemplate.hashSurvey.has(slicedQuest)) {
       addQuestionMappingMultiQuestion(slicedQuest, surveyTemplate);
     } 
@@ -109,4 +93,25 @@ function processAYearsFiles(folderPath: fs.PathLike, year: String) {
     }
   });
 
+}
+
+
+
+function getDirectories(source: fs.PathLike) {
+  return fs.readdirSync(source, { withFileTypes: true }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+}
+
+//type needs to be lowercase
+function getAFileTypesPaths(source: fs.PathLike, type: String) {
+  return fs.readdirSync(source, { withFileTypes: true }).filter(dirent => dirent.isFile()).map(dirent => dirent.name).filter(file => {
+    let split = file.split(".");
+    return split[split.length - 1].toLowerCase() === type;
+  }).map(str => source + "/" + str)[0];
+}
+function getQsfFileInDir(source: fs.PathLike) {
+  return getAFileTypesPaths(source, "qsf");
+}
+
+function getCsvFileInDir(source: fs.PathLike) {
+  return getAFileTypesPaths(source, "csv");
 }
