@@ -54,7 +54,7 @@ export default function DataAnalysisTool(): JSX.Element {
     database.getAnswersCount(dataset, indVar).then((val) => {
       console.log("IndVarAnswrCnt after getAnswersCount:", val);
       setIndVarAnswrCnt(val);
-
+      
     });
   }, [dataset, indVar]);
   
@@ -72,16 +72,21 @@ export default function DataAnalysisTool(): JSX.Element {
   function handleButtonClick(value: string) {
     console.log("Button Clicked:", value);
     setSelectedButton(value);
+  
   }
 
   
-  useEffect(() => {
-    const dummyData = [['Category', 'Profit']]
-    Object.entries(depVarAnswrCnt).forEach(([key, value]) =>{
-      dummyData.push([key, value])
-    })
-    setData(dummyData)
-  }, [depVar]);
+  
+  function handleDataUpdate() {
+     
+      const dummyData = [['Category', 'Profit']]
+      Object.entries(depVarAnswrCnt).forEach(([key, value]) =>{
+        dummyData.push([key, value])
+      })
+    
+      setData(dummyData)
+
+  }
 
 
 
@@ -115,11 +120,12 @@ export default function DataAnalysisTool(): JSX.Element {
 
 
       out.push(
-        <button key={key} onClick={() => handleButtonClick(key)}>
+        <button key={key} onClick={() => handleButtonClick(key)} >
           {key} : {value}
         </button>
       );
     }
+    
 
     return (
       <>
@@ -152,6 +158,12 @@ export default function DataAnalysisTool(): JSX.Element {
         />
         {test(depVarAnswrCnt, "Depenent Variables Answer count")}
 
+        <button
+            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
+            onClick={handleDataUpdate}>
+                Show Chart
+            </button>
+
         <Chart
           width={'100%'}
           chartType='PieChart'
@@ -166,4 +178,3 @@ export default function DataAnalysisTool(): JSX.Element {
 
   );
 }
-
