@@ -5,9 +5,7 @@ const CDemFooter = () => {
   return (
     <div className="cdem_footer">
       <div className ='footer_text'>
-        <span>test</span>
-        <span>test</span>
-        <span>test</span>
+        <span>Capstone Project: Ethan Miranda, Varnesh Vasudevan, Li Qian Zhou, Johnson Yong, and Abdelhalem Kassara</span>
       </div>
     </div>
   );

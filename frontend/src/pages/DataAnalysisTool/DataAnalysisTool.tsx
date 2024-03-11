@@ -24,6 +24,7 @@ export default function DataAnalysisTool(): JSX.Element {
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string>("");
 
+
   //these are used for the temporary display output (might not )
   const [indVarAnswrCnt, setIndVarAnswrCnt] = useState([]);
   const [depVarAnswrCnt, setDepVarAnswrCnt] = useState([]);
@@ -49,16 +50,21 @@ export default function DataAnalysisTool(): JSX.Element {
   }, []);
 
   useEffect(() => {
+    console.log("Dataset, DepVar, IndVar, SelectedButton:", dataset, depVar, indVar, selectedButton);
     database.getAnswersCount(dataset, indVar).then((val) => {
+      console.log("IndVarAnswrCnt after getAnswersCount:", val);
       setIndVarAnswrCnt(val);
 
     });
   }, [dataset, indVar]);
+  
 
 
 
   useEffect(() => {
-    database.getAnswersCount(dataset, depVar).then((val) => {
+    console.log("DepVarAnswrCnt before getFilteredAnswersCount:", depVarAnswrCnt);
+    database.getFilteredAnswersCount(dataset, depVar, indVar, selectedButton).then((val) => {
+      console.log("DepVarAnswrCnt after getFilteredAnswersCount:", val);
       setDepVarAnswrCnt(val);
     });
   }, [dataset, depVar, indVar, selectedButton]);
@@ -67,6 +73,7 @@ export default function DataAnalysisTool(): JSX.Element {
     console.log("Button Clicked:", value);
     setSelectedButton(value);
   }
+
   
   useEffect(() => {
     const dummyData = [['Category', 'Profit']]
@@ -75,6 +82,7 @@ export default function DataAnalysisTool(): JSX.Element {
     })
     setData(dummyData)
   }, [depVar]);
+
 
 
 
@@ -95,13 +103,16 @@ export default function DataAnalysisTool(): JSX.Element {
         {out}
       </>
     );
+
     // setData(out)
   }
+
 
   function createButtons(obj: any, title: any) {
     let out: JSX.Element[] = [];
     for (let [key, value] of Object.entries(obj)) {
       //@ts-ignore
+
 
       out.push(
         <button key={key} onClick={() => handleButtonClick(key)}>
@@ -109,6 +120,7 @@ export default function DataAnalysisTool(): JSX.Element {
         </button>
       );
     }
+
     return (
       <>
         <p>{title}</p>
@@ -129,8 +141,10 @@ export default function DataAnalysisTool(): JSX.Element {
         />
         {createButtons(indVarAnswrCnt, "Select a filter: ")}
         <SelectionTool dataset={dataset} setDataset={setDataset} />
+
         <br />
         <br />
+
         <DropdownMenu
           dataset={dataset}
           setDependentQuestion={setDepVar}
@@ -144,9 +158,12 @@ export default function DataAnalysisTool(): JSX.Element {
           data={data}
         />
 
+
       </div>
       {/* < CDemFooter /> */}
     </div>
 
+
   );
 }
+

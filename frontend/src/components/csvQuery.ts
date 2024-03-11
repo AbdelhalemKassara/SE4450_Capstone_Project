@@ -188,6 +188,110 @@ class csvQuery {
 
   }
 
+   // Asynchronous function to get the count of filtered answers for a specific question in a given dataset.
+public async getFilteredAnswersCount(dataset: string, questionId: string, filterId: string, filter: string): Promise<any> {
+  //console.log("Start of getFilteredAnswersCount");
+
+  await Promise.all(this.promises);
+
+  // Get the column index for the specified question.
+  let col = this.questionCol.get(questionId);
+  let fil = this.questionCol.get(filterId);
+
+  // Get the mapping of answers for the specified question in the given dataset.
+  let answersMapping = await this.getAnswers(dataset, questionId);
+  let filterMapping = await this.getAnswers(dataset, filterId);
+
+
+  // Check if the column index exists.
+  if (col) {
+    // Initialize an object to store the count of filtered answers.
+    let out: any = {};
+
+    // Get the dataset for the specified dataset.
+    let data = this.datasets.get(dataset).dataset.data;
+
+    // Create a mapping from answer values to their corresponding answer IDs.
+    let valueToAnswerId: Map<string, any> = new Map();
+    for (let [key, value] of Object.entries(answersMapping)) {
+      valueToAnswerId.set(key, value.Display);
+    }
+
+       // Create a mapping from answer values to their corresponding answer IDs.
+       let valueToFilterId: Map<string, any> = new Map();
+       for (let [key, value] of Object.entries(filterMapping)) {
+         valueToFilterId.set(key, value.Display);
+       }
+
+       let filterKey;
+
+for (const [key, value] of valueToFilterId.entries()) {
+  if (value === filter) {
+    filterKey = key;
+    break;
+  }
+}
+
+console.log("The key for Nova Scotia is:", filterKey);
+
+    // Log the mapping for debugging purposes.
+    console.log("test", valueToAnswerId);
+    console.log("the filter is ",  valueToFilterId);
+
+    // Flag to log the first occurrence of a non-"1", "2", "3", or "4" response.
+    let once = true;
+
+    // Iterate through the dataset starting from index 1 (assuming index 0 is headers).
+    for (let i = 1; i < data.length; i++) {
+      // Get the current answer for the specified question.
+      let curAnswer = valueToAnswerId.get(data[i][col]);
+
+
+   // Check if the filter column is defined before using it as an index
+   if (typeof fil !== 'undefined') {
+    // Check if the current row should be ignored based on the filter condition.
+    if (typeof data[i][fil] === 'undefined') {
+      console.log(`Value for ${fil} is undefined at index ${i}. Skipping this row.`);
+      continue; // Skip this iteration if the filter condition is not met.
+    }
+
+    if (data[i][fil] != filterKey) {
+      continue; // Skip this iteration if the filter condition is met.
+    }
+  } else {
+    console.log('Filter column is undefined. Skipping row.');
+    continue; // Skip this iteration if the filter column is not defined.
+  }
+
+      // Check if the current answer is not "1", "2", "3", or "4".
+      if (data[i][col] !== "1" && data[i][col] !== "2" && data[i][col] !== "3" && data[i][col] !== "4") {
+        //console.log('first', data[i][col]);
+        once = false;
+      }
+
+      // Log a message if the current answer is undefined.
+      if (curAnswer === undefined) {
+        console.log("curAnswer is undefined");
+      }
+
+      // Count occurrences of each answer and store the counts in the 'out' object.
+      if (out[curAnswer]) {
+        out[curAnswer]++;
+      } else if (curAnswer !== undefined) {
+        // If the answer is not undefined, initialize the count to 1.
+        out[curAnswer] = 1;
+      }
+    }
+
+    // Return the object containing the count of filtered answers.
+    return out;
+  } else {
+    // Return an empty object if the column index does not exist.
+    return {};
+  }
+}
+
+
   public async getAnswerCount(dataset: string, questionId: string, answerId: string) {
     await Promise.all(this.promises);
     let val = await this.getAnswersCount(dataset, questionId);

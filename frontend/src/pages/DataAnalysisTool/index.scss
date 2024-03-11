@@ -1,9 +1,12 @@
 
 #data_page{
+  position: fixed;
+  top: 0;
   display: flex;
   flex-direction: column;
   .text {
     color: black;
+    padding-top: 6rem; /* Add padding to compensate for the fixed header height */
   }
   overflow-y: scroll;
   position: relative;
