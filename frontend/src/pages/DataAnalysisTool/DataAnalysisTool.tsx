@@ -6,6 +6,7 @@ import StatsBar from "./components/StatsBar/StatsBar";
 import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 import CdemHeader from "../HomePage/Header/CdemHeader";
 import CDemFooter from "../HomePage/Footer/CdemFooter";
+import { Chart } from 'react-google-charts';
 
 import "./index.scss";
 
@@ -16,8 +17,13 @@ export default function DataAnalysisTool(): JSX.Element {
   const [depVar, setDepVar] = useState<string>("dc20_pos_career_pol"); //dependent variable
   const [indVar, setIndVar] = useState<string>("dc20_consent"); //demographic variable
 
+  const [data, setData] = useState([
+    ['Category', 'Profit'],
+  ]);
+
   // Inside your component function
-const [selectedButton, setSelectedButton] = useState<string>("");
+  const [selectedButton, setSelectedButton] = useState<string>("");
+
 
   //these are used for the temporary display output (might not )
   const [indVarAnswrCnt, setIndVarAnswrCnt] = useState([]);
@@ -49,9 +55,12 @@ const [selectedButton, setSelectedButton] = useState<string>("");
     database.getAnswersCount(dataset, indVar).then((val) => {
       console.log("IndVarAnswrCnt after getAnswersCount:", val);
       setIndVarAnswrCnt(val);
+      
     });
   }, [dataset, indVar]);
   
+
+
 
   useEffect(() => {
     console.log("DepVarAnswrCnt before getFilteredAnswersCount:", depVarAnswrCnt);
@@ -64,7 +73,24 @@ const [selectedButton, setSelectedButton] = useState<string>("");
   function handleButtonClick(value: string) {
     console.log("Button Clicked:", value);
     setSelectedButton(value);
+  
   }
+
+  
+  
+  function handleDataUpdate() {
+     
+      const dummyData = [['Category', 'Profit']]
+      Object.entries(depVarAnswrCnt).forEach(([key, value]) =>{
+        dummyData.push([key, value])
+      })
+    
+      setData(dummyData)
+
+  }
+
+
+
 
   function test(obj: any, title: any) {
     let out: JSX.Element[] = [];
@@ -76,26 +102,32 @@ const [selectedButton, setSelectedButton] = useState<string>("");
         </p>
       );
     }
-  
+
     return (
       <>
         <p>{title}</p>
         {out}
       </>
     );
+
+    // setData(out)
   }
-  
+
+
   function createButtons(obj: any, title: any) {
     let out: JSX.Element[] = [];
     for (let [key, value] of Object.entries(obj)) {
       //@ts-ignore
+
+
       out.push(
-        <button key={key} onClick={() => handleButtonClick(key)}>
+        <button key={key} onClick={() => handleButtonClick(key)} >
           {key} : {value}
         </button>
       );
     }
-  
+    
+
     return (
       <>
         <p>{title}</p>
@@ -116,16 +148,34 @@ const [selectedButton, setSelectedButton] = useState<string>("");
         />
         {createButtons(indVarAnswrCnt, "Select a filter: ")}
         <SelectionTool dataset={dataset} setDataset={setDataset} />
-        <br/>
-        <br/>
+
+        <br />
+        <br />
+
         <DropdownMenu
           dataset={dataset}
           setDependentQuestion={setDepVar}
           depVar={depVar}
         />
         {test(depVarAnswrCnt, "Depenent Variables Answer count")}
+
+        <button
+            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
+            onClick={handleDataUpdate}>
+                Show Chart
+            </button>
+
+        <Chart
+          width={'100%'}
+          chartType='PieChart'
+          data={data}
+        />
+
+
       </div>
-      <CDemFooter />
+      {/* < CDemFooter /> */}
     </div>
+
+
   );
 }
