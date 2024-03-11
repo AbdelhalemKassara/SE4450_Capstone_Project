@@ -8,4 +8,6 @@
     color: black;
     padding-top: 6rem; /* Add padding to compensate for the fixed header height */
   }
+  overflow-y: scroll;
+  position: relative;
 }
