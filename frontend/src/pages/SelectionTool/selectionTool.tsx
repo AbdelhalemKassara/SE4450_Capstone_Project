@@ -13,7 +13,7 @@ import { DatabaseContext } from "../../components/DatabaseContext";
 import Button from '@mui/material/Button';
 
 
-export default function SelectionTool({ dataset, setDataset }: { setDataset: React.Dispatch<React.SetStateAction<string>>, dataset: string }): JSX.Element {
+export default function SelectionTool({ dataset, setDataset}: { setDataset: React.Dispatch<React.SetStateAction<string>>, dataset: string }): JSX.Element {
 
     const database = useContext(DatabaseContext);
     const [datasets, setDatasets] = useState<string[]>([]);

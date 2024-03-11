@@ -17,7 +17,7 @@ function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: strin
       }
     }
     fetchData();
-  }, [database]);
+  }, [database, dataset]);
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     setDependentQuestion(event.target.value);

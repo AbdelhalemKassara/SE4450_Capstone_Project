@@ -97,6 +97,7 @@ class csvQuery {
 
   public async getDependentQuestions(dataset: string) : Promise<{key : string, value : string}[]> {
     await Promise.all(this.promises);
+    console.log(this.datasets.get(dataset));
     return this.getQuestionsMethod(dataset, "dependent");
   }
   private async getQuestionsMethod(dataset: string, questionsType: "independent" | "dependent"): Promise<{key : string, value : string}[]> {
