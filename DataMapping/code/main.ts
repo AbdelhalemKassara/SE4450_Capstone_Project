@@ -1,117 +1,65 @@
-import Papa from 'papaparse';
-import fs from 'fs';
-import { getFilteredQuestions, hashSurveyTemplateQuestions, getQuestionMapping } from './processGlobalVars';
-import { addQuestionMapping, addQuestionMappingMultiQuestion } from './helperFunctions';
+import path from "path";
+import { FileManager} from "./FileManager";
+import { QsfFileFetchWrapper } from "./QsfFileFetchWrapper";
+import { DatasetFetchWrapper } from "./DatasetFetchWrapper";
+import { Mapping, MC } from "./Types";
+const inputFiles = "inputFiles";
 
 
 
+let fileManager: FileManager = new FileManager();
+let datasetYearsDir: string[] = fileManager.getDirectories(path.join(inputFiles));
 
-let dirs = getDirectories("./inputFiles");
-for(let i = 0; i < dirs.length; i++) {
-  processAYearsFiles("./inputFiles/" + dirs[i], dirs[i]);
-}
 
-function processAYearsFiles(folderPath: fs.PathLike, year: String) {
-  let csvFilePath = getCsvFileInDir(folderPath);
-  let qsfFilePath = getQsfFileInDir(folderPath);
-  
-  if(csvFilePath === undefined || qsfFilePath === undefined) {
-    console.log("a FolderPath is invalid");
-    return;
-  }
-  //read and convert csv file to json
-  const jsonDataset: any = Papa.parse(fs.readFileSync(csvFilePath).toString());
+for(let i = 0; i < datasetYearsDir.length; i++) {
+  let mappingFile: Mapping = {independent: {}, dependent: {}};
 
-  //get independent variables
-  const parameters = JSON.parse(fs.readFileSync('./inputFiles/parameters.json').toString());
+  //get the required file paths
+  let datasetYearPath = path.join(inputFiles, datasetYearsDir[i]);
 
-  //get the qsf survey
-  let surveyTemplate : {survey: any, hashSurvey: Map<string,any>} = {survey : {}, hashSurvey : new Map()};
+  let qsfFilePath: string = fileManager.getQsfFileNameInDir(datasetYearPath);
+  let csvFilePath: string = fileManager.getCsvFileNameInDir(datasetYearPath);
+  let paramtersPath: string = fileManager.getParamtersFileNameInDir(datasetYearPath);
 
-  surveyTemplate.survey = JSON.parse(fs.readFileSync(getQsfFileInDir(folderPath)).toString());
-  //get and hash all question ids from the qsf file
-  surveyTemplate.hashSurvey = hashSurveyTemplateQuestions(surveyTemplate.survey);//key is the question, value is reference to it's row i.e. survey.SurveyElements[i]
-
-  //output file
-  //question : {type: string, ...} | {pointer : string}
-  let output : {independent: any, dependent: any, questionTypes: any} = {
-    "independent" : {},
-    "dependent" : {},
-    "questionTypes" : []
+  if(!qsfFilePath || !csvFilePath || !paramtersPath) {
+    console.log(`The folder ${datasetYearPath} has qsf, csv, or json file missing.`);
+    continue;    
   }
 
-  //adding the question types
-  output.questionTypes = parameters.questionTypes;
+  //declare and create the qsf and dataset handler objects
+  let qsfFile: QsfFileFetchWrapper = new QsfFileFetchWrapper(qsfFilePath, paramtersPath);
+  let dataset: DatasetFetchWrapper = new DatasetFetchWrapper(csvFilePath);
 
-  //get an array of all question ids from survey
-  const questions: string[] = getFilteredQuestions(jsonDataset, parameters);
-  const questionsMapping: Map<string, number> = getQuestionMapping(questions, jsonDataset);
+  //get the question ids and loop over them
+  let depVars: String[] = dataset.getQuestionIds();
+  depVars = qsfFile.removeQuestionToIgnoreFromList(depVars);
+
+  let indVars: String[] = qsfFile.getIndependentVariables();
+  indVars = qsfFile.removeQuestionToIgnoreFromList(indVars);
 
 
 
-  for(let i = 0; i < questions.length; i++) {
-    let quest: string = questions[i];
-    let sliceStr: string[] = quest.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+  //loop over the dependent variables
+  for(let d = 0; d < depVars.length; d++) {
+    let questionId: String = depVars[d];
+
+    let type: String = qsfFile.getQuestionType(questionId);
+    // console.log(type);
+    //skip over the ones that don't exist in the qsf or don't have a type we can process
+    if(!type || (type !== "MC")) {
+      // console.log(`We couldn't process ${questionId} as it's type is something that we can't process (haven't implemented) or is undefined.`)
+      continue;
+    }
+
+    //create the current questions mapping
+    let curQuestMap: MC = {type: "MC", mainQuestion: "", answersMapping: {}};
+    mappingFile.dependent[questionId.valueOf()] = curQuestMap;// the .valueOf() is to convert it from a string object to a string primitive
+
+    //get and assing the values for the answer mapping
+    let answerMap = curQuestMap.answersMapping;
+
+    let choices = qsfFile.getAnswerMappingObj(questionId);
     
-    //ignores everything that contins D0 since that is just the display order
-    if(sliceStr.includes("_DO")) {
-      continue;
-    }
-
-    ////////////////////////////remove this later (don't want to deal with these ones now)
-    if(sliceStr.includes("_TEXT")) {
-      continue;
-    }
-
-    //removes the number or "TEXT" tag at the end for matrix and Text entry
-    sliceStr.pop();
-    let slicedQuest: string = sliceStr.length > 0 ? sliceStr.join('') : quest;
-
- 
-    if(surveyTemplate.hashSurvey.has(quest)) {
-      addQuestionMapping(output, questions, parameters, surveyTemplate, quest, i, jsonDataset, questionsMapping);
-      
-    } else if(slicedQuest !== quest && surveyTemplate.hashSurvey.has(slicedQuest)) {
-      addQuestionMappingMultiQuestion(slicedQuest, surveyTemplate);
-    } 
-    else {
-      console.log(`"for "${questions[i]}" in the raw csv file. "${quest}" and "${slicedQuest}"(substring of the first) isn't contained within the QSF file.`)
-    }
   }
 
-  //remove the unused questions/columns from the json version of the dataset and save the json version
-  fs.writeFile("./outputFiles/" + year + "-dataset.json", JSON.stringify(jsonDataset), (err: any) => {
-    if(err) {
-      console.log(err);
-    }
-  });
-
-  //save the output to json file
-  fs.writeFile("./outputFiles/" + year + "-mapping.json", JSON.stringify(output), (err: any) => {
-    if(err) {
-      console.log(err);
-    }
-  });
-
-}
-
-
-
-function getDirectories(source: fs.PathLike) {
-  return fs.readdirSync(source, { withFileTypes: true }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
-}
-
-//type needs to be lowercase
-function getAFileTypesPaths(source: fs.PathLike, type: String) {
-  return fs.readdirSync(source, { withFileTypes: true }).filter(dirent => dirent.isFile()).map(dirent => dirent.name).filter(file => {
-    let split = file.split(".");
-    return split[split.length - 1].toLowerCase() === type;
-  }).map(str => source + "/" + str)[0];
-}
-function getQsfFileInDir(source: fs.PathLike) {
-  return getAFileTypesPaths(source, "qsf");
-}
-
-function getCsvFileInDir(source: fs.PathLike) {
-  return getAFileTypesPaths(source, "csv");
 }
