@@ -7,6 +7,8 @@ import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 import CdemHeader from "../HomePage/Header/CdemHeader";
 import CDemFooter from "../HomePage/Footer/CdemFooter";
 import { Chart } from 'react-google-charts';
+import {jsPDF} from 'jspdf';
+import html2canvas from 'html2canvas';
 
 import "./index.scss";
 
@@ -89,6 +91,28 @@ export default function DataAnalysisTool(): JSX.Element {
 
   }
 
+  function Export(){
+
+    const exportitem = document.getElementById('my-table') as HTMLElement;
+    html2canvas(exportitem, {}).then(canvas => {
+
+      const imgData = canvas.toDataURL('image/png');
+      console.log(imgData);
+
+      const pdf = new jsPDF( "p", "mm" , "a4");
+
+      const PageHeight  = 400;
+      const PageWidth = 300;
+
+      const height = canvas.height*PageHeight/canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0,0, PageWidth, height);
+
+
+     pdf.save("data.pdf");
+    })
+  }
+
 
   
 
@@ -158,13 +182,27 @@ export default function DataAnalysisTool(): JSX.Element {
           setDependentQuestion={setDepVar}
           depVar={depVar}
         />
-        {test(depVarAnswrCnt, "Depenent Variables Answer count")}
 
+        <br />
+        <br />
+        
         <button
             className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
             onClick={handleDataUpdate}>
                 Show Chart
             </button>
+            <button
+            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
+            onClick={Export}>
+                Export PDF
+            </button>
+
+            <div id='my-table'>
+
+        {test(depVarAnswrCnt, "Depenent Variables Answer count")}
+
+
+            
 
         <Chart
           width={'100%'}
@@ -172,6 +210,7 @@ export default function DataAnalysisTool(): JSX.Element {
           data={data}
         />
 
+      </div>
 
       </div>
       {/* < CDemFooter /> */}
