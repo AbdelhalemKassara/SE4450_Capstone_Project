@@ -17,9 +17,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [depVar, setDepVar] = useState<string>("dc22_democratic_sat"); //dependent variable
   const [indVar, setIndVar] = useState<string>("dc22_age_in_years"); //demographic variable
 
-  const [data, setData] = useState([
-    ['Category', 'Profit'],
-  ]);
+  const [data, setData] = useState(false);
 
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string>("");
@@ -54,7 +52,7 @@ export default function DataAnalysisTool(): JSX.Element {
     database.getAnswersCount(dataset, indVar).then((val) => {
       console.log("IndVarAnswrCnt after getAnswersCount:", val);
       setIndVarAnswrCnt(val);
-      
+    
     });
   }, [dataset, indVar]);
   
@@ -66,6 +64,8 @@ export default function DataAnalysisTool(): JSX.Element {
     database.getFilteredAnswersCount(dataset, depVar, indVar, selectedButton).then((val) => {
       console.log("DepVarAnswrCnt after getFilteredAnswersCount:", val);
       setDepVarAnswrCnt(val);
+      
+      
     });
   }, [dataset, depVar, indVar, selectedButton]);
 
@@ -89,7 +89,7 @@ export default function DataAnalysisTool(): JSX.Element {
   }
 
 
-
+  
 
   function test(obj: any, title: any) {
     let out: JSX.Element[] = [];
@@ -144,8 +144,9 @@ export default function DataAnalysisTool(): JSX.Element {
           indVar={indVar}
           setIndVar={setIndVar}
           dataset={dataset}
+          
         />
-        {createButtons(indVarAnswrCnt, "Select a filter: ")}
+        {createButtons(indVarAnswrCnt, "Select a filter: ") }
         <SelectionTool dataset={dataset} setDataset={setDataset} />
 
         <br />
