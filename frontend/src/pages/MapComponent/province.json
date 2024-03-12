@@ -6062,9 +6062,8 @@
             },
             "properties": {
                 "name": "Quebec",
-                "cartodb_id": 1,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 11,
+                "density": 0
             }
         },
         {
@@ -13348,9 +13347,8 @@
             },
             "properties": {
                 "name": "Newfoundland and Labrador",
-                "cartodb_id": 5,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 5,
+                "density": 0
             }
         },
         {
@@ -19282,9 +19280,8 @@
             },
             "properties": {
                 "name": "British Columbia",
-                "cartodb_id": 6,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 2,
+                "density": 0
             }
         },
         {
@@ -57924,9 +57921,8 @@
             },
             "properties": {
                 "name": "Nunavut",
-                "cartodb_id": 12,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 8,
+                "density": 0
             }
         },
         {
@@ -64734,9 +64730,8 @@
             },
             "properties": {
                 "name": "Northwest Territories",
-                "cartodb_id": 13,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 6,
+                "density": 0
             }
         },
         {
@@ -65504,9 +65499,8 @@
             },
             "properties": {
                 "name": "New Brunswick",
-                "cartodb_id": 7,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 4,
+                "density": 0
             }
         },
         {
@@ -67154,9 +67148,8 @@
             },
             "properties": {
                 "name": "Nova Scotia",
-                "cartodb_id": 2,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 7,
+                "density": 0
             }
         },
         {
@@ -67464,9 +67457,8 @@
             },
             "properties": {
                 "name": "Saskatchewan",
-                "cartodb_id": 3,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 12,
+                "density": 0
             }
         },
         {
@@ -67982,9 +67974,8 @@
             },
             "properties": {
                 "name": "Alberta",
-                "cartodb_id": 4,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 1,
+                "density": 0
             }
         },
         {
@@ -68408,9 +68399,8 @@
             },
             "properties": {
                 "name": "Prince Edward Island",
-                "cartodb_id": 8,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 10,
+                "density": 0
             }
         },
         {
@@ -69398,9 +69388,8 @@
             },
             "properties": {
                 "name": "Yukon Territory",
-                "cartodb_id": 9,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 13,
+                "density": 0
             }
         },
         {
@@ -69956,10 +69945,8 @@
             },
             "properties": {
                 "name": "Manitoba",
-                "density": 1000,
-                "cartodb_id": 10,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 3,
+                "density": 0
             }
         },
         {
@@ -71951,9 +71938,8 @@
             },
             "properties": {
                 "name": "Ontario",
-                "cartodb_id": 11,
-                "created_at": "2014-10-16T13:22:00Z",
-                "updated_at": "2014-10-16T13:22:00Z"
+                "province_id": 9,
+                "density": 0
             }
         }
     ]
