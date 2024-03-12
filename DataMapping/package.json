@@ -20,6 +20,7 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
+    "mapshaper": "^0.6.70",
     "papaparse": "^5.4.1"
   }
 }

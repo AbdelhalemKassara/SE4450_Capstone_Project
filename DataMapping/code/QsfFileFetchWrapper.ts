@@ -1,5 +1,5 @@
 import fs, {PathLike} from 'fs';
-import { paramters } from '../oldCode/Types';
+import { paramters } from './Types';
 
 export class QsfFileFetchWrapper {
   //this class should contain the qsf file object
@@ -8,6 +8,7 @@ export class QsfFileFetchWrapper {
   private qsfFile: any;
   private parametersFile: paramters;
   private questIDToObj = new Map<String, any>();
+  private questionIdsFromQsfRmIndex0 = new Map<String, String>();
 
   constructor(qsfFilePath: PathLike, parametersFile: PathLike) {
     let file:any = fs.readFileSync(qsfFilePath).toString();
@@ -26,6 +27,7 @@ export class QsfFileFetchWrapper {
     }
 
     this.hashQuestionIDToQuestionObject();
+    this.hashRemovedFirstSegQuestId();
   }
 
   public getMainQuestion(questionId: String): String | undefined {
@@ -61,7 +63,7 @@ export class QsfFileFetchWrapper {
 
   //for now this will ignore both metadata and question to ignore as we aren't using the metadata
   public removeQuestionToIgnoreFromList(questionIds: String[]): String[] {
-    questionIds.filter((questionId: String) => {
+    questionIds = questionIds.filter((questionId: String) => {
       let split: String[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
       
       //ignores everything that contins _DO (at the end) since that is just the display order
@@ -97,6 +99,25 @@ export class QsfFileFetchWrapper {
     return questionIds;
   }
 
+  public reformatNecissaryQuestions(questionIds: String[]): String[] {
+    let out: any = questionIds.map((questionId: String) => {
+      let split: String[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+      split[0] = "";
+      console.log(questionId, this.questIDToObj.has(questionId), split.join(), split.length > 1 && this.questionIdsFromQsfRmIndex0.has(split.join()))
+      if(this.questIDToObj.has(questionId)) {
+        return questionId;
+      } else if(split.length > 1 && this.questionIdsFromQsfRmIndex0.has(split.join())) { //some questions have ds##, pes##, or dc## while the qsf file has another one of these, this assigns it to the one the qsf file has.
+        return this.questionIdsFromQsfRmIndex0.get(split.join());
+      } else {
+        // console.log(`Warning: ${questionId} in the dataset doesn't exist in any form that we can find in the qsf file, it won't exist in the mapping file.`);
+        return "";
+      }
+    });
+
+    out = out.filter((questionId: String) => questionId !== "");//remove the question that have a warning
+
+    return out;
+  }
   public getIndependentVariables(): String[] {
     return this.parametersFile.independentVariables;
   }
@@ -110,6 +131,19 @@ export class QsfFileFetchWrapper {
     });
   }
 
+  private hashRemovedFirstSegQuestId() {
+    //get ids without the first ds##, pes##, or dc##
+    let questionIdsFromQsf: String[] = Array.from(this.questIDToObj.keys());
+
+    questionIdsFromQsf.forEach((questionId: String) => {
+      let split: String[] = questionId.split(/(?=_)/);
+
+      split[0] = "";
+      this.questionIdsFromQsfRmIndex0.set(split.join(), questionId);
+    });
+
+
+  }
   //hardcode each quesiton type
   //the parameters file is now specific to each dataset year and contains 
 }

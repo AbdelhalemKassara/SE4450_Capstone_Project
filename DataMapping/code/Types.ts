@@ -54,3 +54,8 @@ export type Dataset = {
   errors: any[];
   meta: any;
 };
+
+export type FileStruct = {
+  name : String;
+  date: number;
+}[];
