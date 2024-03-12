@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState, useMemo } from 'react';
-import { red, amber } from '@mui/material/colors';
+import { red, amber, orange } from '@mui/material/colors';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { DatabaseContext } from "../../components/DatabaseContext";
 import { Legend, InfoControl } from './components';
@@ -7,7 +7,6 @@ import "./index.scss";
 import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
 import province from './province.json'
 import { electoralRidings, section } from './helper'
-import { Key } from '@mui/icons-material';
 
 const MapComponent = () => {
   const database = useContext(DatabaseContext);
@@ -19,8 +18,13 @@ const MapComponent = () => {
   const [selectedLayer, setSelectedLayer] = useState({})
   const [selectedStyle, setSelectedStyle] = useState({})
   const [ridingCount, setRidingCount] = useState({})
-  const elec = {...electoralRidings()};
+  const elec = { ...electoralRidings() };
   const provinceGeoData = { ...province }
+  const [heatValues, setHeatValues] = useState([])
+  const multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,7 +40,9 @@ const MapComponent = () => {
             }
           }
         })
+        let maxV = 0
         Object.entries(ridingCount).forEach(([key, value]) => {
+          maxV = Math.max(maxV, value)
           for (let i = 0; i < elec.features.length; i++) {
             const elecProperties = elec?.features?.[i]?.properties;
             if (key && elecProperties?.feduid == key) {
@@ -44,6 +50,12 @@ const MapComponent = () => {
             }
           }
         })
+
+        const multipliersMax = multipliers.map((val) => {
+          return Math.ceil(val * maxV)
+        });
+
+        setHeatValues(multipliersMax);
       } catch (error) {
         console.error('Error fetching data: ', error);
       }
@@ -72,23 +84,25 @@ const MapComponent = () => {
   }
   const getColor = (value) => {
     // You can customize this function based on your data
-    return value > 3000
+    return value > heatValues[8]
       ? red[900]
-      : value > 2500
-        ? red[700]
-        : value > 2000
-          ? red[500]
-          : value > 1500
-            ? amber[900]
-            : value > 1000
-              ? amber[700]
-              : value > 750
-                ? amber[500]
-                : value > 500
-                  ? amber[300] :
-                  value > 250 ?
-                    amber[100]
-                    : amber[50];
+      : value > heatValues[7]
+        ? red[800]
+        : value > heatValues[6]
+          ? red[700] :
+          value > heatValues[5]
+            ? orange[900]
+            : value > heatValues[4]
+              ? amber[900]
+              : value > heatValues[3]
+                ? amber[700]
+                : value > heatValues[2]
+                  ? amber[500]
+                  : value > heatValues[1]
+                    ? amber[300] :
+                    value > heatValues[0] ?
+                      amber[100]
+                      : amber[50];
   };
   const highlightFeature = (e) => {
     const layer = e.target;
@@ -142,12 +156,12 @@ const MapComponent = () => {
         />
         {provinceGeoData && (
           <GeoJSON
-            data={provinceGeoData}
+            data={elec}
             style={style}
             onEachFeature={onEachFeature}
           />
         )}
-        <Legend getColor={getColor} />
+        <Legend getColor={getColor} heatValues={heatValues} />
         <InfoControl currentProvince={currentProvince} />
 
 
