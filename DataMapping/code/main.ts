@@ -2,13 +2,18 @@ import path from "path";
 import { FileManager} from "./FileManager";
 import { QsfFileFetchWrapper } from "./QsfFileFetchWrapper";
 import { DatasetFetchWrapper } from "./DatasetFetchWrapper";
-import { Mapping, MC } from "./Types";
+import { AllQuestionTypes, Mapping, MC } from "./Types";
+import {inspect} from 'util';
+import { ProcessQuestions } from "./ProcessQuestions";
+
 const inputFiles = "inputFiles";
 
 
 
-let fileManager: FileManager = new FileManager();
+const fileManager: FileManager = new FileManager();
 let datasetYearsDir: string[] = fileManager.getDirectories(path.join(inputFiles));
+
+const processQuest: ProcessQuestions = new ProcessQuestions();
 
 
 for(let i = 0; i < datasetYearsDir.length; i++) {
@@ -41,25 +46,17 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
 
   //loop over the dependent variables
   for(let d = 0; d < depVars.length; d++) {
-    let questionId: String = depVars[d];
+    processQuest.addQuestion(mappingFile, qsfFile, depVars[d], false);
+  } 
 
-    let type: String = qsfFile.getQuestionType(questionId);
-    // console.log(type);
-    //skip over the ones that don't exist in the qsf or don't have a type we can process
-    if(!type || (type !== "MC")) {
-      // console.log(`We couldn't process ${questionId} as it's type is something that we can't process (haven't implemented) or is undefined.`)
-      continue;
-    }
-
-    //create the current questions mapping
-    let curQuestMap: MC = {type: "MC", mainQuestion: "", answersMapping: {}};
-    mappingFile.dependent[questionId.valueOf()] = curQuestMap;// the .valueOf() is to convert it from a string object to a string primitive
-
-    //get and assing the values for the answer mapping
-    let answerMap = curQuestMap.answersMapping;
-
-    let choices = qsfFile.getAnswerMappingObj(questionId);
-    
+  for(let d = 0; d < indVars.length; d++) {
+    processQuest.addQuestion(mappingFile, qsfFile, depVars[d], true);
   }
+  //loop over the independent variables
+  console.log(inspect(mappingFile, {showHidden: false, depth: null, colors: true}));
+
+  //write the mapping file
+  // fileManager.writeFile(mappingFile, [datasetYearsDir[i]],  datasetYearsDir[i] + "-mapping.json");
+  //break up the the dataset to [column][row] from [row][column] and make each column a separate file
 
 }

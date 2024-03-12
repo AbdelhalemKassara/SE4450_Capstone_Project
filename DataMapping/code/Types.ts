@@ -7,12 +7,12 @@ export type paramters = {
 
 //mapping file
 export type Mapping = {
-  dependent : {
-    [key: string]: MC | TE | Matrix | Slider;
-  };
-  independent : {
-    [key: string]: MC | TE | Matrix | Slider;
-  };
+  dependent : AllQuestionTypes;
+  independent : AllQuestionTypes;
+};
+
+export type AllQuestionTypes =   {
+  [key: string]: MC | TE | Matrix | Slider
 };
 
 type Question = {

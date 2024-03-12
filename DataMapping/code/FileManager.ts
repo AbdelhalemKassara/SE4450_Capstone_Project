@@ -1,8 +1,11 @@
-import {PathLike, readdirSync, readFileSync} from 'fs';
+import { dir } from 'console';
+import {PathLike, readdirSync, readFileSync, write, writeFileSync, mkdirSync} from 'fs';
 import Papa from 'papaparse';
+import path from "path";
 
 
 export class FileManager {
+  private outputFilesDir: string = "outputFiles";
 
   public getCSVFile(path: PathLike): any {
     return Papa.parse(this.readFile(path));
@@ -29,6 +32,14 @@ export class FileManager {
     return this.getAFileTypesPaths(source, "json");
   }
 
+  public writeFile(json: any, filePath: string[], file: string) {
+    this.makeDirectory(filePath);
+    writeFileSync(path.join(this.outputFilesDir, ...filePath, file), JSON.stringify(json));
+  }
+
+  private makeDirectory(dirPath: string[]) {
+    mkdirSync(path.join(this.outputFilesDir, ...dirPath));
+  }
   //private functions
   private readFile(path: PathLike) {
     return readFileSync(path).toString();

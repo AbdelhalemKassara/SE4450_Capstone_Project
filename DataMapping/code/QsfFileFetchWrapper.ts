@@ -28,13 +28,27 @@ export class QsfFileFetchWrapper {
     this.hashQuestionIDToQuestionObject();
   }
 
+  public getMainQuestion(questionId: String): String | undefined {
+    if(this.questIDToObj.has(questionId)) {
+      return this.questIDToObj.get(questionId).Payload.QuestionText;
+    } else {
+      return undefined;
+    }
+  }
+  public getChoiceOrderArr(questionId: String): String[] | undefined {
+    if(this.questIDToObj.has(questionId)) {
+      return this.questIDToObj.get(questionId).Payload.ChoiceOrder;
+    } else {
+      return undefined;
+    }
+  }
+
   public getAnswerMappingObj(questionId: String): any {
     if(this.questIDToObj.has(questionId)) {
       return this.questIDToObj.get(questionId).Payload.Choices;
     } else {
       return undefined;
     }
-    
   }
 
   public getQuestionType(questionId: String) {
