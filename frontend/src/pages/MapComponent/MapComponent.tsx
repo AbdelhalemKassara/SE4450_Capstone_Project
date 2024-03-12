@@ -7,6 +7,7 @@ import "./index.scss";
 import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
 import province from './province.json'
 import { electoralRidings, section } from './helper'
+import { Key } from '@mui/icons-material';
 
 const MapComponent = () => {
   const database = useContext(DatabaseContext);
@@ -17,20 +18,29 @@ const MapComponent = () => {
   const [currentProvince, setCurrentProvince] = useState({});
   const [selectedLayer, setSelectedLayer] = useState({})
   const [selectedStyle, setSelectedStyle] = useState({})
-  const elec = useMemo(() => electoralRidings(), [])
-  console.log(section)
-
+  const [ridingCount, setRidingCount] = useState({})
+  const elec = {...electoralRidings()};
   const provinceGeoData = { ...province }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setProvinceCount(await database.getProvinceCount("2022-dataset.json", "dc22_province"))
+        setRidingCount(await database.getRidingCount("2022-dataset.json"))
+
         Object.values(provinceCount).forEach((v) => {
           for (let i = 0; i < provinceGeoData?.features.length; i++) {
             const provinceProperty = provinceGeoData?.features?.[i]?.properties;
             if (v?.province_id && provinceProperty?.province_id == v?.province_id) {
               provinceProperty.density = v.total
+            }
+          }
+        })
+        Object.entries(ridingCount).forEach(([key, value]) => {
+          for (let i = 0; i < elec.features.length; i++) {
+            const elecProperties = elec?.features?.[i]?.properties;
+            if (key && elecProperties?.feduid == key) {
+              elecProperties.density = value
             }
           }
         })
@@ -40,6 +50,8 @@ const MapComponent = () => {
     };
     fetchData();
   }, []);
+  console.log(elec)
+
   useEffect(() => {
     if (selectedLayer && selectedLayer.setStyle) {
       selectedLayer?.setStyle({ ...selectedStyle })
@@ -130,7 +142,7 @@ const MapComponent = () => {
         />
         {provinceGeoData && (
           <GeoJSON
-            data={elec}
+            data={provinceGeoData}
             style={style}
             onEachFeature={onEachFeature}
           />

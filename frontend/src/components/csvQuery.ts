@@ -222,7 +222,6 @@ class csvQuery {
     let col = this.questionCol.get(questionId);
     let answersMapping = await this.getAnswers(dataset, questionId);
 
-
     if (col) {
       let out: any = {};
       let data = this.datasets.get(dataset).dataset.data;
@@ -377,38 +376,37 @@ class csvQuery {
 
     let col = this.questionCol.get(questionId);
     let answersMapping = await this.getAnswers(dataset, questionId);
-    
 
-
-    if(col) {
+    if (col) {
       let out: any = {};
       let data = this.datasets.get(dataset).dataset.data;
+
       let valueToAnswerId: Map<string, any> = new Map();
 
-      for(let [key, value] of Object.entries(answersMapping)) {
+      for (let [key, value] of Object.entries(answersMapping)) {
         valueToAnswerId.set(key, value.Display);
       }
 
       // console.log("test", valueToAnswerId);
 
       let once = true;
-      for(let i = 1; i < data.length; i++) {
+      for (let i = 1; i < data.length; i++) {
         let curAnswer = valueToAnswerId.get(data[i][col]);
-        if(data[i][col] !== "1" && data[i][col] !== "2" && data[i][col] !== "3" && data[i][col] !== "4") {
+        if (data[i][col] !== "1" && data[i][col] !== "2" && data[i][col] !== "3" && data[i][col] !== "4") {
           //console.log("test", valueToAnswerId);
           // console.log('first', data[i][col])
 
-          once= false;
+          once = false;
         }
-        
-        if(curAnswer === undefined) {
+
+        if (curAnswer === undefined) {
           console.log("curAnswer is undefined");
         }
 
-        if(out[curAnswer]) {
-          out[curAnswer].total ++;
-        } else if(curAnswer !== undefined) {//removes the -99 or no response
-          out[curAnswer] = {province_id: data[i][col], total: 1};
+        if (out[curAnswer]) {
+          out[curAnswer].total++;
+        } else if (curAnswer !== undefined) {//removes the -99 or no response
+          out[curAnswer] = { province_id: data[i][col], total: 1 };
         }
       }
 
@@ -418,7 +416,21 @@ class csvQuery {
     }
 
   }
+  public async getRidingCount(dataset: string): Promise<any> {
+    await Promise.all(this.promises);
 
+    let data = this.datasets.get(dataset).dataset.data;
+    let out = []
+    for (let i = 1; i < data.length; i++) {
+      if (out[data[i][414]]) {
+        out[data[i][414]]++;
+      }
+      else {
+        out[data[i][414]] = 1
+      }
+    }
+    return out;
+
+  }
 }
-
 export default csvQuery;
