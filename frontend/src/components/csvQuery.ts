@@ -97,6 +97,7 @@ class csvQuery {
 
   public async getDependentQuestions(dataset: string) : Promise<{key : string, value : string}[]> {
     await Promise.all(this.promises);
+    console.log(this.datasets.get(dataset));
     return this.getQuestionsMethod(dataset, "dependent");
   }
   private async getQuestionsMethod(dataset: string, questionsType: "independent" | "dependent"): Promise<{key : string, value : string}[]> {
@@ -158,17 +159,9 @@ class csvQuery {
         valueToAnswerId.set(key, value.Display);
       }
 
-      console.log("test", valueToAnswerId);
-
-      let once = true;
       for(let i = 1; i < data.length; i++) {
         let curAnswer = valueToAnswerId.get(data[i][col]);
-        if(data[i][col] !== "1" && data[i][col] !== "2" && data[i][col] !== "3" && data[i][col] !== "4") {
-          //console.log("test", valueToAnswerId);
-          console.log('first', data[i][col])
 
-          once= false;
-        }
         
         if(curAnswer === undefined) {
           console.log("curAnswer is undefined");
@@ -225,14 +218,13 @@ public async getFilteredAnswersCount(dataset: string, questionId: string, filter
 
        let filterKey;
 
-for (const [key, value] of valueToFilterId.entries()) {
-  if (value === filter) {
-    filterKey = key;
-    break;
+  for (const [key, value] of valueToFilterId.entries()) {
+    if (value === filter) {
+      filterKey = key;
+      break;
+    }
   }
-}
 
-console.log("The key for Nova Scotia is:", filterKey);
 
     // Log the mapping for debugging purposes.
     console.log("test", valueToAnswerId);

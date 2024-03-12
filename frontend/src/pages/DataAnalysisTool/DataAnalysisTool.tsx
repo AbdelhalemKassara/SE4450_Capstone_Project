@@ -13,9 +13,9 @@ import "./index.scss";
 
 export default function DataAnalysisTool(): JSX.Element {
   const database = useContext(DatabaseContext);
-  const [dataset, setDataset] = useState<string>("2022-dataset.json"); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
-  const [depVar, setDepVar] = useState<string>("dc22_democratic_sat"); //dependent variable
-  const [indVar, setIndVar] = useState<string>("dc22_age_in_years"); //demographic variable
+  const [dataset, setDataset] = useState<string>("2020-dataset.json"); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
+  const [depVar, setDepVar] = useState<string>("dc20_pos_career_pol"); //dependent variable
+  const [indVar, setIndVar] = useState<string>("dc20_consent"); //demographic variable
 
   const [data, setData] = useState(false);
 
@@ -46,6 +46,7 @@ export default function DataAnalysisTool(): JSX.Element {
       // console.log(await database.getTotalResponses("2022-dataset.json", "dc22_age_in_years"));
     })();
   }, []);
+
 
   useEffect(() => {
     console.log("Dataset, DepVar, IndVar, SelectedButton:", dataset, depVar, indVar, selectedButton);

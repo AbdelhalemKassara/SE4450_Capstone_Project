@@ -15,7 +15,7 @@ export default function IndVarDropDown({setIndVar, indVar, dataset}:
     database.getIndependentQuestions(dataset).then((val: {key : string, value : any}[]) => {
       setIndVars(val);
     });
-  }, []);
+  }, [dataset]);
 
 
   return (

@@ -1,11 +1,12 @@
 export function addQuestionMapping(output: {independent: any, dependent: any}, questions: string[], parameters: any, surveyTemplate: {survey: any, hashSurvey: Map<string,any>}, quest: string, i: number, jsonDataset: any, questionsMapping: Map<string, number>): void {
       
   let row = surveyTemplate.hashSurvey.get(quest);
+
   if(parameters.questionTypes.filter((qType: any ) => qType?.type === row.Payload.QuestionType)) {//checks if this row's question type is in the paramters document
     let questIndOrDep: "independent" | "dependent" = parameters.independentVariables.includes(questions[i]) ? "independent" : "dependent";
 
     output[questIndOrDep][questions[i]]  = {type : row.Payload.QuestionType};
-
+    
     //fetchQSF
     let questTypeParam = parameters.questionTypes.find((val : any) => val.type === row.Payload.QuestionType);
 
@@ -25,18 +26,12 @@ export function addQuestionMapping(output: {independent: any, dependent: any}, q
       let newAnswersMapping:any = {};
 
       row.Payload.ChoiceOrder.forEach((val:any, i:number) => {
+     
         newAnswersMapping[i+1] = answersMapping[val];
-      })
-      
-      if(questions[i] === "dc22_genderid") {
-        console.log(output[questIndOrDep][questions[i]].answersMapping, newAnswersMapping);
-      }
+      });
       output[questIndOrDep][questions[i]].answersMapping = newAnswersMapping;
-      console.log();
-      if(questions[i] === "dc22_genderid") {
-        console.log(output[questIndOrDep][questions[i]].answersMapping, newAnswersMapping);
-      }
     }
+    
     //fetchDataset for questions[i] and get all unique values
     if(questTypeParam.fetchDataset) {
       let uniqueAnswers = new Map();
