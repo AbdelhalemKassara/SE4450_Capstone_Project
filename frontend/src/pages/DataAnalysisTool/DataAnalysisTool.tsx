@@ -70,6 +70,14 @@ export default function DataAnalysisTool(): JSX.Element {
     });
   }, [dataset, depVar, indVar, selectedButton]);
 
+  useEffect(() => {
+    const dummyData = [['Category', 'Profit']];
+    Object.entries(depVarAnswrCnt).forEach(([key, value]) => {
+      dummyData.push([key, value]);
+    });
+    setData(dummyData);
+  }, [depVarAnswrCnt]);
+
   function handleButtonClick(value: string) {
     console.log("Button Clicked:", value);
     setSelectedButton(value);
@@ -122,7 +130,7 @@ export default function DataAnalysisTool(): JSX.Element {
 
       out.push(
         <button key={key} onClick={() => handleButtonClick(key)} >
-          {key} : {value}
+          {key}
         </button>
       );
     }
@@ -140,14 +148,15 @@ export default function DataAnalysisTool(): JSX.Element {
     <div id="data_page">
       <CdemHeader />
       <div className='text'>
+        <div className="container">
         <StatsBar dataset={dataset} depVar={depVar} />
+        <SelectionTool dataset={dataset} setDataset={setDataset} />
         <IndVarDropDown
           indVar={indVar}
           setIndVar={setIndVar}
           dataset={dataset}
         />
         {createButtons(indVarAnswrCnt, "Select a filter: ")}
-        <SelectionTool dataset={dataset} setDataset={setDataset} />
 
         <br />
         <br />
@@ -157,23 +166,22 @@ export default function DataAnalysisTool(): JSX.Element {
           setDependentQuestion={setDepVar}
           depVar={depVar}
         />
-        {test(depVarAnswrCnt, "Depenent Variables Answer count")}
 
         <button
             className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
             onClick={handleDataUpdate}>
                 Show Chart
             </button>
+            </div>
+            {test(depVarAnswrCnt, "Depenent Variables Answer count")}
 
         <Chart
           width={'100%'}
           chartType='PieChart'
           data={data}
         />
-
-
       </div>
-      {/* < CDemFooter /> */}
+      {< CDemFooter />}
     </div>
 
 

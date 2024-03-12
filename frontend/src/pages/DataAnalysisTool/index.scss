@@ -1,13 +1,24 @@
-
-#data_page{
+#data_page {
   position: relative;
+  width: 100vw;
   top: 0;
   display: flex;
   flex-direction: column;
-  .text {
-    color: black;
-    padding-top: 6rem; /* Add padding to compensate for the fixed header height */
-  }
-  overflow-y: scroll;
-  position: relative;
+  min-height: 100vh;
+}
+
+#data_page .text {
+  color: black;
+  padding-top: 6rem; /* Add padding to compensate for the fixed header height */
+  flex-grow: 1;
+  margin-bottom: 60px;
+  padding-bottom: 10px;
+}
+.container{
+  position: centre;
+  //outline: 2px solid black;
+  width: 80%;
+  //border: 2px solid #ccc; /* Border style and color */
+  padding: 20px; /* Padding around the content */
+  margin: 20px auto;
 }
