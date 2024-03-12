@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState, useRef } from 'react';
 import { red, amber } from '@mui/material/colors';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { DatabaseContext } from "../../components/DatabaseContext";
@@ -16,6 +16,8 @@ const MapComponent = () => {
   const [indVar, setIndVar] = useState<string>("dc22_age_in_years"); //demographic variable
   const [provinceCount, setProvinceCount] = useState({})
   const [currentProvince, setCurrentProvince] = useState({});
+  const [selectedLayer, setSelectedLayer] = useState({})
+  const [selectedStyle, setSelectedStyle] = useState({})
 
   const provinceGeoData = { ...province }
 
@@ -38,6 +40,12 @@ const MapComponent = () => {
     };
     fetchData();
   }, []);
+  useEffect(() => {
+    if (selectedLayer && selectedLayer.setStyle) {
+      selectedLayer?.setStyle({ ...selectedStyle })
+      selectedLayer?.bringToFront();
+    }
+  }, [selectedLayer])
 
   const style = (feature) => {
     const count = feature.properties.density;
@@ -72,28 +80,27 @@ const MapComponent = () => {
   };
   const highlightFeature = (e) => {
     const layer = e.target;
-    layer.setStyle({
+    const properties = layer?.feature?.properties ?? {};
+    setSelectedLayer(layer)
+    setSelectedStyle({
       weight: 3,
-      color: '#E2E2E2',
+      color: '#AAAAAA',
       dashArray: '',
       fillOpacity: 0.7,
-    });
-
-    setCurrentProvince({ name: layer?.feature?.properties?.name, count: layer?.feature?.properties?.density })
-    layer.bringToFront();
+    })
+    setCurrentProvince({ name: properties?.name, count: properties?.density })
   };
 
   const resetHighlight = (e) => {
     const layer = e.target;
-    setCurrentProvince({})
-
-    layer.setStyle({
+    setSelectedLayer(layer)
+    setSelectedStyle({
       weight: 2,
       color: 'white',
       dashArray: '3',
       fillOpacity: 0.7,
     });
-
+    setCurrentProvince({})
   };
   const zoomToFeature = (e) => {
     const map = e.target._map;
