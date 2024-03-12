@@ -33,4 +33,23 @@ export class DatasetFetchWrapper {
     return this.dataset.data[0].length;
   }
 
+  public getDatasetWithSwappedRowAndCol(): String[][] {
+    if(this.dataset.data.length === 0) {
+      throw new Error("There is no dataset or the dataset wasn't loaded properly.");
+    }
+    
+    let out: String[][] = new Array(this.dataset.data[0].length);
+    
+    for(let i = 0; i < out.length; i++) {
+      out[i] = new Array(this.dataset.data.length);
+    }
+
+    for(let i = 0; i < this.dataset.data.length; i++) {
+      for(let d = 0; d < this.dataset.data[i].length; d++) {
+        out[d][i] = this.dataset.data[i][d];
+      }
+    }
+
+    return out;
+  }
 }

@@ -7,6 +7,10 @@ import path from "path";
 export class FileManager {
   private outputFilesDir: string = "outputFiles";
 
+  constructor() {
+    this.makeDirectory([]);
+  }
+
   public getCSVFile(path: PathLike): any {
     return Papa.parse(this.readFile(path));
   }
