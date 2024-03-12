@@ -1,7 +1,59 @@
+import { DatasetNMap } from "./Types";
 let instance : csvQuery;
 
+//other notes
+/*
+- Maybe create a fileManager class that deals with all the file names, and its functions takes in at most a datasetId and a fileName (might have forgotten some stuff)
+- maybe create two version where one outputs exactly the same format as the old function and the other is a new and updated version
+*/
+//public functions
+/*
+  //this is the id that is used to identify the dataset and is displayed to the user
+  public async getDatasetsNames(): Promise<string[]>
+
+  ////////////////This doesn't seem to be getting used
+  //returns independent and dependet questions (I'm pretty sure it returns their ids as the key and the actual question text on as the value)
+  public async getQuestions(dataset: string): Promise<{key : string, value : string}[]> {
+
+  //returns the independent questions ^
+  public async getIndependentQuestions(dataset: string): Promise<{key : string, value : any}[]> {
+
+  //returns the dependent questions ^^
+  public async getDependentQuestions(dataset: string) : Promise<{key : string, value : string}[]> {
+  
+
+  //I think this gets the answer mapping (Maybe change this to a Map<QuestionId, answerMapping>)
+  public async getAnswers(dataset: string, questionId: string): Promise<Object> {
+
+  //this seems to return a count of for each of the possible responses for a question (no idea about the structure of the output)
+  public async getAnswersCount(dataset: string, questionId: string): Promise<any> {
+  
+  //this takes in a dependent, independent variable, dataset, and maybe a possibleDepREsp# (so it will return only of of the inner objects)
+  //note this is just a structure I made up this might not actually be the structure that this function is returning.
+  {
+    possibleDepResp1: {
+      possibleIndResp1: ###count,
+      possibleIndResp2: ###count
+    },
+    possibleDepResp2: {
+      possibleIndResp1: ###count,
+      possibleIndREsp2: ###count
+    }
+  }
+  // getes the count of filtered answers for a specific question in a given dataset.
+  public async getFilteredAnswersCount(dataset: string, questionId: string, filterId: string, filter: string): Promise<any> {
+
+  // gets the count for a specific answer and question
+  public async getAnswerCount(dataset: string, questionId: string, answerId: string) {
+
+  //gets the total responses for a specific question (note this is implemented incorrectly it should be checking for a -99  (-99 means no reponse in the dataset) (there might be addtional values to check for but im pretty sure -99 is the only one))
+  public async getTotalResponses(dataset: string, questionId: string): Promise<number>  {
+*/
+
+
+
 class csvQuery {
-  private datasets : Map<string, any> = new Map();
+  private datasets : Map<string, DatasetNMap> = new Map();
   private questionCol: Map<string, number> = new Map();
   private datasetNames : string[] = [];
 
@@ -23,6 +75,26 @@ class csvQuery {
 
     this.init();
   }
+
+  //query dataset
+  //query mapping
+  //paramter list: ("dataset", "")
+      // console.log(await database.getDatasetsNames());
+      // console.log(await database.getIndependentQuestions("2022-dataset.json"));
+      // console.log(await database.getDependentQuestions("2022-dataset.json"));
+      // console.log(await database.getQuestions("2022-dataset.json"));
+      // database.getAnswers("2022-dataset.json", "dc22_age_in_years")
+      // console.log()
+      // database.getAnswersCount("2022-dataset.json", "dc22_age_in_years")
+      // database.getAnswers("2022-dataset.json", "dc22_age_in_years")
+      // database.getAnswersCount("2022-dataset.json", "dc22_provvote") 
+      // database.getAnswers("2022-dataset.json", "dc22_provvote")
+      // console.log(await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"));
+      // console.log(await database.getAnswerCount("2022-dataset.json", "dc22_age_in_years", "12"));
+      // console.log(await database.getTotalResponses("2022-dataset.json", "dc22_age_in_years"));
+
+  //query values from dataset passing in a header in the mapping and returning 
+
 
   private async init() {
     try {
@@ -128,7 +200,8 @@ class csvQuery {
     await Promise.all(this.promises);
 
     let mapping = this.datasets.get(dataset)?.mapping;
-
+    
+    //unique answers are for text entry questions
     if(mapping?.dependent[questionId]?.uniqueAnswers) {
         return mapping?.dependent[questionId]?.uniqueAnswers;
       } else if(mapping?.dependent[questionId]?.answersMapping) {
@@ -301,4 +374,3 @@ public async getFilteredAnswersCount(dataset: string, questionId: string, filter
 }
 
 export default csvQuery;
-
