@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState, useRef } from 'react';
+import { useEffect, useContext, useState, useMemo } from 'react';
 import { red, amber } from '@mui/material/colors';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { DatabaseContext } from "../../components/DatabaseContext";
@@ -6,8 +6,7 @@ import { Legend, InfoControl } from './components';
 import "./index.scss";
 import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
 import province from './province.json'
-
-
+import { electoralRidings, section } from './helper'
 
 const MapComponent = () => {
   const database = useContext(DatabaseContext);
@@ -18,9 +17,10 @@ const MapComponent = () => {
   const [currentProvince, setCurrentProvince] = useState({});
   const [selectedLayer, setSelectedLayer] = useState({})
   const [selectedStyle, setSelectedStyle] = useState({})
+  const elec = useMemo(() => electoralRidings(), [])
+  console.log(section)
 
   const provinceGeoData = { ...province }
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,7 +130,7 @@ const MapComponent = () => {
         />
         {provinceGeoData && (
           <GeoJSON
-            data={provinceGeoData}
+            data={elec}
             style={style}
             onEachFeature={onEachFeature}
           />
