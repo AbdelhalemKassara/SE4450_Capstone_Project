@@ -1,5 +1,5 @@
 import { dir } from 'console';
-import {PathLike, readdirSync, readFileSync, write, writeFileSync, mkdirSync} from 'fs';
+import {PathLike, readdirSync, readFileSync, writeFile, writeFileSync, mkdirSync, existsSync} from 'fs';
 import Papa from 'papaparse';
 import path from "path";
 
@@ -34,11 +34,19 @@ export class FileManager {
 
   public writeFile(json: any, filePath: string[], file: string) {
     this.makeDirectory(filePath);
-    writeFileSync(path.join(this.outputFilesDir, ...filePath, file), JSON.stringify(json));
+    writeFile(path.join(this.outputFilesDir, ...filePath, file), JSON.stringify(json), (error: any) => {
+      if(error) {
+        console.log(error);
+      }
+    });
   }
 
   private makeDirectory(dirPath: string[]) {
-    mkdirSync(path.join(this.outputFilesDir, ...dirPath));
+    let dirPathStr: string = path.join(this.outputFilesDir, ...dirPath);
+    
+    if(!existsSync(dirPathStr)) {
+      mkdirSync(dirPathStr);
+    } 
   }
   //private functions
   private readFile(path: PathLike) {

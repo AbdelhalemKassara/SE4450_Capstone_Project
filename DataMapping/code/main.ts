@@ -53,10 +53,13 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
     processQuest.addQuestion(mappingFile, qsfFile, depVars[d], true);
   }
   //loop over the independent variables
-  console.log(inspect(mappingFile, {showHidden: false, depth: null, colors: true}));
+  // console.log(inspect(mappingFile, {showHidden: false, depth: null, colors: true}));
 
   //write the mapping file
-  // fileManager.writeFile(mappingFile, [datasetYearsDir[i]],  datasetYearsDir[i] + "-mapping.json");
+  fileManager.writeFile(mappingFile, [datasetYearsDir[i]],  datasetYearsDir[i] + "-mapping.json");
+  
+  
+  
   //break up the the dataset to [column][row] from [row][column] and make each column a separate file
 
 }
