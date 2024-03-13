@@ -7,6 +7,8 @@ import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 import CdemHeader from "../HomePage/Header/CdemHeader";
 import CDemFooter from "../HomePage/Footer/CdemFooter";
 import { Chart } from 'react-google-charts';
+import {jsPDF} from 'jspdf';
+import html2canvas from 'html2canvas';
 
 import "./index.scss";
 
@@ -17,9 +19,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [depVar, setDepVar] = useState<string>("dc20_pos_career_pol"); //dependent variable
   const [indVar, setIndVar] = useState<string>("dc20_consent"); //demographic variable
 
-  const [data, setData] = useState([
-    ['Category', 'Profit'],
-  ]);
+  const [data, setData] = useState(false);
 
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string>("");
@@ -55,7 +55,7 @@ export default function DataAnalysisTool(): JSX.Element {
     database.getAnswersCount(dataset, indVar).then((val) => {
       console.log("IndVarAnswrCnt after getAnswersCount:", val);
       setIndVarAnswrCnt(val);
-      
+    
     });
   }, [dataset, indVar]);
   
@@ -67,6 +67,8 @@ export default function DataAnalysisTool(): JSX.Element {
     database.getFilteredAnswersCount(dataset, depVar, indVar, selectedButton).then((val) => {
       console.log("DepVarAnswrCnt after getFilteredAnswersCount:", val);
       setDepVarAnswrCnt(val);
+      
+      
     });
   }, [dataset, depVar, indVar, selectedButton]);
 
@@ -84,6 +86,29 @@ export default function DataAnalysisTool(): JSX.Element {
     setSelectedButton(value);
   
   }
+
+  function Export(){
+
+    const exportitem = document.getElementById('my-table') as HTMLElement;
+    html2canvas(exportitem, {}).then(canvas => {
+
+      const imgData = canvas.toDataURL('image/png');
+      console.log(imgData);
+
+      const pdf = new jsPDF( "p", "mm" , "a4");
+
+      const PageHeight  = 298;
+      const PageWidth = 210;
+
+      const height = canvas.height*PageHeight/canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0,0, PageWidth, height);
+
+
+     pdf.save("data.pdf");
+    })
+  }
+
 
   function createButtons(obj: any, title: any) {
     let out: JSX.Element[] = [];
@@ -118,7 +143,15 @@ export default function DataAnalysisTool(): JSX.Element {
         <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
         </div>
         <StatsBar dataset={dataset} depVar={depVar} />
-      <Chart width={'100%'} chartType='PieChart' data={data} />
+        <button
+            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
+            onClick={Export}>
+                Export PDF
+            </button>
+        <div id='my-table'>
+        <Chart width={'100%'} chartType='BarChart' data={data} />
+        <Chart width={'100%'} chartType='PieChart' data={data} />
+        </div>
       </div>
     {< CDemFooter />}
     </div>
