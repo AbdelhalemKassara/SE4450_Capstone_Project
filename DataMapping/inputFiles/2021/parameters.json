@@ -1,11 +1,13 @@
 {
   "independentVariables" : [
-  "dc22_age_in_years",
-  "dc21_genderid",
-  "dc22_province",
-  "dc22_education",
-  "dc22_canada_born",
-  "dc21_religion"
+  "dc21_yob",
+  "dc21_gender",
+  "dc21_province",
+  "dc21_education",
+  "dc21_canada_born",
+  "dc21_religion",
+  "dc21_consent",
+  "dc21_citizenship"
   ],
   "metadata" : [
     "Premier"

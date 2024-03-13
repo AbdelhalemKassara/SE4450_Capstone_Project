@@ -4,7 +4,10 @@
   "dc23_genderid",
   "dc23_province",
   "dc23_education",
-  "dc23_canada_born"
+  "dc23_canada_born",
+  "dc23_citizenship",
+  "dc23_religion",
+  "dc23_consent"
   ],
   "metadata" : [
     "Premier"
