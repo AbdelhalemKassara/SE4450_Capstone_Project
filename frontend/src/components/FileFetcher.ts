@@ -3,55 +3,6 @@ let instance : FileFetcher;
 import { FileStruct, Mapping, AllQuestionTypes, MC, TE, Matrix, Slider } from "../../../DataMapping/code/Types";
  
 class FileFetcher {
-//other notes
-/*
-- Maybe create a fileManager class that deals with all the file names, and its functions takes in at most a datasetId and a fileName (might have forgotten some stuff)
-- maybe create two version where one outputs exactly the same format as the old function and the other is a new and updated version
-*/
-//public functions
-/*
-  //this is the id that is used to identify the dataset and is displayed to the user
-  public async getDatasetsNames(): Promise<string[]>
-
-  ////////////////This doesn't seem to be getting used
-  //returns independent and dependet questions (I'm pretty sure it returns their ids as the key and the actual question text on as the value)
-  public async getQuestions(dataset: string): Promise<{key : string, value : string}[]> {
-
-  //returns the independent questions ^
-  public async getIndependentQuestions(dataset: string): Promise<{key : string, value : any}[]> {
-
-  //returns the dependent questions ^^
-  public async getDependentQuestions(dataset: string) : Promise<{key : string, value : string}[]> {
-  
-
-  //I think this gets the answer mapping (Maybe change this to a Map<QuestionId, answerMapping>)
-  public async getAnswers(dataset: string, questionId: string): Promise<Object> {
-
-  //this seems to return a count of for each of the possible responses for a question (no idea about the structure of the output)
-  public async getAnswersCount(dataset: string, questionId: string): Promise<any> {
-  
-  //this takes in a dependent, independent variable, dataset, and maybe a possibleDepREsp# (so it will return only of of the inner objects)
-  //note this is just a structure I made up this might not actually be the structure that this function is returning.
-  {
-    possibleDepResp1: {
-      possibleIndResp1: ###count,
-      possibleIndResp2: ###count
-    },
-    possibleDepResp2: {
-      possibleIndResp1: ###count,
-      possibleIndREsp2: ###count
-    }
-  }
-  // getes the count of filtered answers for a specific question in a given dataset.
-  public async getFilteredAnswersCount(dataset: string, questionId: string, filterId: string, filter: string): Promise<any> {
-
-  // gets the count for a specific answer and question
-  public async getAnswerCount(dataset: string, questionId: string, answerId: string) {
-
-  //gets the total responses for a specific question (note this is implemented incorrectly it should be checking for a -99  (-99 means no reponse in the dataset) (there might be addtional values to check for but im pretty sure -99 is the only one))
-  public async getTotalResponses(dataset: string, questionId: string): Promise<number>  {
-*/
-
   //note none of the ids have a .json or any file ending
   private mappingsPromise: Map<DatasetName, Promise<Mapping>> = new Map<MappingFileName, Promise<Mapping>>();// key is dataset year
   private datasetsPromise: Map<DatasetName, Dataset> = new Map();//key is dataset year, String[column][row]
@@ -109,13 +60,11 @@ class FileFetcher {
   public async getQuestionText(datasetId: String, colId: String): Promise<String> {
     let answerMap: (MC | TE | Matrix | Slider) = await this.getAnswerMappingObj(datasetId, colId);
     return answerMap.mainQuestion;
-
   }
 
   public async getType(datasetId: String, colId: String): Promise<String> {
     let answerMap: (MC | TE | Matrix | Slider) = await this.getAnswerMappingObj(datasetId, colId);
     return answerMap.type;
-
   }
 
 
@@ -138,7 +87,6 @@ class FileFetcher {
       }
     });
     
-
     return output;
   }
 
@@ -151,6 +99,7 @@ class FileFetcher {
     let questionsMap: Mapping | undefined = await this.mappingsPromise.get(datasetId);
     if(questionsMap) {
       let question: MC | TE | Matrix | Slider | undefined = undefined;
+      
       for(let [key, value] of Object.entries(questionsMap.independent)) {
         if(key === colId) {
           question = value;
@@ -273,11 +222,12 @@ class FileFetcher {
     });
   }
 
+
+  //fetch automatically caches the files but it doesn't behave how you want then you can implement caching with these functions
   private async validateCache() {
 
   }
-
-  private fetchJsonFileWithCache(promise: Promise<any>, value: any, path: string) {
+  private fetchJsonFileWithCache<T>(url: string): Promise<T> {
     //first check the dirNames.json for the time (and if there are any datsets removed), and if that time is different than the locally stored version.
     //for now use this info only to check if a year needs to be removed or added
 

@@ -21,7 +21,7 @@ export default function TestPageDeleteThis(): JSX.Element {
 
       //issue with choice order not getting remapped for whatever reason on this one
       // console.log(await fileFetcher.getColsVals("2020" , "dc20_citizenship"));
-      // console.log(await fileFetcher.getColsVals("2022" , "dc22_citizenship"));
+      console.log(await fileFetcher.getColsVals("2022" , "dc22_citizenship"));
 
 
       //old csvQuery (All of these need a function in DatasetQuery)
