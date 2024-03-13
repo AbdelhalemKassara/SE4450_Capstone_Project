@@ -81,17 +81,18 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
   let newDataset : String[][] = dataset.getDatasetWithSwappedRowAndCol();
 
 
-///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////
-      //Don't forget to remove the values that aren't in the independent or dependent variables lists
-///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////
+  //create a hashmap to test if a dependent variable or independent variable is in the mapping file (some might not but this greatly reduces the amount that there is)
+  let hashAllQuestIds: Map<String, null> = new Map<String, null>();
+  indVars.forEach((indVar: String) => {
+    hashAllQuestIds.set(indVar, null);
+  });
+  depVars.forEach((depVar: String) => {
+    hashAllQuestIds.set(depVar, null);
+  });
+
+  //write the colun files
   newDataset.forEach((column: String[]) => {
-    if(column[0] !== "" && column[0] !== " ") {
+    if(column[0] !== "" && column[0] !== " " && hashAllQuestIds.has(column[0])) {
       let fileName: string = column[0] + ".json";
       fileManager.writeFile(column, [datasetYearsDir[i]], fileName);
       curYearFiles.push({ name: fileName, date: curDate});
