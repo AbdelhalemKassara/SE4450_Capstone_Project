@@ -74,9 +74,9 @@ export class QsfFileFetchWrapper {
 
       //I only added this beacuse I don't know the reason why I removed them in the first place (I'm refactoring the code)
       ////////////////////////////remove this later (don't want to deal with these ones now)
-      if(split.includes("_TEXT")) {
-        return false;
-      }
+      // if(split.includes("_TEXT")) {
+      //   return false;
+      // }
 
       for(let i = 0; i < this.parametersFile.variablesToIgnore.length; i++) {
         let varIgnore: String = this.parametersFile.variablesToIgnore[i];
