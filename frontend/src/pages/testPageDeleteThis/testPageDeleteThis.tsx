@@ -11,7 +11,9 @@ export default function TestPageDeleteThis(): JSX.Element {
       // console.log(await fileFetcher.getIndependentVarsIds("2020"));
       // console.log(await fileFetcher.getDependentVarsIds("2020"));
       // console.log(await fileFetcher.getAllVarIds("2020"));
-      console.log(await fileFetcher.getColVals("2020", "dc20_citizenship"));
+      // console.log(await fileFetcher.getColVals("2020", "dc20_citizenship"));
+
+
     })()
 
   }, []);

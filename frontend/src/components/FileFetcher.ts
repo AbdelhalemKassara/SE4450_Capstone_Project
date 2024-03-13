@@ -1,6 +1,6 @@
 import { MappingFileName, DatasetName, Dataset } from "./NewTypes";
 let instance : FileFetcher;
-import { FileStruct, Mapping, AllQuestionTypes } from "../../../DataMapping/code/Types";
+import { FileStruct, Mapping, AllQuestionTypes, MC, TE, Matrix, Slider } from "../../../DataMapping/code/Types";
 
 class FileFetcher {
 //other notes
@@ -52,7 +52,8 @@ class FileFetcher {
   public async getTotalResponses(dataset: string, questionId: string): Promise<number>  {
 */
 
-  private mappingsPromise: Map<MappingFileName, Promise<Mapping>> = new Map<MappingFileName, Promise<Mapping>>();// key is dataset year
+  //note none of the ids have a .json or any file ending
+  private mappingsPromise: Map<DatasetName, Promise<Mapping>> = new Map<MappingFileName, Promise<Mapping>>();// key is dataset year
   private datasetsPromise: Map<DatasetName, Dataset> = new Map();//key is dataset year, String[column][row]
   
   private datasetIdsPromise !: Promise<FileStruct[]>;
@@ -80,6 +81,7 @@ class FileFetcher {
   }
   
   
+  /*fuctions to get the various ids */
   public async getDatasetsIds(): Promise<String[]> {
     let datasetIds: String[] = [];
 
@@ -105,7 +107,71 @@ class FileFetcher {
     return [...independent, ...dependent];
   }
 
-  public async getColVals(datasetId: String, colId: String): Promise<String[]> {
+
+  /*functions to get stuff from the mapping file */
+
+
+  /*functions to get data from the dataset */
+  public async getColsVals(datasetId: String, colId: String): Promise<String[]> {
+    let rawColValues: String[] = await this.getRawColVals(datasetId, colId);
+
+    throw new Error("Haven't implemented this yet.");
+  }
+
+
+
+  /*private functions*/
+
+  //this gets the answer mapping from the mapping file
+  private async getAnswerMappingObj(datasetId: String, colId: String): Promise<MC | TE | Matrix | Slider> {
+    let questionsMap: Mapping | undefined = await this.mappingsPromise.get(datasetId);
+    if(questionsMap) {
+      let question: MC | TE | Matrix | Slider | undefined = undefined;
+      for(let [key, value] of Object.entries(questionsMap.independent)) {
+        if(key === colId) {
+          question = value;
+          break;
+        }
+      }
+      if(!question) {
+        for(let [key, value] of Object.entries(questionsMap.dependent)) {
+          if(key === colId) {
+            question = value;
+            break;
+          }
+        }
+      }
+
+      if(!question) {
+        throw new Error(`We weren't able to find ${colId} in the mapping file.`);
+      }
+
+      return question;
+    } else {
+      throw new Error(`The datasetId "${datasetId}"'s mapping file doesn't exist.`);
+    }
+  }
+
+  //this gets the answer mapping in the form of a hashmap in the mapping file
+  private async getAnswerMapping(datasetId: String, colId: String): Promise<Map<String, String>> {
+    let map: Map<String, String> = new Map<String, String>();
+    let answerMapObj: MC | TE | Matrix | Slider = await this.getAnswerMappingObj(datasetId, colId);
+
+    for(let [key, value] of Object.entries(answerMapObj.answersMapping)) {
+      //@ts-expect-error: This is mostly because we can't assing a type in this kind of loop
+      if(value?.Display) {
+        //@ts-expect-error: same as above 
+        map.set(key, value.Display);
+      } else {
+        throw new Error(`The column Id ${colId} from the Dataset with Id ${datasetId}, doesn't have a .Display property in the answerMapping property.`);
+      }
+    }
+
+    return map;
+  }
+
+  //fetches the column values
+  private async getRawColVals(datasetId: String, colId: String): Promise<String[]> {
     let datasetMapTemp: Dataset | undefined;
     let datasetMap: Dataset;
     if(this.datasetsPromise.has(datasetId)) {
@@ -131,9 +197,7 @@ class FileFetcher {
     }
 
   }
-
-  
-  //private functions
+  //helper function for getRawColVals
   private async getColValueFromDatasetMap(colId: String, datasetMap: Dataset): Promise<String[]>  {
     let colvals: String[] | undefined = await datasetMap.get(colId);
     if(colvals) {
@@ -159,7 +223,6 @@ class FileFetcher {
         return questionIds;
       }
     } 
-    
     
     throw new Error("Error: The datasetId passed in to the getIndependentVarsIds or getDependentVarsIds function is invalid");
   }
@@ -190,9 +253,12 @@ class FileFetcher {
   }
 
   private fetchJsonFileWithCache(promise: Promise<any>, value: any, path: string) {
-    //first check the dirNames.json for the time (and if there are any datsets removed), and if that time is different than the locally stored version
+    //first check the dirNames.json for the time (and if there are any datsets removed), and if that time is different than the locally stored version.
+    //for now use this info only to check if a year needs to be removed or added
+
     //then check the the locally stored datasetFileNames.json for the times and compare it with the new one that has been fetched (includes the datasetId-mapping.json) and remove the datasets that aren't valid anymore.
-  }
+    
+  } 
 
   private fetchJsonFile<T>(url: string): Promise <T> {
     return fetch(url)
