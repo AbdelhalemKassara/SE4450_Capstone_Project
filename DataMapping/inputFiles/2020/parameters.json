@@ -5,7 +5,9 @@
   "dc20_citizenship",
   "dc20_gender",
   "dc20_province",
-  "dc20_education"
+  "dc20_education",
+  "dc20_canada_born",
+  "dc20_religion"
   ],
   "metadata" : [
     "Premier"
