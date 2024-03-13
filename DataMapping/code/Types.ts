@@ -58,4 +58,4 @@ export type Dataset = {
 export type FileStruct = {
   name : String;
   date: number;
-}[];
+};

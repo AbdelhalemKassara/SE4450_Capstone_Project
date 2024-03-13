@@ -17,7 +17,7 @@ let datasetYearsDir: string[] = fileManager.getDirectories(path.join(inputFiles)
 
 const processQuest: ProcessQuestions = new ProcessQuestions();
 
-let datasetNMapDirNames: FileStruct = new Array();
+let datasetNMapDirNames: FileStruct[] = new Array();
 
 for(let i = 0; i < datasetYearsDir.length; i++) {
   let mappingFile: Mapping = {independent: {}, dependent: {}};
@@ -72,11 +72,11 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
   // console.log(inspect(mappingFile, {showHidden: false, depth: null, colors: true}));
 
   //write the mapping file
-  let fileName: string = datasetYearsDir[i] + "-mapping.json";
-  fileManager.writeFile(mappingFile, [datasetYearsDir[i]],  fileName);
+  let mapFileName: string = datasetYearsDir[i] + "-mapping.json";
+  fileManager.writeFile(mappingFile, [datasetYearsDir[i]],  mapFileName);
 
   //write the dataset files
-  let curYearFiles: FileStruct = new Array();
+  let curYearFiles: FileStruct[] = new Array();
 
   let newDataset : String[][] = dataset.getDatasetWithSwappedRowAndCol();
 
@@ -99,6 +99,9 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
     }
   });
   
+  //add the mapping file
+  curYearFiles.push({name :  mapFileName, date: curDate});
+
   //write the file that contains all the datasets file names (i.e. the columns) (This file is needed as we can't fetch the filenames in the frontend we have to know them ahead of time)
   fileManager.writeFile(curYearFiles, [datasetYearsDir[i]], "datasetFileNames.json");
 }
