@@ -11,6 +11,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useContext, useEffect } from "react";
 import { DatabaseContext } from "../../components/DatabaseContext";
 import Button from '@mui/material/Button';
+import './selectionTool.css';
 
 
 export default function SelectionTool({ dataset, setDataset}: { setDataset: React.Dispatch<React.SetStateAction<string>>, dataset: string }): JSX.Element {
@@ -26,6 +27,7 @@ export default function SelectionTool({ dataset, setDataset}: { setDataset: Reac
 
 
     return (
+        <div className="container">
         <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">DataSet Year</InputLabel>
             <Select
@@ -46,6 +48,7 @@ export default function SelectionTool({ dataset, setDataset}: { setDataset: Reac
 
             </Select>
         </FormControl>
+        </div>
     );
 }
 

@@ -13,12 +13,22 @@
   flex-grow: 1;
   margin-bottom: 60px;
   padding-bottom: 10px;
+  justify-content: center;
 }
+
 .container{
-  position: centre;
-  //outline: 2px solid black;
   width: 80%;
-  //border: 2px solid #ccc; /* Border style and color */
-  padding: 20px; /* Padding around the content */
-  margin: 20px auto;
+  margin: 0 auto;
+  flex-direction: column;
+}
+
+.container > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.container button {
+  width: fit-content;
+  margin: 5px;
+  float: left; /* Set buttons to float next to each other */
 }

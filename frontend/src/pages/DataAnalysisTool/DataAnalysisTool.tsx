@@ -73,7 +73,8 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     const dummyData = [['Category', 'Profit']];
     Object.entries(depVarAnswrCnt).forEach(([key, value]) => {
-      dummyData.push([key, value]);
+      // Append the value next to the label
+      dummyData.push([`${key} (${value})`, value]);
     });
     setData(dummyData);
   }, [depVarAnswrCnt]);
@@ -83,44 +84,6 @@ export default function DataAnalysisTool(): JSX.Element {
     setSelectedButton(value);
   
   }
-
-  
-  
-  function handleDataUpdate() {
-     
-      const dummyData = [['Category', 'Profit']]
-      Object.entries(depVarAnswrCnt).forEach(([key, value]) =>{
-        dummyData.push([key, value])
-      })
-    
-      setData(dummyData)
-
-  }
-
-
-
-
-  function test(obj: any, title: any) {
-    let out: JSX.Element[] = [];
-    for (let [key, value] of Object.entries(obj)) {
-      //@ts-ignore
-      out.push(
-        <p key={key}>
-          {key} : {value}
-        </p>
-      );
-    }
-
-    return (
-      <>
-        <p>{title}</p>
-        {out}
-      </>
-    );
-
-    // setData(out)
-  }
-
 
   function createButtons(obj: any, title: any) {
     let out: JSX.Element[] = [];
@@ -149,41 +112,15 @@ export default function DataAnalysisTool(): JSX.Element {
       <CdemHeader />
       <div className='text'>
         <div className="container">
-        <StatsBar dataset={dataset} depVar={depVar} />
         <SelectionTool dataset={dataset} setDataset={setDataset} />
-        <IndVarDropDown
-          indVar={indVar}
-          setIndVar={setIndVar}
-          dataset={dataset}
-        />
+        <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} />
         {createButtons(indVarAnswrCnt, "Select a filter: ")}
-
-        <br />
-        <br />
-
-        <DropdownMenu
-          dataset={dataset}
-          setDependentQuestion={setDepVar}
-          depVar={depVar}
-        />
-
-        <button
-            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
-            onClick={handleDataUpdate}>
-                Show Chart
-            </button>
-            </div>
-            {test(depVarAnswrCnt, "Depenent Variables Answer count")}
-
-        <Chart
-          width={'100%'}
-          chartType='PieChart'
-          data={data}
-        />
+        <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
+        </div>
+        <StatsBar dataset={dataset} depVar={depVar} />
+      <Chart width={'100%'} chartType='PieChart' data={data} />
       </div>
-      {< CDemFooter />}
+    {< CDemFooter />}
     </div>
-
-
   );
 }
