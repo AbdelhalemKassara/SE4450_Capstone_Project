@@ -1,4 +1,4 @@
 dist
 
-inputFiles
-!*/inputFiles/parameters.json
+*.csv
+*.qsf

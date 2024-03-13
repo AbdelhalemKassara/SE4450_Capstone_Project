@@ -1,0 +1,46 @@
+{
+  "independentVariables" : [
+  "dc20_consent",
+  "dc20_yob",
+  "dc20_citizenship",
+  "dc20_gender",
+  "dc20_province",
+  "dc20_education"
+  ],
+  "metadata" : [
+    "Premier"
+  ],
+  "variablesToIgnore" : [
+    " ",
+    "",
+    "dc20_jurisdiction_t_Last_Click",
+    "dc20_jurisdiction_t_Last_Click",
+    "dc20_jurisdiction_t_First_Click",
+    "dc20_jurisdiction_t_Page_Submit",
+    "feduid",
+    "fedname",
+    "pccf_problem",
+    "dc20_quota_weight",
+    "emb",
+    "EMB_fr",
+    "pid_fr",
+    "religion_fr",
+    "religion_en",
+    "StartDate",
+    "EndDate",
+    "Duration__in_seconds_",
+    "time",
+    "RecordedDate",
+    "ResponseId",
+    "UserLanguage",
+    "survey_wave",
+    "dc20_consent_t_First_Click",
+    "dc20_consent_t_Last_Click",
+    "dc20_consent_t_Page_Submit",
+    "dc20_consent_t_Click_Count",
+    "dc20_consent",
+    "Attitudes1_politicianattitudes_D",
+    "Attitudes1_politicianattitudes_0",
+    "dc20_jurisdiction_t_Click_Count"    
+  ]
+}
