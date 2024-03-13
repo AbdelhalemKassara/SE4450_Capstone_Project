@@ -72,23 +72,19 @@ export default function DataAnalysisTool(): JSX.Element {
     });
   }, [dataset, depVar, indVar, selectedButton]);
 
+  useEffect(() => {
+    const dummyData = [['Category', 'Profit']];
+    Object.entries(depVarAnswrCnt).forEach(([key, value]) => {
+      // Append the value next to the label
+      dummyData.push([`${key} (${value})`, value]);
+    });
+    setData(dummyData);
+  }, [depVarAnswrCnt]);
+
   function handleButtonClick(value: string) {
     console.log("Button Clicked:", value);
     setSelectedButton(value);
   
-  }
-
-  
-  
-  function handleDataUpdate() {
-     
-      const dummyData = [['Category', 'Profit']]
-      Object.entries(depVarAnswrCnt).forEach(([key, value]) =>{
-        dummyData.push([key, value])
-      })
-    
-      setData(dummyData)
-
   }
 
   function Export(){
@@ -114,30 +110,6 @@ export default function DataAnalysisTool(): JSX.Element {
   }
 
 
-  
-
-  function test(obj: any, title: any) {
-    let out: JSX.Element[] = [];
-    for (let [key, value] of Object.entries(obj)) {
-      //@ts-ignore
-      out.push(
-        <p key={key}>
-          {key} : {value}
-        </p>
-      );
-    }
-
-    return (
-      <>
-        <p>{title}</p>
-        {out}
-      </>
-    );
-
-    // setData(out)
-  }
-
-
   function createButtons(obj: any, title: any) {
     let out: JSX.Element[] = [];
     for (let [key, value] of Object.entries(obj)) {
@@ -146,7 +118,7 @@ export default function DataAnalysisTool(): JSX.Element {
 
       out.push(
         <button key={key} onClick={() => handleButtonClick(key)} >
-          {key} : {value}
+          {key}
         </button>
       );
     }
@@ -164,64 +136,24 @@ export default function DataAnalysisTool(): JSX.Element {
     <div id="data_page">
       <CdemHeader />
       <div className='text'>
-        <StatsBar dataset={dataset} depVar={depVar} />
-        <IndVarDropDown
-          indVar={indVar}
-          setIndVar={setIndVar}
-          dataset={dataset}
-          
-        />
-        {createButtons(indVarAnswrCnt, "Select a filter: ") }
+        <div className="container">
         <SelectionTool dataset={dataset} setDataset={setDataset} />
-
-        <br />
-        <br />
-
-        <DropdownMenu
-          dataset={dataset}
-          setDependentQuestion={setDepVar}
-          depVar={depVar}
-        />
-
-        <br />
-        <br />
-        
+        <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} />
+        {createButtons(indVarAnswrCnt, "Select a filter: ")}
+        <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
+        </div>
+        <StatsBar dataset={dataset} depVar={depVar} />
         <button
-            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
-            onClick={handleDataUpdate}>
-                Show Chart
-            </button>
-            <button
             className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
             onClick={Export}>
                 Export PDF
             </button>
-
-            <div id='my-table'>
-
-        {test(depVarAnswrCnt, "Depenent Variables Answer count")}
-
-
-            
-
-        <Chart
-          width={'100%'}
-          chartType='BarChart'
-          data={data}
-        />
-
-        <Chart
-          width={'100%'}
-          chartType='PieChart'
-          data={data}
-        />
-
+        <div id='my-table'>
+        <Chart width={'100%'} chartType='BarChart' data={data} />
+        <Chart width={'100%'} chartType='PieChart' data={data} />
+        </div>
       </div>
-
-      </div>
-      < CDemFooter />
+    {< CDemFooter />}
     </div>
-
-
   );
 }

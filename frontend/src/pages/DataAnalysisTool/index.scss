@@ -1,13 +1,34 @@
-
-#data_page{
+#data_page {
   position: relative;
+  width: 100vw;
   top: 0;
   display: flex;
   flex-direction: column;
-  .text {
-    color: black;
-    padding-top: 6rem; /* Add padding to compensate for the fixed header height */
-  }
-  overflow-y: scroll;
-  position: relative;
+  min-height: 100vh;
+}
+
+#data_page .text {
+  color: black;
+  padding-top: 6rem; /* Add padding to compensate for the fixed header height */
+  flex-grow: 1;
+  margin-bottom: 60px;
+  padding-bottom: 10px;
+  justify-content: center;
+}
+
+.container{
+  width: 80%;
+  margin: 0 auto;
+  flex-direction: column;
+}
+
+.container > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.container button {
+  width: fit-content;
+  margin: 5px;
+  float: left; /* Set buttons to float next to each other */
 }
