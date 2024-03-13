@@ -23,17 +23,10 @@ type Question = {
 
 export interface MC extends Question{
   type: "MC";
-  answersMapping: any;//this one should be answersmapping but is kinda hard to define
 }
-type answersMapping = {
-  [key: number] : {
-    [key in keyof {"Display" : any}] : String;//I did it this way so the key can be a literal of Display
-  }
-};
 
 export interface TE extends Question{
   type: "TE";
-  uniqueAnswers: String[];
 }
 
 export interface Matrix extends Question {

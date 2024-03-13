@@ -45,6 +45,19 @@ export class DatasetFetchWrapper {
     console.log(`Warning: there was an questionId that was called to be updated but the old id couldn't be found. (so it wasn't updated) old: ${oldQuestId} new: ${newQuestId}`);
   }
 
+  public updateQuestValues(questionId: String, OldNewValMap: Map<String, String>): void {
+    let columnIndex: number = this.getDatasetColumnIndex(questionId); 
+    
+    //1 so we skip the id
+    for(let i = 1; i < this.dataset.data.length; i++) {
+      let val: String | undefined = OldNewValMap.get(this.dataset.data[i][columnIndex]);
+      if(val) {
+        this.dataset.data[i][columnIndex] = val;
+      } else {
+        throw new Error(`There was an issue with updating the values for questionid ${questionId}, the mapping file can't find ${this.dataset.data[i][columnIndex]}.`);
+      }
+    }
+  }
   public getDatasetWithSwappedRowAndCol(): String[][] {
     if(this.dataset.data.length === 0) {
       throw new Error("There is no dataset or the dataset wasn't loaded properly.");
@@ -64,4 +77,33 @@ export class DatasetFetchWrapper {
 
     return out;
   }
+
+  public getDatasetColumnIndex(questionId: String) : number {
+    let columnIndex: number = -1; 
+    for(let i = 0; i < this.dataset.data[0].length; i++) {
+      if(this.dataset.data[0][i] === questionId) {
+        columnIndex = i;
+        break;
+      } 
+    }
+    
+    if(columnIndex !== -1) {
+      return columnIndex;
+    } else {
+      throw new Error(`We couldn't find the column Index for ${questionId}.`);
+    }
+  }
+
+  public getDatasetColumn(questionId: String) : String[] {
+    let columnIndex: number = this.getDatasetColumnIndex(questionId);
+
+    let out: String[] = [];
+
+    this.dataset.data.forEach((row: String[]) => {
+      out.push(row[columnIndex]);
+    });
+
+    return out;
+  }
 }
+
