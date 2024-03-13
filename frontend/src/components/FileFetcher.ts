@@ -65,10 +65,8 @@ class FileFetcher {
       return instance;
     }
     instance = this;
-    
-
-
   }
+
   public async init() {
     await this.getDatasetIds();
     //after we get the datasetIds get the datasetId-mapping and the datasetFileNames
@@ -109,13 +107,29 @@ class FileFetcher {
 
 
   /*functions to get stuff from the mapping file */
-
+  
 
   /*functions to get data from the dataset */
+  //null means no response
   public async getColsVals(datasetId: String, colId: String): Promise<String[]> {
     let rawColValues: String[] = await this.getRawColVals(datasetId, colId);
+    let answerMap: Map<String, String> = await this.getAnswerMapping(datasetId, colId);
 
-    throw new Error("Haven't implemented this yet.");
+    let output: String[] = [];
+
+    rawColValues.forEach((answerId: String) => {
+      let answer = answerMap.get(answerId);
+      if(answer) {
+        output.push(answer);
+      } else if(answerId === "-99") {
+        //this means there was no response  
+      } else {
+        throw new Error(`We couldn't find the mapping for datasetId ${datasetId} colId ${colId} and answerId ${answerId}.`);
+      }
+    });
+
+
+    return output;
   }
 
 
@@ -156,7 +170,7 @@ class FileFetcher {
   private async getAnswerMapping(datasetId: String, colId: String): Promise<Map<String, String>> {
     let map: Map<String, String> = new Map<String, String>();
     let answerMapObj: MC | TE | Matrix | Slider = await this.getAnswerMappingObj(datasetId, colId);
-
+    console.log(answerMapObj);
     for(let [key, value] of Object.entries(answerMapObj.answersMapping)) {
       //@ts-expect-error: This is mostly because we can't assing a type in this kind of loop
       if(value?.Display) {
@@ -197,6 +211,7 @@ class FileFetcher {
     }
 
   }
+
   //helper function for getRawColVals
   private async getColValueFromDatasetMap(colId: String, datasetMap: Dataset): Promise<String[]>  {
     let colvals: String[] | undefined = await datasetMap.get(colId);

@@ -31,6 +31,7 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     console.log("current independent variable", indVar);
   }, [indVar]);
+  
   useEffect(() => {
     // let test = new csvQuery();
 
