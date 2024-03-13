@@ -33,6 +33,18 @@ export class DatasetFetchWrapper {
     return this.dataset.data[0].length;
   }
 
+  public updateQuestId(oldQuestId: String, newQuestId: String) {
+    for(let i = 0; i < this.dataset.data[0].length; i++) {
+      if(this.dataset.data[0][i] === oldQuestId) {
+        this.dataset.data[0][i] = newQuestId;
+        return;
+      } 
+    }
+
+    //this might be because of multiple calls for the same old question id because this function is getting called before the independet variables are removed from the dependent variables
+    console.log(`Warning: there was an questionId that was called to be updated but the old id couldn't be found. (so it wasn't updated) old: ${oldQuestId} new: ${newQuestId}`);
+  }
+
   public getDatasetWithSwappedRowAndCol(): String[][] {
     if(this.dataset.data.length === 0) {
       throw new Error("There is no dataset or the dataset wasn't loaded properly.");

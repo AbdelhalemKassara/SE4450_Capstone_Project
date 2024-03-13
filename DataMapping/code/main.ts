@@ -44,11 +44,11 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
   //get the question ids and loop over them
   let depVars: String[] = dataset.getQuestionIds();
   depVars = qsfFile.removeQuestionToIgnoreFromList(depVars);
-  depVars = qsfFile.reformatNecissaryQuestions(depVars);
+  depVars = qsfFile.reformatNecissaryQuestions(depVars, dataset);
 
   let indVars: String[] = qsfFile.getIndependentVariables();
   indVars = qsfFile.removeQuestionToIgnoreFromList(indVars);
-  indVars = qsfFile.reformatNecissaryQuestions(indVars);
+  indVars = qsfFile.reformatNecissaryQuestions(indVars, dataset);
 
   let hashIndVars: Map<String, any> = new Map<String, any>();
 

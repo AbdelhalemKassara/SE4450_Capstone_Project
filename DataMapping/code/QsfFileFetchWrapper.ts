@@ -1,5 +1,6 @@
 import fs, {PathLike} from 'fs';
 import { paramters } from './Types';
+import { DatasetFetchWrapper } from './DatasetFetchWrapper';
 
 export class QsfFileFetchWrapper {
   //this class should contain the qsf file object
@@ -99,15 +100,17 @@ export class QsfFileFetchWrapper {
     return questionIds;
   }
 
-  public reformatNecissaryQuestions(questionIds: String[]): String[] {
+  public reformatNecissaryQuestions(questionIds: String[], dataset: DatasetFetchWrapper): String[] {
     let out: any = questionIds.map((questionId: String) => {
       let split: String[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
       split[0] = "";
-      console.log(questionId, this.questIDToObj.has(questionId), split.join(), split.length > 1 && this.questionIdsFromQsfRmIndex0.has(split.join()))
+
       if(this.questIDToObj.has(questionId)) {
         return questionId;
-      } else if(split.length > 1 && this.questionIdsFromQsfRmIndex0.has(split.join())) { //some questions have ds##, pes##, or dc## while the qsf file has another one of these, this assigns it to the one the qsf file has.
-        return this.questionIdsFromQsfRmIndex0.get(split.join());
+      } else if(split.length > 1 && this.questionIdsFromQsfRmIndex0.has(split.join())) { //some questions have ds##, pes##, or dc## while the qsf file has another one of these, this assigns it to the one the qsf file has.        
+        let newQuest: any = this.questionIdsFromQsfRmIndex0.get(split.join());
+        dataset.updateQuestId(questionId, newQuest);
+        return newQuest;
       } else {
         // console.log(`Warning: ${questionId} in the dataset doesn't exist in any form that we can find in the qsf file, it won't exist in the mapping file.`);
         return "";
