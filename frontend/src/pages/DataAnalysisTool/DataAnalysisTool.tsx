@@ -7,7 +7,7 @@ import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 import CdemHeader from "../HomePage/Header/CdemHeader";
 import CDemFooter from "../HomePage/Footer/CdemFooter";
 import { Chart } from 'react-google-charts';
-import {jsPDF} from 'jspdf';
+import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
 import "./index.scss";
@@ -24,7 +24,8 @@ export default function DataAnalysisTool(): JSX.Element {
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string>("");
 
-
+  //chart colours
+  const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
   //these are used for the temporary display output (might not )
   const [indVarAnswrCnt, setIndVarAnswrCnt] = useState([]);
   const [depVarAnswrCnt, setDepVarAnswrCnt] = useState([]);
@@ -55,10 +56,10 @@ export default function DataAnalysisTool(): JSX.Element {
     database.getAnswersCount(dataset, indVar).then((val) => {
       console.log("IndVarAnswrCnt after getAnswersCount:", val);
       setIndVarAnswrCnt(val);
-    
+
     });
   }, [dataset, indVar]);
-  
+
 
 
 
@@ -67,8 +68,8 @@ export default function DataAnalysisTool(): JSX.Element {
     database.getFilteredAnswersCount(dataset, depVar, indVar, selectedButton).then((val) => {
       console.log("DepVarAnswrCnt after getFilteredAnswersCount:", val);
       setDepVarAnswrCnt(val);
-      
-      
+
+
     });
   }, [dataset, depVar, indVar, selectedButton]);
 
@@ -81,13 +82,24 @@ export default function DataAnalysisTool(): JSX.Element {
     setData(dummyData);
   }, [depVarAnswrCnt]);
 
+  useEffect(() => {
+    const barData = [['Category', 'Count']];
+    Object.entries(depVarAnswrCnt).forEach(([key, value]) => {
+      // Append the value next to the label
+      barData.push([`${key} (${value})`, value]);
+    });
+    setData(barData);
+  }, [depVarAnswrCnt]);
+
+
+
   function handleButtonClick(value: string) {
     console.log("Button Clicked:", value);
     setSelectedButton(value);
-  
+
   }
 
-  function Export(){
+  function Export() {
 
     const exportitem = document.getElementById('my-table') as HTMLElement;
     html2canvas(exportitem, {}).then(canvas => {
@@ -95,17 +107,17 @@ export default function DataAnalysisTool(): JSX.Element {
       const imgData = canvas.toDataURL('image/png');
       console.log(imgData);
 
-      const pdf = new jsPDF( "p", "mm" , "a4");
+      const pdf = new jsPDF("p", "mm", "a4");
 
-      const PageHeight  = 298;
+      const PageHeight = 298;
       const PageWidth = 210;
 
-      const height = canvas.height*PageHeight/canvas.width;
+      const height = canvas.height * PageHeight / canvas.width;
 
-      pdf.addImage(imgData, 'PNG', 0,0, PageWidth, height);
+      pdf.addImage(imgData, 'PNG', 0, 0, PageWidth, height);
 
 
-     pdf.save("data.pdf");
+      pdf.save("data.pdf");
     })
   }
 
@@ -122,7 +134,7 @@ export default function DataAnalysisTool(): JSX.Element {
         </button>
       );
     }
-    
+
 
     return (
       <>
@@ -137,23 +149,34 @@ export default function DataAnalysisTool(): JSX.Element {
       <CdemHeader />
       <div className='text'>
         <div className="container">
-        <SelectionTool dataset={dataset} setDataset={setDataset} />
-        <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} />
-        {createButtons(indVarAnswrCnt, "Select a filter: ")}
-        <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
+          <SelectionTool dataset={dataset} setDataset={setDataset} />
+          <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} />
+          {createButtons(indVarAnswrCnt, "Select a filter: ")}
+          <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
         </div>
         <StatsBar dataset={dataset} depVar={depVar} />
         <button
-            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
-            onClick={Export}>
-                Export PDF
-            </button>
+          className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
+          onClick={Export}>
+          Export PDF
+        </button>
         <div id='my-table'>
-        <Chart width={'100%'} chartType='BarChart' data={data} />
-        <Chart width={'100%'} chartType='PieChart' data={data} />
+          <Chart width={'100%'} chartType='BarChart' data={data}
+            options={{
+              colors: chartColors,
+              legend: { position: 'top' }
+            }}
+
+          />
+          <Chart width={'100%'} chartType='PieChart' data={data}
+            options={{
+              colors: chartColors,
+              legend: { position: 'top' }
+            }}
+          />
         </div>
       </div>
-    {< CDemFooter />}
+      {< CDemFooter />}
     </div>
   );
 }
