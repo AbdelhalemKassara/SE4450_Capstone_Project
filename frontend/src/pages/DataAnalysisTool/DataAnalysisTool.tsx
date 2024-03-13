@@ -101,8 +101,8 @@ export default function DataAnalysisTool(): JSX.Element {
 
       const pdf = new jsPDF( "p", "mm" , "a4");
 
-      const PageHeight  = 400;
-      const PageWidth = 300;
+      const PageHeight  = 298;
+      const PageWidth = 210;
 
       const height = canvas.height*PageHeight/canvas.width;
 
@@ -206,6 +206,12 @@ export default function DataAnalysisTool(): JSX.Element {
 
         <Chart
           width={'100%'}
+          chartType='BarChart'
+          data={data}
+        />
+
+        <Chart
+          width={'100%'}
           chartType='PieChart'
           data={data}
         />
@@ -213,7 +219,7 @@ export default function DataAnalysisTool(): JSX.Element {
       </div>
 
       </div>
-      {/* < CDemFooter /> */}
+      < CDemFooter />
     </div>
 
 
