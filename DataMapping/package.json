@@ -20,7 +20,9 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
+    "fix-esm": "^1.0.1",
     "mapshaper": "^0.6.70",
-    "papaparse": "^5.4.1"
+    "papaparse": "^5.4.1",
+    "string-strip-html": "^13.4.6"
   }
 }

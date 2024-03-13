@@ -1,6 +1,7 @@
 import fs, {PathLike} from 'fs';
 import { paramters } from './Types';
 import { DatasetFetchWrapper } from './DatasetFetchWrapper';
+const stringStripHtml = require('fix-esm').require('string-strip-html');
 
 export class QsfFileFetchWrapper {
   //this class should contain the qsf file object
@@ -33,10 +34,37 @@ export class QsfFileFetchWrapper {
 
   public getMainQuestion(questionId: String): String | undefined {
     if(this.questIDToObj.has(questionId)) {
-      return this.questIDToObj.get(questionId).Payload.QuestionText;
+      let question: string = this.questIDToObj.get(questionId).Payload.QuestionText;
+      question = stringStripHtml.stripHtml(question).result;
+      question = question.replace('\n', ' ');
+      console.log(question);
+      question = this.removeTemplateLiterals(question);
+      console.log(question);
+      return question; 
     } else {
       return undefined;
     }
+  }
+
+  private removeTemplateLiterals(questionText: string): string {
+    let stLit;
+
+    while(stLit !== -1) {
+      stLit = -1;
+
+
+      for(let i = 1; i < questionText.length; i++) {
+        if(questionText[i-1] === "$" && questionText[i] === "{") {
+          stLit = i;
+        }
+        if(stLit !== -1 && questionText[i] === "}") {
+          questionText = questionText.slice(0, stLit-1) + questionText.slice(i+1, questionText.length);
+          break;
+        }
+      }
+    }
+
+    return questionText;
   }
   public getChoiceOrderArr(questionId: String): String[] | undefined {
     if(this.questIDToObj.has(questionId)) {
