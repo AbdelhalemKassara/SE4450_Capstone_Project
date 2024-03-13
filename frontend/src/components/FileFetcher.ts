@@ -83,7 +83,6 @@ class FileFetcher {
   public async getDatasetsIds(): Promise<String[]> {
     let datasetIds: String[] = [];
 
-
     (await this.datasetIdsPromise).forEach((val: FileStruct) => {
       datasetIds.push(val.name);
     })
@@ -107,7 +106,18 @@ class FileFetcher {
 
 
   /*functions to get stuff from the mapping file */
-  
+  public async getQuestionText(datasetId: String, colId: String): Promise<String> {
+    let answerMap: (MC | TE | Matrix | Slider) = await this.getAnswerMappingObj(datasetId, colId);
+    return answerMap.mainQuestion;
+
+  }
+
+  public async getType(datasetId: String, colId: String): Promise<String> {
+    let answerMap: (MC | TE | Matrix | Slider) = await this.getAnswerMappingObj(datasetId, colId);
+    return answerMap.type;
+
+  }
+
 
   /*functions to get data from the dataset */
   //null means no response
@@ -127,7 +137,7 @@ class FileFetcher {
         throw new Error(`We couldn't find the mapping for datasetId ${datasetId} colId ${colId} and answerId ${answerId}.`);
       }
     });
-
+    
 
     return output;
   }

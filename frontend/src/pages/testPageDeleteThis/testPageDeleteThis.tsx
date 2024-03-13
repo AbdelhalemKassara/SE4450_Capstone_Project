@@ -16,7 +16,9 @@ export default function TestPageDeleteThis(): JSX.Element {
       // console.log(await fileFetcher.getDependentVarsIds("2020"));
       // console.log(await fileFetcher.getAllVarIds("2020"));
       // console.log(await fileFetcher.getColVals("2020", "dc20_citizenship"));
-      
+      console.log(await fileFetcher.getQuestionText("2022", "dc22_citizenship"));
+      console.log(await fileFetcher.getType("2022", "dc22_citizenship"));
+
       //issue with choice order not getting remapped for whatever reason on this one
       // console.log(await fileFetcher.getColsVals("2020" , "dc20_citizenship"));
       // console.log(await fileFetcher.getColsVals("2022" , "dc22_citizenship"));
