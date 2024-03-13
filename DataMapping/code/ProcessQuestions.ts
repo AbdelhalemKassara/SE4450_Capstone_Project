@@ -9,7 +9,9 @@ export class ProcessQuestions {
   public addQuestion(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: String, addToIndVar: Boolean, dataset: DatasetFetchWrapper) {
 
     let type: String = qsfFile.getQuestionType(questionId);
-
+    if(type && type === "Matrix") {
+      console.log("There is a matrix question.");
+    }
     //skip over the ones that don't exist in the qsf or don't have a type we can process
     if(!type || !(type === "MC" || type === "TE")) {
       // console.log(`We couldn't process ${questionId} as it's type is something that we can't process (haven't implemented) or is undefined.`)
