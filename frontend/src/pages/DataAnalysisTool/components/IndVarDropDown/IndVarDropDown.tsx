@@ -19,6 +19,9 @@ export default function IndVarDropDown({setIndVar, indVar, dataset, depVar}:
       datasetQ.getIndependentQuestions(dataset).then((val: Map<QuestionId, QuestionText>) => {
         setIndVars(val);
       })
+    } else {
+      setIndVars(new Map());
+      setIndVar(undefined);
     }
   }, [dataset]);
 
@@ -31,7 +34,7 @@ export default function IndVarDropDown({setIndVar, indVar, dataset, depVar}:
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
-        value={indVar ? indVar : ""}
+        value={indVar ? indVar : ''}
         label="Independent Variables"
         onChange={(event: SelectChangeEvent) => {
           setIndVar(event.target.value);

@@ -33,7 +33,7 @@ export default function SelectionTool({ dataset, setDataset}: { setDataset: Reac
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={dataset ? dataset : ""}
+                value={dataset ? dataset : ''}
                 label="DataSet Years"
                 onChange={(event: SelectChangeEvent) => {
                     setDataset(event.target.value);

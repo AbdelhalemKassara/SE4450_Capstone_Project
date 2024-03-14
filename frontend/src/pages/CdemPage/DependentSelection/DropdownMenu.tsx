@@ -12,6 +12,9 @@ function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: strin
       if(dataset) {
         const questionsData = await datasetQ.getDependentQuestions(dataset);
         setQuestions(questionsData);  
+      } else {
+        setQuestions(new Map());
+        setDependentQuestion(undefined);
       }
 
     }
@@ -25,7 +28,7 @@ function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: strin
   return (
     <FormControl fullWidth>
     <InputLabel id="another-id">Dependent Variables</InputLabel>
-      <Select value={depVar? depVar : ""} onChange={handleSelectChange}>
+      <Select value={depVar? depVar : ''} onChange={handleSelectChange}>
         {(
           () => {
           let out: JSX.Element[] = [];

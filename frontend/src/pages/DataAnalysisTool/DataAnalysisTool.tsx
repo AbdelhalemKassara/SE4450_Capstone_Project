@@ -36,16 +36,6 @@ export default function DataAnalysisTool(): JSX.Element {
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
   //these are used for the temporary display output (might not )
-  const [indVarAnswrCnt, setIndVarAnswrCnt] = useState<Map<string, number> | undefined>();
-
-  useEffect(() => {
-    if (dataset && indVar) {
-      datasetQ.getAnswersCount(dataset, indVar).then((val: Map<string, number>) => {
-        setIndVarAnswrCnt(val);
-      });
-    }
-
-  }, [dataset, indVar]);
 
 
   useEffect(() => {
@@ -64,15 +54,6 @@ export default function DataAnalysisTool(): JSX.Element {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
   };
-
-  const handleChangeDataSet = (e: string) =>{
-    console.log(e)
-    setDataset(e);
-    setDepVar(undefined)
-    setIndVar(undefined)
-  }
-
-
 
   function Export() {
 
@@ -101,10 +82,10 @@ export default function DataAnalysisTool(): JSX.Element {
       <CdemHeader />
       <div className='analysis_container'>
         <div className="filter_container">
-          <SelectionTool dataset={dataset} setDataset={handleChangeDataSet} />
+          <SelectionTool dataset={dataset} setDataset={setDataset} />
           <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar} />
 
-          <FilterButtons indVarAnswrCnt={indVarAnswrCnt} setSelectedButton={setSelectedButton} />
+          <FilterButtons dataset={dataset} indVar={indVar} setSelectedButton={setSelectedButton} />
 
           <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
           <button
