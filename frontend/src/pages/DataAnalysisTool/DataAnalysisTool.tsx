@@ -173,7 +173,7 @@ export default function DataAnalysisTool(): JSX.Element {
               legend: { position: 'top' }
             }}
           />
-        </div>
+        
         <div id='data_map_component'>
           <div>
             <FormControl>
@@ -191,7 +191,7 @@ export default function DataAnalysisTool(): JSX.Element {
           </div>
           <MapComponent mapData={mapData} mapType={mapType} />
         </div>
-
+      </div>
       </div>
       {< CDemFooter />}
     </div>
