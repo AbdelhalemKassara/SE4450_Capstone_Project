@@ -9,19 +9,33 @@ import CDemFooter from "../HomePage/Footer/CdemFooter";
 import { Chart } from 'react-google-charts';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import MapComponent from "../MapComponent/MapComponent";
+
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 import "./index.scss";
 
-
 export default function DataAnalysisTool(): JSX.Element {
   const database = useContext(DatabaseContext);
+<<<<<<< HEAD
   const datasetQ = useContext(datasetQuery);
 
   const [dataset, setDataset] = useState<String>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
   const [depVar, setDepVar] = useState<String>(); //dependent variable
   const [indVar, setIndVar] = useState<String>(); //demographic variable
+=======
+  const [dataset, setDataset] = useState<string>("2020-dataset.json"); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
+  const [depVar, setDepVar] = useState<string>("dc20_pos_career_pol"); //dependent variable
+  const [indVar, setIndVar] = useState<string>("dc20_consent"); //demographic variable
+  const [mapData, setMapData] = useState({ province: {}, riding: [] })
+>>>>>>> 1dbd168 (Update csv query)
 
   const [data, setData] = useState(false);
+  const [mapType, setMapType] = useState<string>('province');
 
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string>("");
@@ -52,11 +66,14 @@ export default function DataAnalysisTool(): JSX.Element {
     console.log("DepVarAnswrCnt before getFilteredAnswersCount:", depVarAnswrCnt);
     database.getFilteredAnswersCount(dataset, depVar, indVar, selectedButton).then((val) => {
       console.log("DepVarAnswrCnt after getFilteredAnswersCount:", val);
-      setDepVarAnswrCnt(val);
+      if (val?.out) {
+        setDepVarAnswrCnt(val.out);
+        setMapData({ province: val.province, riding: val.riding });
+      }
 
 
     });
-  }, [dataset, depVar, indVar, selectedButton]);
+  }, [depVar, indVar, selectedButton]);
 
   useEffect(() => {
     const dummyData = [['Category', 'Profit']];
@@ -83,6 +100,10 @@ export default function DataAnalysisTool(): JSX.Element {
     setSelectedButton(value);
 
   }
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMapType((event.target as HTMLInputElement).value);
+  };
+
 
   function Export() {
 
@@ -119,7 +140,6 @@ export default function DataAnalysisTool(): JSX.Element {
         </button>
       );
     }
-
 
     return (
       <>
@@ -160,6 +180,24 @@ export default function DataAnalysisTool(): JSX.Element {
             }}
           />
         </div>
+        <div id='data_map_component'>
+          <div>
+            <FormControl>
+              <FormLabel id="map-control-group">Map Type</FormLabel>
+              <RadioGroup
+                aria-labelledby="map-control-group"
+                name="cmap-control-group"
+                value={mapType}
+                onChange={handleChange}
+              >
+                <FormControlLabel value="province" control={<Radio />} label="Province" />
+                <FormControlLabel value="riding" control={<Radio />} label="Riding" />
+              </RadioGroup>
+            </FormControl>
+          </div>
+          <MapComponent mapData={mapData} mapType={mapType} />
+        </div>
+
       </div>
       {< CDemFooter />}
     </div>
