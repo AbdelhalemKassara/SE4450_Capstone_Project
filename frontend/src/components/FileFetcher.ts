@@ -78,7 +78,7 @@ class FileFetcher {
       let answer = answerMap.get(answerId);
       if(answer) {
         output.push(answer);
-      } else if(answerId === "-99" || answerId === undefined) {
+      } else if(answerId === "-99" || answerId === undefined || answerId === null) {
         //this means there was no response  
       } else {
         throw new Error(`We couldn't find the mapping for datasetId ${datasetId} colId ${colId} and answerId ${answerId}.`);

@@ -101,12 +101,6 @@ export class QsfFileFetchWrapper {
         return false;
       }
 
-      //I only added this beacuse I don't know the reason why I removed them in the first place (I'm refactoring the code)
-      ////////////////////////////remove this later (don't want to deal with these ones now)
-      // if(split.includes("_TEXT")) {
-      //   return false;
-      // }
-
       for(let i = 0; i < this.parametersFile.variablesToIgnore.length; i++) {
         let varIgnore: string = this.parametersFile.variablesToIgnore[i];
 
@@ -129,6 +123,7 @@ export class QsfFileFetchWrapper {
     return questionIds;
   }
 
+  //this may cause issues and map to the wrong values
   public reformatNecissaryQuestions(questionIds: string[], dataset: DatasetFetchWrapper): string[] {
     let out: any = questionIds.map((questionId: string) => {
       let split: string[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"

@@ -44,11 +44,11 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
   //get the question ids and loop over them
   let depVars: string[] = dataset.getQuestionIds();
   depVars = qsfFile.removeQuestionToIgnoreFromList(depVars);
-  depVars = qsfFile.reformatNecissaryQuestions(depVars, dataset);
+  // depVars = qsfFile.reformatNecissaryQuestions(depVars, dataset); //this may cause issues and map to the wrong values
 
   let indVars: string[] = qsfFile.getIndependentVariables();
   indVars = qsfFile.removeQuestionToIgnoreFromList(indVars);
-  indVars = qsfFile.reformatNecissaryQuestions(indVars, dataset);
+  // indVars = qsfFile.reformatNecissaryQuestions(indVars, dataset); //this may cause issues and map to the wrong values
 
   let hashIndVars: Map<string, any> = new Map<string, any>();
 
@@ -92,11 +92,12 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
 
   //write the colun files
   newDataset.forEach((column: string[]) => {
-    if(column[0] !== "" && column[0] !== " " && hashAllQuestIds.has(column[0])) {
+    //commented this out as excluding them has no performance benefit and might cause some issues of some stuff is missing
+    // if(column[0] !== "" && column[0] !== " " && hashAllQuestIds.has(column[0])) {
       let fileName: string = column[0] + ".json";
       fileManager.writeFile(column, [datasetYearsDir[i]], fileName);
       curYearFiles.push({ name: fileName, date: curDate});
-    }
+    // }
   });
   
   //add the mapping file

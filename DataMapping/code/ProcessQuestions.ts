@@ -20,13 +20,7 @@ export class ProcessQuestions {
       //the last _# needs to be remove inorder to process this type of file (There might be the filtering part that will exculde because of this)
     }
 
-
-    if(type1 === "Slider") {
-      console.log("There is a Slider question. not original code ", questionId, year);
-
-      //the last _# needs to be remove inorder to process this type of file (There might be the filtering part that will exculde because of this)
-    }
-
+ 
     //skip over the ones that don't exist in the qsf or don't have a type we can process
     if(!type || !(type === "MC" || type === "TE")) {
       // console.log(`We couldn't process ${questionId} as it's type is something that we can't process (haven't implemented) or is undefined.`)
@@ -45,7 +39,8 @@ export class ProcessQuestions {
   private processMC(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean) {
     //create the current questions mapping
     let curQuestMap: MC = {type: "MC", mainQuestion: "", answersMapping: {}};
-    
+    let datasetUpdateMapOldTNew: Map<string, string> = new Map<string, string>();
+
     //for some reason MappingFile.independent isn't getting passed by refrence or something (basically the one in main isn't getting modified)
     if(addToIndVar) {
       mappingFile.independent[questionId.valueOf()] = curQuestMap;// the .valueOf() is to convert it from a string object to a string primitive
@@ -71,6 +66,8 @@ export class ProcessQuestions {
 
       curQuestMap.answersMapping = newAnswerMapping;
     }
+    
+    //update the values in the dataset to match the choice order array
 
     //gets the mainQuestion 
     temp = qsfFile.getMainQuestion(questionId);
