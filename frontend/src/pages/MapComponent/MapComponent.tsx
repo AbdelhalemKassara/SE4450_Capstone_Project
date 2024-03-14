@@ -143,7 +143,7 @@ const MapComponent = ({ mapData, mapType }) => {
   return (
     Object.values(mapData?.province).length >= 1 ? (
       <div id='map_box'>
-        <MapContainer center={[56.505, -92.09]} zoom={4} scrollWheelZoom={false}>
+        <MapContainer center={[56.505, -92.09]} zoom={3} scrollWheelZoom={false}>
           <TileLayer
             attribution='<a href="https://www.jawg.io" target="_blank">© Jawg</a> | © OpenStreetMap contributors'
             url='https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=bqE3ggBOk5o1bJSHS5niKahBnM7ubg2mdUHa13PP33GcCN5MJ1D254LcGz6x6W32'

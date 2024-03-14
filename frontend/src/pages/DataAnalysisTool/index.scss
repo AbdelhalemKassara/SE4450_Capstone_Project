@@ -5,30 +5,36 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
 
-#data_page .text {
-  color: black;
-  padding-top: 6rem; /* Add padding to compensate for the fixed header height */
-  flex-grow: 1;
-  margin-bottom: 60px;
-  padding-bottom: 10px;
-  justify-content: center;
-}
+  .analysis_container {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    color: black;
+    padding-top: 6rem;
+    /* Add padding to compensate for the fixed header height */
+    margin-bottom: 60px;
+    padding-bottom: 6rem;
 
-.container{
-  width: 80%;
-  margin: 0 auto;
-  flex-direction: column;
-}
 
-.container > * {
-  width: 100%;
-  box-sizing: border-box;
-}
+    .filter_container {
+      margin: 0 auto;
+      flex-direction: column;
+      display: flex;
+      .update_sizing{
+        text-overflow: ellipsis;
+        // display: grid;
+      }
 
-.container button {
-  width: fit-content;
-  margin: 5px;
-  float: left; /* Set buttons to float next to each other */
+      >* {
+        box-sizing: border-box;
+      }
+
+      button {
+        width: fit-content;
+        margin: 5px;
+        float: left;
+        /* Set buttons to float next to each other */
+      }
+    }
+  }
 }
