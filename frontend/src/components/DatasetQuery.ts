@@ -124,6 +124,9 @@ class DatasetQuery {
     //these will have the same length
     let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
     let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
+    console.log(await this.getQuestions('2022'))
+    // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
 
     for(let i = 0; i < indAnswers.length; i++) {
       if(indAnswers[i] === depAnswer && depAnswers[i]) {
