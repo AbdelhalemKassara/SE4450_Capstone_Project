@@ -13,7 +13,7 @@ import { datasetQuery } from "../../components/DatabaseContext";
 import './selectionTool.css';
 
 
-export default function SelectionTool({ dataset, setDataset}: { setDataset: React.Dispatch<React.SetStateAction<string| undefined>>, dataset: (string | undefined) }): JSX.Element {
+export default function SelectionTool({ dataset, setDataset, setIndVar, setDepVar}: { setIndVar: React.Dispatch<React.SetStateAction<string| undefined>>, setDepVar: React.Dispatch<React.SetStateAction<string| undefined>>, setDataset: React.Dispatch<React.SetStateAction<string| undefined>>, dataset: (string | undefined) }): JSX.Element {
 
     const datasetQ = useContext(datasetQuery);
 
@@ -37,6 +37,8 @@ export default function SelectionTool({ dataset, setDataset}: { setDataset: Reac
                 label="DataSet Years"
                 onChange={(event: SelectChangeEvent) => {
                     setDataset(event.target.value);
+                    setDepVar(undefined);
+                    setIndVar(undefined);        
                 }}>
                 {(() => {
                     let out: JSX.Element[] = [];

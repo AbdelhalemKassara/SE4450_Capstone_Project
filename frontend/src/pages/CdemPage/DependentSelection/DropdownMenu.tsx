@@ -15,6 +15,7 @@ function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: strin
       } else {
         setQuestions(new Map());
         setDependentQuestion(undefined);
+
       }
 
     }
@@ -24,6 +25,7 @@ function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: strin
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     setDependentQuestion(event.target.value);
   };
+
 
   return (
     <FormControl fullWidth>

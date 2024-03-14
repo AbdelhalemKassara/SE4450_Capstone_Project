@@ -82,7 +82,7 @@ export default function DataAnalysisTool(): JSX.Element {
       <CdemHeader />
       <div className='analysis_container'>
         <div className="filter_container">
-          <SelectionTool dataset={dataset} setDataset={setDataset} />
+          <SelectionTool dataset={dataset} setDataset={setDataset} setDepVar={setDepVar} setIndVar={setIndVar} />
           <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar} />
 
           <FilterButtons dataset={dataset} indVar={indVar} setSelectedButton={setSelectedButton} />
