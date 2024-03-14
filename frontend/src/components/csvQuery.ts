@@ -1,5 +1,5 @@
 import { DatasetNMap } from "./Types";
-let instance : csvQuery;
+let instance: csvQuery;
 
 //other notes
 /*
@@ -53,9 +53,9 @@ let instance : csvQuery;
 
 
 class csvQuery {
-  private datasets : Map<string, DatasetNMap> = new Map();
+  private datasets: Map<string, DatasetNMap> = new Map();
   private questionCol: Map<string, number> = new Map();
-  private datasetNames : string[] = [];
+  private datasetNames: string[] = [];
 
   //bottom two are to avoid race conditions
   private resolve: any;
@@ -68,10 +68,10 @@ class csvQuery {
 
   constructor() {
     //making this a singleton class
-    if(instance) {
+    if (instance) {
       return instance;
     }
-    instance = this;    
+    instance = this;
 
     this.init();
   }
@@ -79,19 +79,19 @@ class csvQuery {
   //query dataset
   //query mapping
   //paramter list: ("dataset", "")
-      // console.log(await database.getDatasetsNames());
-      // console.log(await database.getIndependentQuestions("2022-dataset.json"));
-      // console.log(await database.getDependentQuestions("2022-dataset.json"));
-      // console.log(await database.getQuestions("2022-dataset.json"));
-      // database.getAnswers("2022-dataset.json", "dc22_age_in_years")
-      // console.log()
-      // database.getAnswersCount("2022-dataset.json", "dc22_age_in_years")
-      // database.getAnswers("2022-dataset.json", "dc22_age_in_years")
-      // database.getAnswersCount("2022-dataset.json", "dc22_provvote") 
-      // database.getAnswers("2022-dataset.json", "dc22_provvote")
-      // console.log(await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"));
-      // console.log(await database.getAnswerCount("2022-dataset.json", "dc22_age_in_years", "12"));
-      // console.log(await database.getTotalResponses("2022-dataset.json", "dc22_age_in_years"));
+  // console.log(await database.getDatasetsNames());
+  // console.log(await database.getIndependentQuestions("2022-dataset.json"));
+  // console.log(await database.getDependentQuestions("2022-dataset.json"));
+  // console.log(await database.getQuestions("2022-dataset.json"));
+  // database.getAnswers("2022-dataset.json", "dc22_age_in_years")
+  // console.log()
+  // database.getAnswersCount("2022-dataset.json", "dc22_age_in_years")
+  // database.getAnswers("2022-dataset.json", "dc22_age_in_years")
+  // database.getAnswersCount("2022-dataset.json", "dc22_provvote") 
+  // database.getAnswers("2022-dataset.json", "dc22_provvote")
+  // console.log(await database.getAnswersCount("2022-dataset.json", "dc22_age_in_years"));
+  // console.log(await database.getAnswerCount("2022-dataset.json", "dc22_age_in_years", "12"));
+  // console.log(await database.getTotalResponses("2022-dataset.json", "dc22_age_in_years"));
 
   //query values from dataset passing in a header in the mapping and returning 
 
@@ -110,18 +110,18 @@ class csvQuery {
         this.promises.push(this.fetchDatasets(file));
       });
 
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     };
-    
+
     this.resolve();//to avoid race conditions
   }
   private async fetchDatasetNames() {
     let data: any = await fetch('datasets/fileNames.json');
     data = await data.json();
-    
+
     //checks if the format is valid
-    if(true) {
+    if (true) {
       return data;
     } else {
       throw Error("The dataset names json file is invalid.")
@@ -129,7 +129,7 @@ class csvQuery {
   }
 
   //sending the json version of the dataset is ~20% larger but no processing is required which can take at best a couple of seconds (on good hardware on a desktop) 
-  private async fetchDatasets(files : any) {    
+  private async fetchDatasets(files: any) {
     let response = await fetch("datasets/" + files.dataset);
     this.promises.push(response);
     let data = await response.json();
@@ -138,12 +138,12 @@ class csvQuery {
     data.data[0].forEach((question: string, i: number) => {
       this.questionCol.set(question, i);
     });
-    
+
     let mapping: any = await fetch("datasets/" + files.mapping);
     this.promises.push(mapping);
     mapping = await mapping.json();
     this.promises.push(mapping);
-    this.datasets.set(files.dataset, {"dataset": data, "mapping" : mapping});
+    this.datasets.set(files.dataset, { "dataset": data, "mapping": mapping });
     return;
   }
 
@@ -157,33 +157,33 @@ class csvQuery {
 
     return this.datasetNames;
   }
-  public async getQuestions(dataset: string): Promise<{key : string, value : string}[]> {
+  public async getQuestions(dataset: string): Promise<{ key: string, value: string }[]> {
     await Promise.all(this.promises);
     return [...await this.getIndependentQuestions(dataset), ...await this.getDependentQuestions(dataset)];
   }
 
-  public async getIndependentQuestions(dataset: string): Promise<{key : string, value : any}[]> {
+  public async getIndependentQuestions(dataset: string): Promise<{ key: string, value: any }[]> {
     await Promise.all(this.promises);
     return this.getQuestionsMethod(dataset, "independent");
   }
 
-  public async getDependentQuestions(dataset: string) : Promise<{key : string, value : string}[]> {
+  public async getDependentQuestions(dataset: string): Promise<{ key: string, value: string }[]> {
     await Promise.all(this.promises);
     console.log(this.datasets.get(dataset));
     return this.getQuestionsMethod(dataset, "dependent");
   }
-  private async getQuestionsMethod(dataset: string, questionsType: "independent" | "dependent"): Promise<{key : string, value : string}[]> {
+  private async getQuestionsMethod(dataset: string, questionsType: "independent" | "dependent"): Promise<{ key: string, value: string }[]> {
     await Promise.all(this.promises);
     //invalid question type
-    if(questionsType !== "independent" && questionsType !== "dependent") {
+    if (questionsType !== "independent" && questionsType !== "dependent") {
       return [];
     }
 
-    let out: {key : string, value : string}[] = [];
-    for(let [key, value] of Object.entries(this.datasets.get(dataset).mapping[questionsType])) {
-      if(value && value.hasOwnProperty('mainQuestion')) {
+    let out: { key: string, value: string }[] = [];
+    for (let [key, value] of Object.entries(this.datasets.get(dataset).mapping[questionsType])) {
+      if (value && value.hasOwnProperty('mainQuestion')) {
         out.push({
-          key : key,
+          key: key,
           //@ts-ignore: can't figure out how to fix the typescript error
           value: value.mainQuestion
         });
@@ -192,27 +192,27 @@ class csvQuery {
 
     return out;
   }
-  
-  
+
+
   //the mapping is incorrect because there is a property called "RecodeValues" that maps the numbers this is currenly using to the correct numbers 
   //(i.e. the issue is with the DataMapping code. I think all questions have this property so you can just remap all of them)
   public async getAnswers(dataset: string, questionId: string): Promise<Object> {
     await Promise.all(this.promises);
 
     let mapping = this.datasets.get(dataset)?.mapping;
-    
+
     //unique answers are for text entry questions
-    if(mapping?.dependent[questionId]?.uniqueAnswers) {
-        return mapping?.dependent[questionId]?.uniqueAnswers;
-      } else if(mapping?.dependent[questionId]?.answersMapping) {
-        return mapping.dependent[questionId].answersMapping;
-      } else if (mapping?.independent[questionId]?.answersMapping){
-        return mapping.independent[questionId].answersMapping;
-      } else if (mapping?.independent[questionId]?.uniqueAnswers){
-        return mapping.independent[questionId].uniqueAnswers;
-      } else {
-        return {};
-      }
+    if (mapping?.dependent[questionId]?.uniqueAnswers) {
+      return mapping?.dependent[questionId]?.uniqueAnswers;
+    } else if (mapping?.dependent[questionId]?.answersMapping) {
+      return mapping.dependent[questionId].answersMapping;
+    } else if (mapping?.independent[questionId]?.answersMapping) {
+      return mapping.independent[questionId].answersMapping;
+    } else if (mapping?.independent[questionId]?.uniqueAnswers) {
+      return mapping.independent[questionId].uniqueAnswers;
+    } else {
+      return {};
+    }
   }
 
   //this function doesn't seem to work when the key is not a number in the output(format: {key1: val1, key2: val2})
@@ -223,26 +223,26 @@ class csvQuery {
     let answersMapping = await this.getAnswers(dataset, questionId);
 
 
-    if(col) {
+    if (col) {
       let out: any = {};
       let data = this.datasets.get(dataset).dataset.data;
       let valueToAnswerId: Map<string, any> = new Map();
 
-      for(let [key, value] of Object.entries(answersMapping)) {
+      for (let [key, value] of Object.entries(answersMapping)) {
         valueToAnswerId.set(key, value.Display);
       }
 
-      for(let i = 1; i < data.length; i++) {
+      for (let i = 1; i < data.length; i++) {
         let curAnswer = valueToAnswerId.get(data[i][col]);
 
-        
-        if(curAnswer === undefined) {
+
+        if (curAnswer === undefined) {
           console.log("curAnswer is undefined");
         }
 
-        if(out[curAnswer]) {
+        if (out[curAnswer]) {
           out[curAnswer]++;
-        } else if(curAnswer !== undefined) {//removes the -99 or no response
+        } else if (curAnswer !== undefined) {//removes the -99 or no response
           out[curAnswer] = 1;
         }
       }
@@ -254,107 +254,107 @@ class csvQuery {
 
   }
 
-   // Asynchronous function to get the count of filtered answers for a specific question in a given dataset.
-public async getFilteredAnswersCount(dataset: string, questionId: string, filterId: string, filter: string): Promise<any> {
-  //console.log("Start of getFilteredAnswersCount");
+  // Asynchronous function to get the count of filtered answers for a specific question in a given dataset.
+  public async getFilteredAnswersCount(dataset: string, questionId: string, filterId: string, filter: string): Promise<any> {
+    //console.log("Start of getFilteredAnswersCount");
 
-  await Promise.all(this.promises);
+    await Promise.all(this.promises);
 
-  // Get the column index for the specified question.
-  let col = this.questionCol.get(questionId);
-  let fil = this.questionCol.get(filterId);
+    // Get the column index for the specified question.
+    let col = this.questionCol.get(questionId);
+    let fil = this.questionCol.get(filterId);
 
-  // Get the mapping of answers for the specified question in the given dataset.
-  let answersMapping = await this.getAnswers(dataset, questionId);
-  let filterMapping = await this.getAnswers(dataset, filterId);
-
-
-  // Check if the column index exists.
-  if (col) {
-    // Initialize an object to store the count of filtered answers.
-    let out: any = {};
-
-    // Get the dataset for the specified dataset.
-    let data = this.datasets.get(dataset).dataset.data;
-
-    // Create a mapping from answer values to their corresponding answer IDs.
-    let valueToAnswerId: Map<string, any> = new Map();
-    for (let [key, value] of Object.entries(answersMapping)) {
-      valueToAnswerId.set(key, value.Display);
-    }
-
-       // Create a mapping from answer values to their corresponding answer IDs.
-       let valueToFilterId: Map<string, any> = new Map();
-       for (let [key, value] of Object.entries(filterMapping)) {
-         valueToFilterId.set(key, value.Display);
-       }
-
-       let filterKey;
-
-  for (const [key, value] of valueToFilterId.entries()) {
-    if (value === filter) {
-      filterKey = key;
-      break;
-    }
-  }
+    // Get the mapping of answers for the specified question in the given dataset.
+    let answersMapping = await this.getAnswers(dataset, questionId);
+    let filterMapping = await this.getAnswers(dataset, filterId);
 
 
-    // Log the mapping for debugging purposes.
-    console.log("test", valueToAnswerId);
-    console.log("the filter is ",  valueToFilterId);
+    // Check if the column index exists.
+    if (col) {
+      // Initialize an object to store the count of filtered answers.
+      let out: any = {};
 
-    // Flag to log the first occurrence of a non-"1", "2", "3", or "4" response.
-    let once = true;
+      // Get the dataset for the specified dataset.
+      let data = this.datasets.get(dataset).dataset.data;
 
-    // Iterate through the dataset starting from index 1 (assuming index 0 is headers).
-    for (let i = 1; i < data.length; i++) {
-      // Get the current answer for the specified question.
-      let curAnswer = valueToAnswerId.get(data[i][col]);
-
-
-   // Check if the filter column is defined before using it as an index
-   if (typeof fil !== 'undefined') {
-    // Check if the current row should be ignored based on the filter condition.
-    if (typeof data[i][fil] === 'undefined') {
-      console.log(`Value for ${fil} is undefined at index ${i}. Skipping this row.`);
-      continue; // Skip this iteration if the filter condition is not met.
-    }
-
-    if (data[i][fil] != filterKey) {
-      continue; // Skip this iteration if the filter condition is met.
-    }
-  } else {
-    console.log('Filter column is undefined. Skipping row.');
-    continue; // Skip this iteration if the filter column is not defined.
-  }
-
-      // Check if the current answer is not "1", "2", "3", or "4".
-      if (data[i][col] !== "1" && data[i][col] !== "2" && data[i][col] !== "3" && data[i][col] !== "4") {
-        //console.log('first', data[i][col]);
-        once = false;
+      // Create a mapping from answer values to their corresponding answer IDs.
+      let valueToAnswerId: Map<string, any> = new Map();
+      for (let [key, value] of Object.entries(answersMapping)) {
+        valueToAnswerId.set(key, value.Display);
       }
 
-      // Log a message if the current answer is undefined.
-      if (curAnswer === undefined) {
-        console.log("curAnswer is undefined");
+      // Create a mapping from answer values to their corresponding answer IDs.
+      let valueToFilterId: Map<string, any> = new Map();
+      for (let [key, value] of Object.entries(filterMapping)) {
+        valueToFilterId.set(key, value.Display);
       }
 
-      // Count occurrences of each answer and store the counts in the 'out' object.
-      if (out[curAnswer]) {
-        out[curAnswer]++;
-      } else if (curAnswer !== undefined) {
-        // If the answer is not undefined, initialize the count to 1.
-        out[curAnswer] = 1;
+      let filterKey;
+
+      for (const [key, value] of valueToFilterId.entries()) {
+        if (value === filter) {
+          filterKey = key;
+          break;
+        }
       }
+
+
+      // Log the mapping for debugging purposes.
+      console.log("test", valueToAnswerId);
+      console.log("the filter is ", valueToFilterId);
+
+      // Flag to log the first occurrence of a non-"1", "2", "3", or "4" response.
+      let once = true;
+
+      // Iterate through the dataset starting from index 1 (assuming index 0 is headers).
+      for (let i = 1; i < data.length; i++) {
+        // Get the current answer for the specified question.
+        let curAnswer = valueToAnswerId.get(data[i][col]);
+
+
+        // Check if the filter column is defined before using it as an index
+        if (typeof fil !== 'undefined') {
+          // Check if the current row should be ignored based on the filter condition.
+          if (typeof data[i][fil] === 'undefined') {
+            console.log(`Value for ${fil} is undefined at index ${i}. Skipping this row.`);
+            continue; // Skip this iteration if the filter condition is not met.
+          }
+
+          if (data[i][fil] != filterKey) {
+            continue; // Skip this iteration if the filter condition is met.
+          }
+        } else {
+          console.log('Filter column is undefined. Skipping row.');
+          continue; // Skip this iteration if the filter column is not defined.
+        }
+
+        // Check if the current answer is not "1", "2", "3", or "4".
+        if (data[i][col] !== "1" && data[i][col] !== "2" && data[i][col] !== "3" && data[i][col] !== "4") {
+          //console.log('first', data[i][col]);
+          once = false;
+        }
+
+        // Log a message if the current answer is undefined.
+        if (curAnswer === undefined) {
+          console.log("curAnswer is undefined");
+        }
+
+        // Count occurrences of each answer and store the counts in the 'out' object.
+        if (out[curAnswer]) {
+          out[curAnswer]++;
+        } else if (curAnswer !== undefined) {
+          // If the answer is not undefined, initialize the count to 1.
+          out[curAnswer] = 1;
+        }
+      }
+
+      // Return the object containing the count of filtered answers.
+      return out;
+    } else {
+      // Return an empty object if the column index does not exist.
+      return {};
     }
-
-    // Return the object containing the count of filtered answers.
-    return out;
-  } else {
-    // Return an empty object if the column index does not exist.
-    return {};
   }
-}
 
 
   public async getAnswerCount(dataset: string, questionId: string, answerId: string) {
@@ -363,12 +363,12 @@ public async getFilteredAnswersCount(dataset: string, questionId: string, filter
     return val[answerId];
   }
 
-  public async getTotalResponses(dataset: string, questionId: string): Promise<number>  {
+  public async getTotalResponses(dataset: string, questionId: string): Promise<number> {
     await Promise.all(this.promises);
     let val = await this.getAnswersCount(dataset, questionId);
-    
+
     //@ts-ignore: can't figure out how to fix the typescript error
-    
+
     return (Object.values(val)).reduce((partialSum: number, cur: number) => partialSum + cur, 0);
   }
 }
