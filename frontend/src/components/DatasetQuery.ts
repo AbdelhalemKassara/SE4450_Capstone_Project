@@ -22,26 +22,27 @@ class DatasetQuery {
 
 
   //public function to retrieve the DatasetNames: Query0
-  public async getDatasetsNames(): Promise<String[]> {
+  public async getDatasetsNames(): Promise<string[]> {
     return this.fileFetcher.getDatasetsIds();
   }
 
   //public function to retrieve the Independent Questions: Query1
-  public async getIndependentQuestions(datasetId: String): Promise<Map<QuestionId, QuestionText>> {
+  public async getIndependentQuestions(datasetId: string): Promise<Map<QuestionId, QuestionText>> {
     let out: Map<QuestionId, QuestionText> = new Map<QuestionId, QuestionText>();
 
-    const independentVarsIds: String[] = await this.fileFetcher.getIndependentVarsIds(datasetId);
+    const independentVarsIds: string[] = await this.fileFetcher.getIndependentVarsIds(datasetId);
 
     for (const colId of independentVarsIds) {
-      const questionText: String = await this.fileFetcher.getQuestionText(datasetId, colId);
+      const questionText: string = await this.fileFetcher.getQuestionText(datasetId, colId);
       out.set(colId, questionText);
     }
 
     return out;
   }
-
+  
+  
   //public function to retreieve the Dependent Questions: Query2
-  public async getDependentQuestions(datasetId: String): Promise<Map<QuestionId, QuestionText>> {
+  public async getDependentQuestions(datasetId: string): Promise<Map<QuestionId, QuestionText>> {
     let out: Map<QuestionId, QuestionText> = new Map<QuestionId, QuestionText>();
 
     const dependentVarsIds = await this.fileFetcher.getDependentVarsIds(datasetId);
@@ -55,22 +56,23 @@ class DatasetQuery {
   }
 
   //public function to retreieve the Questions: Query3
-  public async getQuestions(datasetId: String): Promise<Map<QuestionId, QuestionText>> {
+  public async getQuestions(datasetId: string): Promise<Map<QuestionId, QuestionText>> {
     const independentQuestions = await this.getIndependentQuestions(datasetId);
     const dependentQuestions = await this.getDependentQuestions(datasetId);
 
     return new Map([...independentQuestions, ...dependentQuestions]);
   }
 
+
   //created a function to retrieve the answers: Query5
-  public async getAnswersCount(datasetId: String, questionId: String): Promise<Map<AnswerText, Count>> {
+  public async getAnswersCount(datasetId: string, questionId: string): Promise<Map<AnswerText, Count>> {
     let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
     
     const colVals = await this.fileFetcher.getColsVals(datasetId, questionId);
 
     // Count occurrences of each answer
-    colVals.forEach((answer: String) => {
-      const stringValue: string = answer.valueOf(); // Convert String to string
+    colVals.forEach((answer: string) => {
+      const stringValue: string = answer.valueOf(); // Convert string to string
       let curCount : number | undefined = out.get(stringValue);
       if(curCount) {
         out.set(stringValue, curCount + 1);
@@ -82,7 +84,8 @@ class DatasetQuery {
 
     return out;
   }
-  public async getAnswerCount(datasetId: String, questionId: String, answerText: String) : Promise<number> {
+
+  public async getAnswerCount(datasetId: string, questionId: string, answerText: string) : Promise<number> {
     let out: number | undefined = (await this.getAnswersCount(datasetId, questionId)).get(answerText);
 
     if(out) {
@@ -92,7 +95,7 @@ class DatasetQuery {
     }
 
   }
-  public async getAnswers(datasetId: String, questionId: String): Promise<String[]> {
+  public async getAnswers(datasetId: string, questionId: string): Promise<string[]> {
     let colVals: AnswerText[] = await this.fileFetcher.getColsVals(datasetId, questionId);
 
     let map:Map<AnswerText, null> = new Map<AnswerText, null>();
@@ -116,17 +119,17 @@ class DatasetQuery {
   }
 
 
-  public async getFilteredAnswersCount(datasetId: String, depQuestId: String, depAnswer: String, indQuestId: String): Promise<Map<AnswerText, Count>> {
+  public async getFilteredAnswersCount(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string): Promise<Map<AnswerText, Count>> {
     let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
 
     //these will have the same length
-    let depAnswers: (undefined | String)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
-    let indAnswers: (undefined | String)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
+    let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
 
-    for(let i = 0; i < depAnswers.length; i++) {
-      if(depAnswers[i] === depAnswer && indAnswers[i]) {
+    for(let i = 0; i < indAnswers.length; i++) {
+      if(indAnswers[i] === depAnswer && depAnswers[i]) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
-        let id: String = indAnswers[i];
+        let id: string = depAnswers[i];
         let curCount: number | undefined = out.get(id);
         
         if(curCount) {

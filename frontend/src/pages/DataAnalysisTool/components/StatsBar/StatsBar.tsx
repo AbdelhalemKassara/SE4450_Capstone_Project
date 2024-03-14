@@ -1,19 +1,21 @@
 import styles from './styles.module.css'
 
 import { useContext, useEffect, useState } from "react";
-import { DatabaseContext } from "../../../../components/DatabaseContext";
+import {  datasetQuery } from "../../../../components/DatabaseContext";
 
 
-export default function StatsBar({ dataset, depVar }: { dataset: string,depVar: string }): JSX.Element {
-  const database = useContext(DatabaseContext);
-  
-  const [totalResp, setTotalResp] = useState<number>(0);
+export default function StatsBar({ dataset, depVar }: { dataset: string | undefined,depVar: string | undefined }): JSX.Element {
+  const datasetQ = useContext(datasetQuery);
+
+  const [totalResp, setTotalResp] = useState<number | undefined>();
 
   useEffect(() => {
-    database.getTotalResponses(dataset, depVar).then(val => {
-      setTotalResp(val);
-    });
+    if(dataset && depVar) {
+      datasetQ.getTotalResponses(dataset, depVar).then(val => {
+        setTotalResp(val);
 
+      });
+    }
   }, [dataset, depVar]);
 
   return (

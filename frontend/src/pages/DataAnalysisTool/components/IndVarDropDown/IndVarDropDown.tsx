@@ -2,19 +2,24 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { DatabaseContext } from '../../../../components/DatabaseContext';
+import { DatabaseContext, datasetQuery } from '../../../../components/DatabaseContext';
 import { useContext, useState, useEffect } from 'react';
+import { QuestionId, QuestionText } from '../../../../components/NewTypes';
 
-export default function IndVarDropDown({setIndVar, indVar, dataset}: 
-  {setIndVar: React.Dispatch<React.SetStateAction<string>>, indVar: string, dataset: string}): JSX.Element{
+export default function IndVarDropDown({setIndVar, indVar, dataset, depVar}: 
+  {setIndVar: React.Dispatch<React.SetStateAction<string | undefined>>, indVar: string | undefined, dataset: string | undefined, depVar:(string | undefined)}): JSX.Element{
   
-  const database = useContext(DatabaseContext);
-  const [indVars, setIndVars] = useState<{key : string, value : any}[]>([]);
+  const datasetQ = useContext(datasetQuery);
+
+  const [indVars, setIndVars] = useState<Map<QuestionId, QuestionText>>();
 
   useEffect(() => {
-    database.getIndependentQuestions(dataset).then((val: {key : string, value : any}[]) => {
-      setIndVars(val);
-    });
+
+    if(dataset) {
+      datasetQ.getIndependentQuestions(dataset).then((val: Map<QuestionId, QuestionText>) => {
+        setIndVars(val);
+      })
+    }
   }, [dataset]);
 
 
@@ -24,7 +29,7 @@ export default function IndVarDropDown({setIndVar, indVar, dataset}:
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
-        value={indVar}
+        value={indVar ? indVar : ""}
         label="Independent Variables"
         onChange={(event: SelectChangeEvent) => {
           setIndVar(event.target.value);
@@ -32,7 +37,7 @@ export default function IndVarDropDown({setIndVar, indVar, dataset}:
       >
         {(() => {
             let out: JSX.Element[] = [];
-            indVars.forEach(({key, value}) => {
+            indVars?.forEach((value, key) => {
               out.push(<MenuItem key={key} value={key}>{value}</MenuItem>)
             })
             return out;
