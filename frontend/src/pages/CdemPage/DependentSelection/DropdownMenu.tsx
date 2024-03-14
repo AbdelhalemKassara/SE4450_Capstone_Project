@@ -1,36 +1,44 @@
 import { useContext, useEffect, useState } from 'react';
-import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { DatabaseContext } from "../../../components/DatabaseContext";
+import { Select, MenuItem, SelectChangeEvent,InputLabel, FormControl } from '@mui/material';
+import { datasetQuery } from "../../../components/DatabaseContext";
+import { QuestionId, QuestionText } from '../../../components/NewTypes';
 
-function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: string, setDependentQuestion: React.Dispatch<React.SetStateAction<string>>, depVar: string}) {
-  const [questions, setQuestions] = useState<{ key: string; value: string; }[]>([]);
-  const [selectedQuestion, setSelectedQuestion] = useState<string>('');
-  const database = useContext(DatabaseContext);
+function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: string | undefined, setDependentQuestion: React.Dispatch<React.SetStateAction<string | undefined>>, depVar: string | undefined}): JSX.Element {
+  const [questions, setQuestions] = useState<Map<QuestionId, QuestionText>>();
+  const datasetQ = useContext(datasetQuery);
 
   useEffect(() => {
     async function fetchData() {
-      try {
-        const questionsData = await database.getDependentQuestions(dataset);
-        setQuestions(questionsData);
-      } catch (error) {
-        console.error('Error fetching questions:', error);
+      if(dataset) {
+        const questionsData = await datasetQ.getDependentQuestions(dataset);
+        setQuestions(questionsData);  
       }
+
     }
     fetchData();
-  }, [database, dataset]);
+  }, [dataset]);
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     setDependentQuestion(event.target.value);
   };
 
   return (
-    <Select value={depVar} onChange={handleSelectChange}>
-      {questions.map((question, index) => (
-        <MenuItem key={index} value={question.key}>
-          {question.value}
-        </MenuItem>
-      ))}
-    </Select>
+    <FormControl fullWidth>
+    <InputLabel id="another-id">Dependent Variables</InputLabel>
+      <Select value={depVar? depVar : ""} onChange={handleSelectChange}>
+        {(
+          () => {
+          let out: JSX.Element[] = [];
+            if(questions) {
+              for(let [key, value] of questions) {
+                out.push(<MenuItem key={key} value={key}>{value}</MenuItem>);
+              }
+            }
+          return out;
+        })()}      
+      </Select>
+    </FormControl>  
+
   );
 }
 
