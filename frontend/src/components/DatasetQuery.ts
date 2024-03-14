@@ -1,4 +1,5 @@
 import FileFetcher from "./FileFetcher";
+import { QuestionId, QuestionText, Count, AnswerText } from "./NewTypes";
 
 let instance: DatasetQuery;
 
@@ -26,72 +27,83 @@ class DatasetQuery {
   }
 
   //public function to retrieve the Independent Questions: Query1
-  public async getIndependentQuestions(datasetId: String): Promise<{ key: String; value: any }[]> {
-    console.log(datasetId);
-    const independentVarsIds = await this.fileFetcher.getIndependentVarsIds(datasetId);
-    const questions: { key: String; value: any }[] = [];
+  public async getIndependentQuestions(datasetId: String): Promise<Map<QuestionId, QuestionText>> {
+    let out: Map<QuestionId, QuestionText> = new Map<QuestionId, QuestionText>();
+
+    const independentVarsIds: String[] = await this.fileFetcher.getIndependentVarsIds(datasetId);
+
     for (const colId of independentVarsIds) {
-      const questionText = await this.fileFetcher.getQuestionText(datasetId, colId);
-      questions.push({ key: colId, value: questionText });
+      const questionText: String = await this.fileFetcher.getQuestionText(datasetId, colId);
+      out.set(colId, questionText);
     }
-    return questions;
+
+    return out;
   }
 
   //public function to retreieve the Dependent Questions: Query2
-  public async getDependentQuestions(datasetId: String): Promise<{ key: String; value: String }[]> {
+  public async getDependentQuestions(datasetId: String): Promise<Map<QuestionId, QuestionText>> {
+    let out: Map<QuestionId, QuestionText> = new Map<QuestionId, QuestionText>();
+
     const dependentVarsIds = await this.fileFetcher.getDependentVarsIds(datasetId);
-    const questions: { key: String; value: String }[] = [];
+
     for (const id of dependentVarsIds) {
       const questionText = await this.fileFetcher.getQuestionText(datasetId, id);
-      questions.push({ key: id, value: questionText });
+      out.set(id,questionText);
     }
-    return questions;
+
+    return out;
   }
 
   //public function to retreieve the Questions: Query3
-  public async getQuestions(datasetId: String): Promise<{ key: String; value: String }[]> {
+  public async getQuestions(datasetId: String): Promise<Map<QuestionId, QuestionText>> {
     const independentQuestions = await this.getIndependentQuestions(datasetId);
     const dependentQuestions = await this.getDependentQuestions(datasetId);
-    return [...independentQuestions, ...dependentQuestions];
+
+    return new Map([...independentQuestions, ...dependentQuestions]);
   }
 
-  //created a function to retrieve the answers: Query4
-  public async getAnswers(datasetId: String, questionId: String): Promise<Object> {
-
+  //created a function to retrieve the answers: Query5
+  public async getAnswersCount(datasetId: String, questionId: String): Promise<Map<AnswerText, Count>> {
+    let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
+    
     const colVals = await this.fileFetcher.getColsVals(datasetId, questionId);
-    const answers: { [key: string]: number } = {};
 
     // Count occurrences of each answer
     colVals.forEach((answer: String) => {
       const stringValue: string = answer.valueOf(); // Convert String to string
-      answers[stringValue] = (answers[stringValue] || 0) + 1;
+      let curCount : number | undefined = out.get(stringValue);
+      if(curCount) {
+        out.set(stringValue, curCount + 1);
+      } else {
+        out.set(stringValue, 1);
+      }
 
     });
 
-    return answers as Object; // Type assertion
+    return out;
   }
-  public async getAnswersCount(datasetId: String, questionId: String): Promise<Object> {
-    const colVals = await this.fileFetcher.getColsVals(datasetId, questionId);
-    const counts: { [key: string]: number } = {};
 
-    // Count occurrences of each answer
-    colVals.forEach((answer: String) => {
-      const stringValue: string = answer.valueOf(); // Convert String to string
-      counts[stringValue] = (counts[stringValue] || 0) + 1;
+  public async getAnswers(datasetId: String, questionId: String): Promise<AnswerText[]> {
+    let colVals: AnswerText[] = await this.fileFetcher.getColsVals(datasetId, questionId);
+
+    let map:Map<AnswerText, null> = new Map<AnswerText, null>();
+    colVals = colVals.filter((questText: AnswerText) => {
+      let bool: Boolean = map.has(questText);
+      
+      if(!bool) {
+        map.set(questText, null);
+      }
+
+      return !bool;
     });
 
-    return counts as Object; // Type assertion
+    return colVals;
   }
 
   //retreieve the total repsonse Query6
   public async getTotalResponses(datasetId: string, questionId: string): Promise<number> {
-    // Retrieve the counts of answers for the specified question in the given dataset.
-    const answersCount = await this.getAnswersCount(datasetId, questionId);
-
-    // Calculate the total number of responses by summing up the counts of each answer.
-    const totalResponses: number = Object.values(answersCount).reduce((total: number, count: number) => total + count, 0);
-
-    return totalResponses;
+    // Retrieve all the responses for a question and returns the length of the array (Since no response is removed from this array).
+    return (await this.fileFetcher.getColsVals(datasetId, questionId)).length;
   }
 
 

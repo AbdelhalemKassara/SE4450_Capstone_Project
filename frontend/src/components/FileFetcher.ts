@@ -69,7 +69,6 @@ class FileFetcher {
 
 
   /*functions to get data from the dataset */
-  //null means no response
   public async getColsVals(datasetId: String, colId: String): Promise<String[]> {
     let rawColValues: String[] = await this.getRawColVals(datasetId, colId);
     let answerMap: Map<String, String> = await this.getAnswerMapping(datasetId, colId);
@@ -129,7 +128,7 @@ class FileFetcher {
   private async getAnswerMapping(datasetId: String, colId: String): Promise<Map<String, String>> {
     let map: Map<String, String> = new Map<String, String>();
     let answerMapObj: MC | TE | Matrix | Slider = await this.getAnswerMappingObj(datasetId, colId);
-    console.log(answerMapObj);
+
     for(let [key, value] of Object.entries(answerMapObj.answersMapping)) {
       //@ts-expect-error: This is mostly because we can't assing a type in this kind of loop
       if(value?.Display) {
