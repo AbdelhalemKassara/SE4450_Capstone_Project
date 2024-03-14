@@ -361,9 +361,9 @@ class csvQuery {
           out[curAnswer] = 1;
         }
         if (provinceCount[provinceAnswer]) {
-          provinceCount[provinceAnswer].total++;
+          provinceCount[provinceAnswer]++;
         } else if (provinceAnswer !== undefined) {//removes the -99 or no response
-          provinceCount[provinceAnswer] = { total: 1 };
+          provinceCount[provinceAnswer] = 1;
         }
 
 
