@@ -41,7 +41,7 @@ export default function TestPageDeleteThis(): JSX.Element {
       // console.log("Dataset Query5(3): ", await dataset.getAnswersCount("2022", "dc22_age_in_years"));
       // console.log("Dataset Query5(4):", await dataset.getAnswersCount("2022", "dc22_age_in_years", "12"));
       
-      console.log("Dataset Query6:", await dataset.getTotalResponses("2022", "dc22_provvote"));
+      // console.log("Dataset Query6:", await dataset.getTotalResponses("2022", "dc22_provvote"));
     })();
 
   }, []);
