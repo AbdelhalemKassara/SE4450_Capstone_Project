@@ -1,73 +1,55 @@
 import { useEffect, useContext, useState, useMemo } from 'react';
 import { red, amber, orange } from '@mui/material/colors';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import { DatabaseContext } from "../../components/DatabaseContext";
 import { Legend, InfoControl } from './components';
 import "./index.scss";
 import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
 import province from './province.json'
 import { electoralRidings, section } from './helper'
 
-const MapComponent = ({ dataset, mapType }) => {
-  const database = useContext(DatabaseContext);
+const MapComponent = ({ mapData, mapType }) => {
 
-  const [provinceCount, setProvinceCount] = useState({})
   const [currentHover, setCurrentHover] = useState({});
   const [selectedLayer, setSelectedLayer] = useState({})
   const [selectedStyle, setSelectedStyle] = useState({})
-  const [ridingCount, setRidingCount] = useState({})
   const [heatValues, setHeatValues] = useState([])
   const [maxValue, setMaxValue] = useState({ province: 0, riding: 0 })
   const [provinceMapData, setProvinceMapData] = useState({ ...province })
   const [ridingMapData, setRidingMapData] = useState({ ...electoralRidings() })
-  const [hasData, setHasData] = useState<boolean>(false)
   const multipliers = [0, 0.05, 0.1125, 0.225, 0.3, 0.4, 0.5, 0.6, 0.7, 0.85]
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const provinceCountData = await database.getProvinceCount(dataset, "dc22_province");
-        setProvinceCount(provinceCountData);
-
-        const ridingCountData = await database.getRidingCount(dataset);
-        setRidingCount(ridingCountData);
-
-        let maxProvinceCount = 0;
-        let updatedProvinceMapData = [...provinceMapData.features];
-        Object.values(provinceCount).forEach((v) => {
-          for (let i = 0; i < provinceMapData?.features.length; i++) {
-            const provinceProperty = updatedProvinceMapData?.[i]?.properties;
-            if (v?.province_id && provinceProperty?.province_id == v?.province_id) {
-              maxProvinceCount = Math.max(maxProvinceCount, v.total)
-              provinceProperty.density = v.total;
-              break;
-            }
-          }
-        })
-        let maxRidingCount = 0
-        let updatedRidingMapData = [...ridingMapData.features];
-        Object.entries(ridingCount).forEach(([key, value]) => {
-          for (let i = 0; i < ridingMapData.features.length; i++) {
-            const elecProperties = updatedRidingMapData?.[i]?.properties;
-            if (key && elecProperties?.feduid == key) {
-              maxRidingCount = Math.max(maxRidingCount, value);
-              elecProperties.density = value;
-              break;
-            }
-          }
-        })
-        setRidingMapData({ ...ridingMapData, features: [...updatedRidingMapData] })
-        setProvinceMapData({ ...provinceMapData, features: [...updatedProvinceMapData] })
-        setMaxValue({ ...maxValue, riding: maxRidingCount, province: maxProvinceCount })
-        setHasData(true)
-        console.log(hasData)
-
-      } catch (error) {
-        console.error('Error fetching data: ', error);
+    const provinceCount = mapData.province ?? {};
+    const ridingCount = mapData.riding ?? [];
+    console.log(provinceCount)
+    let maxProvinceCount = 0;
+    let updatedProvinceMapData = [...provinceMapData.features];
+    Object.values(provinceCount).forEach((v) => {
+      for (let i = 0; i < provinceMapData?.features.length; i++) {
+        const provinceProperty = updatedProvinceMapData?.[i]?.properties;
+        if (v?.province_id && provinceProperty?.province_id == v?.province_id) {
+          maxProvinceCount = Math.max(maxProvinceCount, v.total)
+          provinceProperty.density = v.total;
+          break;
+        }
       }
-    };
-    fetchData();
-  }, [dataset]);
+    })
+    let maxRidingCount = 0
+    let updatedRidingMapData = [...ridingMapData.features];
+    Object.entries(ridingCount).forEach(([key, value]) => {
+      for (let i = 0; i < ridingMapData.features.length; i++) {
+        const elecProperties = updatedRidingMapData?.[i]?.properties;
+        if (key && elecProperties?.feduid == key) {
+          maxRidingCount = Math.max(maxRidingCount, value);
+          elecProperties.density = value;
+          break;
+        }
+      }
+    })
+    setRidingMapData({ ...ridingMapData, features: [...updatedRidingMapData] })
+    setProvinceMapData({ ...provinceMapData, features: [...updatedProvinceMapData] })
+    setMaxValue({ ...maxValue, riding: maxRidingCount, province: maxProvinceCount })
+  }, [mapData]);
 
   useEffect(() => {
     const multipliersMax = multipliers.map((val) => {
@@ -139,7 +121,7 @@ const MapComponent = ({ dataset, mapType }) => {
       dashArray: '3',
       fillOpacity: 0.7,
     });
-    setCurrentProvince({})
+    setCurrentHover({})
   };
   const zoomToFeature = (e) => {
     const map = e.target._map;
@@ -157,12 +139,9 @@ const MapComponent = ({ dataset, mapType }) => {
   };
 
   return (
-    <div id='map_box'>
-      {hasData &&
-        <MapContainer center={[56.505, -92.09]}
-          zoom={4}
-          scrollWheelZoom={false}
-        >
+    Object.values(mapData?.province).length >= 1 ? (
+      <div id='map_box'>
+        <MapContainer center={[56.505, -92.09]} zoom={4} scrollWheelZoom={false}>
           <TileLayer
             attribution='<a href="https://www.jawg.io" target="_blank">© Jawg</a> | © OpenStreetMap contributors'
             url='https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=bqE3ggBOk5o1bJSHS5niKahBnM7ubg2mdUHa13PP33GcCN5MJ1D254LcGz6x6W32'
@@ -174,14 +153,14 @@ const MapComponent = ({ dataset, mapType }) => {
             onEachFeature={onEachFeature}
           />
           <Legend getColor={getColor} heatValues={heatValues} />
-          <InfoControl currentHover={currentHover} mapType = {mapType}/>
-
-
-
+          <InfoControl currentHover={currentHover} mapType={mapType} />
         </MapContainer>
-      }
-    </div >
+      </div>
+    ) : (
+      <div>Please Select Data</div>
+    )
   );
+
 };
 
 export default MapComponent;

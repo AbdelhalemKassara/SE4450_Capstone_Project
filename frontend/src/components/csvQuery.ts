@@ -169,7 +169,7 @@ class csvQuery {
 
   public async getDependentQuestions(dataset: string): Promise<{ key: string, value: string }[]> {
     await Promise.all(this.promises);
-    console.log(this.datasets.get(dataset));
+    // console.log(this.datasets.get(dataset));
     return this.getQuestionsMethod(dataset, "dependent");
   }
   private async getQuestionsMethod(dataset: string, questionsType: "independent" | "dependent"): Promise<{ key: string, value: string }[]> {
@@ -258,14 +258,19 @@ class csvQuery {
     //console.log("Start of getFilteredAnswersCount");
 
     await Promise.all(this.promises);
+    const prov_map: string = `${questionId.slice(0, 4)}_province`;
 
     // Get the column index for the specified question.
     let col = this.questionCol.get(questionId);
     let fil = this.questionCol.get(filterId);
+    let provinceCol: number = this.questionCol.get(prov_map) ?? 0;
+    let feduid: number = this.questionCol.get('feduid') ?? 0
+
 
     // Get the mapping of answers for the specified question in the given dataset.
     let answersMapping = await this.getAnswers(dataset, questionId);
     let filterMapping = await this.getAnswers(dataset, filterId);
+    let provinceMapping = await this.getAnswers(dataset, prov_map);
 
 
     // Check if the column index exists.
@@ -288,15 +293,12 @@ class csvQuery {
         valueToFilterId.set(key, value.Display);
       }
 
-      let filterKey;
-
-      for (const [key, value] of valueToFilterId.entries()) {
-        if (value === filter) {
-          filterKey = key;
-          break;
-        }
+      let valueToProvinceId: Map<string, any> = new Map();
+      for (let [key, value] of Object.entries(provinceMapping)) {
+        valueToProvinceId.set(key, value.Display);
       }
 
+      let filterKey;
 
       // Log the mapping for debugging purposes.
       console.log("test", valueToAnswerId);
@@ -310,6 +312,22 @@ class csvQuery {
         // Get the current answer for the specified question.
         let curAnswer = valueToAnswerId.get(data[i][col]);
 
+      // Flag to log the first occurrence of a non-"1", "2", "3", or "4" response.
+      let once = true;
+      let mapData: any = {
+        out: {},
+        province: {},
+        riding: []
+      }
+      let provinceCount: any = {}
+      let ridingCount: any = []
+      // let 
+
+      // Iterate through the dataset starting from index 1 (assuming index 0 is headers).
+      for (let i = 1; i < data.length; i++) {
+        // Get the current answer for the specified question.
+        let curAnswer = valueToAnswerId.get(data[i][col]);
+        let provinceAnswer = valueToProvinceId.get(data[i][provinceCol]);
 
         // Check if the filter column is defined before using it as an index
         if (typeof fil !== 'undefined') {
@@ -345,10 +363,25 @@ class csvQuery {
           // If the answer is not undefined, initialize the count to 1.
           out[curAnswer] = 1;
         }
-      }
+        if (provinceCount[provinceAnswer]) {
+          provinceCount[provinceAnswer].total++;
+        } else if (provinceAnswer !== undefined) {//removes the -99 or no response
+          provinceCount[provinceAnswer] = { total: 1 };
+        }
 
+        
+        if (ridingCount[data[i][feduid]]) {
+          ridingCount[data[i][feduid]]++;
+        }
+        else {
+          ridingCount[data[i][feduid]] = 1
+        }
+      }
       // Return the object containing the count of filtered answers.
-      return out;
+      console.log(provinceCount)
+      console.log(ridingCount)
+      mapData = { ...mapData, out: out, province: { ...provinceCount }, riding: [...ridingCount] }
+      return mapData;
     } else {
       // Return an empty object if the column index does not exist.
       return {};
@@ -408,6 +441,7 @@ class csvQuery {
         } else if (curAnswer !== undefined) {//removes the -99 or no response
           out[curAnswer] = { province_id: data[i][col], total: 1 };
         }
+
       }
 
       return out;
