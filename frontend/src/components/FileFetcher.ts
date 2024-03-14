@@ -109,6 +109,10 @@ class FileFetcher {
     return output;
   }
 
+  public async getFeduid(datasetId: string): Promise<string[]> {
+    return this.getRawColVals(datasetId, "feduid");
+  }
+
   /*private functions*/
 
   //this gets the answer mapping from the mapping file

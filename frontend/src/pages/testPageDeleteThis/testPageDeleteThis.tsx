@@ -45,6 +45,9 @@ export default function TestPageDeleteThis(): JSX.Element {
       // console.log( await dataset.getFilteredAnswersCount("2022", "dc22_provvote", "Liberal", "dc22_citizenship"));
       // console.log("Dataset Query5(3): ", await dataset.getAnswersCount("2022", "dc22_provvote"));
 
+      // console.log(await dataset.getAnswersCount("2022", "feduid"));
+      // console.log((await dataset.getDependentQuestions("2022")).has("feduid"))
+      console.log(await dataset.getFeduid("2020"));
     })();
 
   }, []);
