@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { red, amber, orange } from '@mui/material/colors';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { Legend, InfoControl } from './components';
@@ -6,6 +6,8 @@ import "./index.scss";
 import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
 import province from './province.json'
 import { electoralRidings, section } from './helper'
+import * as stringSimilarity from "string-similarity";
+
 
 const MapComponent = ({ mapData, mapType }) => {
 
@@ -21,15 +23,15 @@ const MapComponent = ({ mapData, mapType }) => {
   useEffect(() => {
     const provinceCount = mapData.province ?? {};
     const ridingCount = mapData.riding ?? [];
-    console.log(provinceCount)
     let maxProvinceCount = 0;
     let updatedProvinceMapData = [...provinceMapData.features];
-    Object.values(provinceCount).forEach((v) => {
+    Object.entries(provinceCount).forEach(([key, value]) => {
       for (let i = 0; i < provinceMapData?.features.length; i++) {
         const provinceProperty = updatedProvinceMapData?.[i]?.properties;
-        if (v?.province_id && provinceProperty?.province_id == v?.province_id) {
-          maxProvinceCount = Math.max(maxProvinceCount, v.total)
-          provinceProperty.density = v.total;
+        const similarity = stringSimilarity.compareTwoStrings(key, provinceProperty?.name);
+        if (similarity >= 0.9) {
+          maxProvinceCount = Math.max(maxProvinceCount, value)
+          provinceProperty.density = value;
           break;
         }
       }

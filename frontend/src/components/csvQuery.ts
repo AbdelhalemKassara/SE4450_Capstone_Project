@@ -300,17 +300,16 @@ class csvQuery {
 
       let filterKey;
 
+      for (const [key, value] of valueToFilterId.entries()) {
+        if (value === filter) {
+          filterKey = key;
+          break;
+        }
+      }
+
       // Log the mapping for debugging purposes.
       console.log("test", valueToAnswerId);
       console.log("the filter is ", valueToFilterId);
-
-      // Flag to log the first occurrence of a non-"1", "2", "3", or "4" response.
-      let once = true;
-
-      // Iterate through the dataset starting from index 1 (assuming index 0 is headers).
-      for (let i = 1; i < data.length; i++) {
-        // Get the current answer for the specified question.
-        let curAnswer = valueToAnswerId.get(data[i][col]);
 
       // Flag to log the first occurrence of a non-"1", "2", "3", or "4" response.
       let once = true;
@@ -364,9 +363,9 @@ class csvQuery {
           out[curAnswer] = 1;
         }
         if (provinceCount[provinceAnswer]) {
-          provinceCount[provinceAnswer].total++;
+          provinceCount[provinceAnswer]++;
         } else if (provinceAnswer !== undefined) {//removes the -99 or no response
-          provinceCount[provinceAnswer] = { total: 1 };
+          provinceCount[provinceAnswer] = 1;
         }
 
         
