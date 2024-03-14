@@ -1,0 +1,47 @@
+{
+  "independentVariables" : [
+  "cps21_yob",
+  "cps21_gender",
+  "cps21_province",
+  "cps21_education",
+  "cps21_canada_born",
+  "cps21_religion",
+  "cps21_consent",
+  "cps21_citizenship"
+  ],
+  "metadata" : [
+    "Premier"
+  ],
+  "variablesToIgnore" : [
+    " ",
+    "",
+    "dc22_jurisdiction_t_Last_Click",
+    "dc22_jurisdiction_t_Last_Click",
+    "dc22_jurisdiction_t_First_Click",
+    "dc22_jurisdiction_t_Page_Submit",
+    "fedname",
+    "pccf_problem",
+    "dc22_quota_weight",
+    "emb",
+    "EMB_fr",
+    "pid_fr",
+    "religion_fr",
+    "religion_en",
+    "StartDate",
+    "EndDate",
+    "Duration__in_seconds_",
+    "time",
+    "RecordedDate",
+    "ResponseId",
+    "UserLanguage",
+    "survey_wave",
+    "dc22_consent_t_First_Click",
+    "dc22_consent_t_Last_Click",
+    "dc22_consent_t_Page_Submit",
+    "dc22_consent_t_Click_Count",
+    "dc22_consent",
+    "Attitudes1_politicianattitudes_D",
+    "Attitudes1_politicianattitudes_0",
+    "dc22_jurisdiction_t_Click_Count"    
+  ]
+}
