@@ -299,18 +299,12 @@ class csvQuery {
       }
 
       let filterKey;
-
-      // Log the mapping for debugging purposes.
-      console.log("test", valueToAnswerId);
-      console.log("the filter is ", valueToFilterId);
-
-      // Flag to log the first occurrence of a non-"1", "2", "3", or "4" response.
-      let once = true;
-
-      // Iterate through the dataset starting from index 1 (assuming index 0 is headers).
-      for (let i = 1; i < data.length; i++) {
-        // Get the current answer for the specified question.
-        let curAnswer = valueToAnswerId.get(data[i][col]);
+      for (const [key, value] of valueToFilterId.entries()) {
+        if (value === filter) {
+          filterKey = key;
+          break;
+        }
+      }
 
       // Flag to log the first occurrence of a non-"1", "2", "3", or "4" response.
       let once = true;
@@ -321,13 +315,15 @@ class csvQuery {
       }
       let provinceCount: any = {}
       let ridingCount: any = []
-      // let 
 
       // Iterate through the dataset starting from index 1 (assuming index 0 is headers).
       for (let i = 1; i < data.length; i++) {
         // Get the current answer for the specified question.
         let curAnswer = valueToAnswerId.get(data[i][col]);
         let provinceAnswer = valueToProvinceId.get(data[i][provinceCol]);
+
+        console.log(curAnswer)
+        console.log(provinceAnswer)
 
         // Check if the filter column is defined before using it as an index
         if (typeof fil !== 'undefined') {
@@ -358,6 +354,7 @@ class csvQuery {
 
         // Count occurrences of each answer and store the counts in the 'out' object.
         if (out[curAnswer]) {
+          console.log(out)
           out[curAnswer]++;
         } else if (curAnswer !== undefined) {
           // If the answer is not undefined, initialize the count to 1.
@@ -369,7 +366,7 @@ class csvQuery {
           provinceCount[provinceAnswer] = { total: 1 };
         }
 
-        
+
         if (ridingCount[data[i][feduid]]) {
           ridingCount[data[i][feduid]]++;
         }
@@ -377,15 +374,15 @@ class csvQuery {
           ridingCount[data[i][feduid]] = 1
         }
       }
-      // Return the object containing the count of filtered answers.
-      console.log(provinceCount)
-      console.log(ridingCount)
       mapData = { ...mapData, out: out, province: { ...provinceCount }, riding: [...ridingCount] }
       return mapData;
-    } else {
+
+    }
+    else {
       // Return an empty object if the column index does not exist.
       return {};
     }
+
   }
 
 
