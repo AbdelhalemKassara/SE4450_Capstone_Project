@@ -24,7 +24,9 @@ export default function IndVarDropDown({setIndVar, indVar, dataset, depVar}:
 
 
   return (
-    <FormControl fullWidth>
+    <FormControl style={{
+      width: '25rem',
+    }}>
       <InputLabel id="demo-simple-select-label">Independent Variables</InputLabel>
       <Select
         labelId="demo-simple-select-label"
@@ -42,8 +44,8 @@ export default function IndVarDropDown({setIndVar, indVar, dataset, depVar}:
             })
             return out;
         })()}
-       
+
       </Select>
-    </FormControl>  
+    </FormControl>
   )
 }

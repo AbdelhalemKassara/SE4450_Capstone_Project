@@ -6,7 +6,7 @@
   gap: 2rem;
   align-items: center;
   height: 6rem;
-  z-index: 1000;
+  z-index: 9999;
   background: rgb(255, 255, 255);
   width: 100%;
   box-shadow: 0px 0px 10px rgb(158, 158, 158);
@@ -45,8 +45,9 @@
   display: flex;
   height: 6rem;
   flex-shrink: 0;
-  width: 100%;
+  width: 100vw;
   box-shadow: 0px 0px 10px rgb(158, 158, 158);
+  z-index: 9999;
   background-color: white;
   >.footer_text{
     color: black;

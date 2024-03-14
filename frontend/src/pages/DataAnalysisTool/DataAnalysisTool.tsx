@@ -35,25 +35,25 @@ export default function DataAnalysisTool(): JSX.Element {
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
   //these are used for the temporary display output (might not )
   const [indVarAnswrCnt, setIndVarAnswrCnt] = useState<Map<string, number> | undefined>();
-  
+
   useEffect(() => {
-    if(dataset && indVar) {
+    if (dataset && indVar) {
       datasetQ.getAnswersCount(dataset, indVar).then((val: Map<string, number>) => {
         setIndVarAnswrCnt(val);
-      });  
+      });
     }
 
   }, [dataset, indVar]);
 
 
   useEffect(() => {
-    if(dataset && depVar && selectedButton && indVar) {
+    if (dataset && depVar && selectedButton && indVar) {
       datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
         const barData: [string, number | string][] = [['Category', 'Count']];
         val?.forEach((value, key) => {
           barData.push([`${key} (${value})`, value]);
         });
-        
+
         setData(barData);
       });
     }
@@ -86,56 +86,58 @@ export default function DataAnalysisTool(): JSX.Element {
   return (
     <div id="data_page">
       <CdemHeader />
-      <div className='text'>
-        <div className="container">
+      <div className='analysis_container'>
+        <div className="filter_container">
           <SelectionTool dataset={dataset} setDataset={setDataset} />
-          <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar}/>
+          <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar} />
 
-          <FilterButtons indVarAnswrCnt={indVarAnswrCnt} setSelectedButton={setSelectedButton}/>
-          
+          <FilterButtons indVarAnswrCnt={indVarAnswrCnt} setSelectedButton={setSelectedButton} />
+
           <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
+          <button
+            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
+            onClick={Export}>
+            Export PDF
+          </button>
+          <FormControl>
+            <FormLabel id="map-control-group">Map Type</FormLabel>
+            <RadioGroup
+              aria-labelledby="map-control-group"
+              name="cmap-control-group"
+              value={mapType}
+              onChange={handleChange}
+            >
+              <FormControlLabel value="province" control={<Radio />} label="Province" />
+              <FormControlLabel value="riding" control={<Radio />} label="Riding" />
+            </RadioGroup>
+          </FormControl>
         </div>
-        <StatsBar dataset={dataset} depVar={depVar} />
-        <button
-          className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
-          onClick={Export}>
-          Export PDF
-        </button>
-        <div id='my-table'>
-          <Chart width={'100%'} chartType='BarChart' data={data}
-            options={{
-              colors: chartColors,
-              legend: { position: 'top' }
-            }}
+        <div className='data_container'>
+          <StatsBar dataset={dataset} depVar={depVar} />
 
-          />
-          <Chart width={'100%'} chartType='PieChart' data={data}
-            options={{
-              colors: chartColors,
-              legend: { position: 'top' }
-            }}
-          />
-        
-        <div id='data_map_component'>
-          <div>
-            <FormControl>
-              <FormLabel id="map-control-group">Map Type</FormLabel>
-              <RadioGroup
-                aria-labelledby="map-control-group"
-                name="cmap-control-group"
-                value={mapType}
-                onChange={handleChange}
-              >
-                <FormControlLabel value="province" control={<Radio />} label="Province" />
-                <FormControlLabel value="riding" control={<Radio />} label="Riding" />
-              </RadioGroup>
-            </FormControl>
+          <div id='data_map_component'>
+            <MapComponent mapData={mapData} mapType={mapType} />
           </div>
-          <MapComponent mapData={mapData} mapType={mapType} />
+
+          <div id='my-table'>
+            <Chart width={'100%'} chartTcaype='BarChart' data={data}
+              options={{
+                colors: chartColors,
+                legend: { position: 'top' }
+              }}
+
+            />
+            <Chart width={'100%'} chartType='PieChart' data={data}
+              options={{
+                colors: chartColors,
+                legend: { position: 'top' }
+              }}
+            />
+          </div>
+
         </div>
-      </div>
       </div>
       {< CDemFooter />}
-    </div>
+    </div >
   );
 }
