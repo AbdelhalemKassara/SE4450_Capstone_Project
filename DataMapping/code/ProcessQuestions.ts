@@ -9,28 +9,27 @@ export class ProcessQuestions {
   public addQuestion(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean, dataset: DatasetFetchWrapper, year: string) {
 
     let type: string = qsfFile.getQuestionType(questionId);
-    
-    let split: string[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
-    split.pop();
-    let type1: string = qsfFile.getQuestionType(split.join());
-
-    if(type === "Slider") {
-      console.log("There is a Slider question. original code ", questionId, year);
-
-      //the last _# needs to be remove inorder to process this type of file (There might be the filtering part that will exculde because of this)
-    }
-
  
-    //skip over the ones that don't exist in the qsf or don't have a type we can process
-    if(!type || !(type === "MC" || type === "TE")) {
-      // console.log(`We couldn't process ${questionId} as it's type is something that we can't process (haven't implemented) or is undefined.`)
-      return;
-    }
-
+    //only process the ones we have implemented the code for processing (these should be enouph unless there are more question types added to qualtrics)
     if(type === "MC") {
       this.processMC(mappingFile, qsfFile, questionId, addToIndVar);
+      return;
     } else if(type === "TE") {
       this.processTE(mappingFile, qsfFile, questionId, addToIndVar, dataset);
+      return;
+    } 
+
+    //remove the last _# from the id
+    let split: string[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+    split.pop();
+    questionId = split.join('');
+    type = qsfFile.getQuestionType(questionId);
+
+
+    if(type === "Slider") {
+      // console.log(questionId);
+    } else if(type === "Matrix") {
+      // console.log(questionId);
     }
 
   }
