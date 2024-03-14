@@ -26,6 +26,8 @@ export default function DataAnalysisTool(): JSX.Element {
   const [dataset, setDataset] = useState<string | undefined>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
   const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
+  const [mapType, setMapType] = useState<string>('province');
+  const [mapData, setMapData] = useState({ province: {}, riding: [] })
 
   const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
@@ -59,6 +61,17 @@ export default function DataAnalysisTool(): JSX.Element {
     }
   }, [dataset, depVar, indVar, selectedButton]);
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMapType((event.target as HTMLInputElement).value);
+  };
+
+  const handleChangeDataSet = (e: string) =>{
+    console.log(e)
+    setDataset(e);
+    setDepVar(undefined)
+    setIndVar(undefined)
+  }
+
 
 
   function Export() {
@@ -88,7 +101,7 @@ export default function DataAnalysisTool(): JSX.Element {
       <CdemHeader />
       <div className='analysis_container'>
         <div className="filter_container">
-          <SelectionTool dataset={dataset} setDataset={setDataset} />
+          <SelectionTool dataset={dataset} setDataset={handleChangeDataSet} />
           <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar} />
 
           <FilterButtons indVarAnswrCnt={indVarAnswrCnt} setSelectedButton={setSelectedButton} />
@@ -116,11 +129,11 @@ export default function DataAnalysisTool(): JSX.Element {
           <StatsBar dataset={dataset} depVar={depVar} />
 
           <div id='data_map_component'>
-            <MapComponent mapData={mapData} mapType={mapType} />
+            {/* <MapComponent mapData={mapData} mapType={mapType} /> */}
           </div>
 
           <div id='my-table'>
-            <Chart width={'100%'} chartTcaype='BarChart' data={data}
+            <Chart width={'100%'} chartType='BarChart' data={data}
               options={{
                 colors: chartColors,
                 legend: { position: 'top' }
