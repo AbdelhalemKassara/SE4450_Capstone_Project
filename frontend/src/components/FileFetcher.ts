@@ -22,7 +22,6 @@ class FileFetcher {
     await this.getDatasetIds();
     //after we get the datasetIds get the datasetId-mapping and the datasetFileNames
     await this.getDatasetFileNames();
-    await this.validateCache();//this will remove outdated mapping files from the database
 
     //this should use the fetchJsonFileWithCache function once it is implemented
     this.getMappingFiles();
@@ -89,7 +88,26 @@ class FileFetcher {
     return output;
   }
 
+  //this doesn't change the array length so we can compare two differnt columns together
+  public async getColValsFullList(datasetId: String, colId: String): Promise<(undefined | String)[]> {
+    let rawColValues: String[] = await this.getRawColVals(datasetId, colId);
+    let answerMap: Map<String, String> = await this.getAnswerMapping(datasetId, colId);
 
+    let output: (undefined | String)[] = [];
+
+    rawColValues.forEach((answerId: String) => {
+      let answer = answerMap.get(answerId);
+      if(answer) {
+        output.push(answer);
+      } else if(answerId === "-99" || answerId === undefined) {
+        output.push(undefined);
+      } else {
+        throw new Error(`We couldn't find the mapping for datasetId ${datasetId} colId ${colId} and answerId ${answerId}.`);
+      }
+    });
+    
+    return output;
+  }
 
   /*private functions*/
 
@@ -221,18 +239,6 @@ class FileFetcher {
     });
   }
 
-
-  //fetch automatically caches the files but it doesn't behave how you want then you can implement caching with these functions
-  private async validateCache() {
-
-  }
-  private fetchJsonFileWithCache<T>(url: string): Promise<T> {
-    //first check the dirNames.json for the time (and if there are any datsets removed), and if that time is different than the locally stored version.
-    //for now use this info only to check if a year needs to be removed or added
-
-    //then check the the locally stored datasetFileNames.json for the times and compare it with the new one that has been fetched (includes the datasetId-mapping.json) and remove the datasets that aren't valid anymore.
-    
-  } 
 
   private fetchJsonFile<T>(url: string): Promise <T> {
     return fetch(url)

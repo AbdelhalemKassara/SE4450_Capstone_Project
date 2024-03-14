@@ -82,8 +82,17 @@ class DatasetQuery {
 
     return out;
   }
+  public async getAnswerCount(datasetId: String, questionId: String, answerText: String) : Promise<number> {
+    let out: number | undefined = (await this.getAnswersCount(datasetId, questionId)).get(answerText);
 
-  public async getAnswers(datasetId: String, questionId: String): Promise<AnswerText[]> {
+    if(out) {
+      return out;
+    } else {
+      throw new Error(`Either the datasetId (${datasetId}) questionId (${questionId}) or answerText (${answerText}) is an invalid value getting passed into the getAnswerCount function.`);
+    }
+
+  }
+  public async getAnswers(datasetId: String, questionId: String): Promise<String[]> {
     let colVals: AnswerText[] = await this.fileFetcher.getColsVals(datasetId, questionId);
 
     let map:Map<AnswerText, null> = new Map<AnswerText, null>();
@@ -107,6 +116,29 @@ class DatasetQuery {
   }
 
 
+  public async getFilteredAnswersCount(datasetId: String, depQuestId: String, depAnswer: String, indQuestId: String): Promise<Map<AnswerText, Count>> {
+    let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
+
+    //these will have the same length
+    let depAnswers: (undefined | String)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
+    let indAnswers: (undefined | String)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+
+    for(let i = 0; i < depAnswers.length; i++) {
+      if(depAnswers[i] === depAnswer && indAnswers[i]) {
+        //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
+        let id: String = indAnswers[i];
+        let curCount: number | undefined = out.get(id);
+        
+        if(curCount) {
+          out.set(id, curCount + 1);
+        } else {
+          out.set(id, 1);
+        }
+      }
+    }
+
+    return out;
+  }
 
 }
 
