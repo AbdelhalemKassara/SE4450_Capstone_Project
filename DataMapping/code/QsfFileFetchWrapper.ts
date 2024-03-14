@@ -9,8 +9,8 @@ export class QsfFileFetchWrapper {
 
   private qsfFile: any;
   private parametersFile: paramters;
-  private questIDToObj = new Map<String, any>();
-  private questionIdsFromQsfRmIndex0 = new Map<String, String>();
+  private questIDToObj = new Map<string, any>();
+  private questionIdsFromQsfRmIndex0 = new Map<string, string>();
 
   constructor(qsfFilePath: PathLike, parametersFile: PathLike) {
     let file:any = fs.readFileSync(qsfFilePath).toString();
@@ -32,7 +32,7 @@ export class QsfFileFetchWrapper {
     this.hashRemovedFirstSegQuestId();
   }
 
-  public getMainQuestion(questionId: String): String | undefined {
+  public getMainQuestion(questionId: string): string | undefined {
     if(this.questIDToObj.has(questionId)) {
       let question: string = this.questIDToObj.get(questionId).Payload.QuestionText;
       
@@ -67,7 +67,7 @@ export class QsfFileFetchWrapper {
 
     return questionText;
   }
-  public getChoiceOrderArr(questionId: String): String[] | undefined {
+  public getChoiceOrderArr(questionId: string): string[] | undefined {
     if(this.questIDToObj.has(questionId)) {
       return this.questIDToObj.get(questionId).Payload.ChoiceOrder;
     } else {
@@ -75,7 +75,7 @@ export class QsfFileFetchWrapper {
     }
   }
 
-  public getAnswerMappingObj(questionId: String): any {
+  public getAnswerMappingObj(questionId: string): any {
     if(this.questIDToObj.has(questionId)) {
       return this.questIDToObj.get(questionId).Payload.Choices;
     } else {
@@ -83,7 +83,7 @@ export class QsfFileFetchWrapper {
     }
   }
 
-  public getQuestionType(questionId: String) {
+  public getQuestionType(questionId: string) {
     if(this.questIDToObj.has(questionId)) {
       return this.questIDToObj.get(questionId).Payload.QuestionType;
     } else {
@@ -92,9 +92,9 @@ export class QsfFileFetchWrapper {
   }
 
   //for now this will ignore both metadata and question to ignore as we aren't using the metadata
-  public removeQuestionToIgnoreFromList(questionIds: String[]): String[] {
-    questionIds = questionIds.filter((questionId: String) => {
-      let split: String[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+  public removeQuestionToIgnoreFromList(questionIds: string[]): string[] {
+    questionIds = questionIds.filter((questionId: string) => {
+      let split: string[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
       
       //ignores everything that contins _DO (at the end) since that is just the display order
       if(split.includes("_DO")) {
@@ -108,7 +108,7 @@ export class QsfFileFetchWrapper {
       // }
 
       for(let i = 0; i < this.parametersFile.variablesToIgnore.length; i++) {
-        let varIgnore: String = this.parametersFile.variablesToIgnore[i];
+        let varIgnore: string = this.parametersFile.variablesToIgnore[i];
 
         if(varIgnore === questionId) {
           return false;
@@ -116,7 +116,7 @@ export class QsfFileFetchWrapper {
       }
 
       for(let i = 0; i < this.parametersFile.metadata.length; i++) {
-        let metadataVar: String = this.parametersFile.metadata[i];
+        let metadataVar: string = this.parametersFile.metadata[i];
         
         if(metadataVar === questionId) {
           return false;
@@ -129,9 +129,9 @@ export class QsfFileFetchWrapper {
     return questionIds;
   }
 
-  public reformatNecissaryQuestions(questionIds: String[], dataset: DatasetFetchWrapper): String[] {
-    let out: any = questionIds.map((questionId: String) => {
-      let split: String[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+  public reformatNecissaryQuestions(questionIds: string[], dataset: DatasetFetchWrapper): string[] {
+    let out: any = questionIds.map((questionId: string) => {
+      let split: string[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
       split[0] = "";
 
       if(this.questIDToObj.has(questionId)) {
@@ -146,11 +146,11 @@ export class QsfFileFetchWrapper {
       }
     });
 
-    out = out.filter((questionId: String) => questionId !== "");//remove the question that have a warning
+    out = out.filter((questionId: string) => questionId !== "");//remove the question that have a warning
 
     return out;
   }
-  public getIndependentVariables(): String[] {
+  public getIndependentVariables(): string[] {
     return this.parametersFile.independentVariables;
   }
 
@@ -165,10 +165,10 @@ export class QsfFileFetchWrapper {
 
   private hashRemovedFirstSegQuestId() {
     //get ids without the first ds##, pes##, or dc##
-    let questionIdsFromQsf: String[] = Array.from(this.questIDToObj.keys());
+    let questionIdsFromQsf: string[] = Array.from(this.questIDToObj.keys());
 
-    questionIdsFromQsf.forEach((questionId: String) => {
-      let split: String[] = questionId.split(/(?=_)/);
+    questionIdsFromQsf.forEach((questionId: string) => {
+      let split: string[] = questionId.split(/(?=_)/);
 
       split[0] = "";
       this.questionIdsFromQsfRmIndex0.set(split.join(), questionId);

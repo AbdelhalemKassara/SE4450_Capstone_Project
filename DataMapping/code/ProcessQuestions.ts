@@ -6,13 +6,13 @@ export class ProcessQuestions {
   constructor() {
   }
 
-  public addQuestion(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: String, addToIndVar: Boolean, dataset: DatasetFetchWrapper, year: string) {
+  public addQuestion(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean, dataset: DatasetFetchWrapper, year: string) {
 
-    let type: String = qsfFile.getQuestionType(questionId);
+    let type: string = qsfFile.getQuestionType(questionId);
     
-    let split: String[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+    let split: string[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
     split.pop();
-    let type1: String = qsfFile.getQuestionType(split.join());
+    let type1: string = qsfFile.getQuestionType(split.join());
 
     if(type === "Slider") {
       console.log("There is a Slider question. original code ", questionId, year);
@@ -42,7 +42,7 @@ export class ProcessQuestions {
   }
   
   //private functions
-  private processMC(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: String, addToIndVar: Boolean) {
+  private processMC(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean) {
     //create the current questions mapping
     let curQuestMap: MC = {type: "MC", mainQuestion: "", answersMapping: {}};
     
@@ -62,10 +62,10 @@ export class ProcessQuestions {
     if(!temp) {
       console.log(`Warning: Question ${questionId} doesn't have a ChoiceOrder array. (The answers may be mapped incorrectly).`);
     } else {
-      let choiceOrder: String[] = temp;
+      let choiceOrder: string[] = temp;
       let newAnswerMapping: AllQuestionTypes = {};
 
-      choiceOrder.forEach((choiceId: String, i: number) => {
+      choiceOrder.forEach((choiceId: string, i: number) => {
         newAnswerMapping[(i + 1).toString()] = curQuestMap.answersMapping[choiceId.valueOf()];
       });
 
@@ -74,7 +74,7 @@ export class ProcessQuestions {
 
     //gets the mainQuestion 
     temp = qsfFile.getMainQuestion(questionId);
-    let mainQuestion: String = temp;
+    let mainQuestion: string = temp;
     if(!temp) {
       console.log(`Warning: Question ${questionId} doesn't have a MainQuestion attribute. (i.e. there wasn't any question text found.)`);
     } else {
@@ -82,7 +82,7 @@ export class ProcessQuestions {
     }
   }
 
-  private processTE(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: String, addToIndVar: Boolean, dataset: DatasetFetchWrapper) {
+  private processTE(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean, dataset: DatasetFetchWrapper) {
     //make up ids and swap them with the values in the dataset
     let curQuestMap: TE = {type: "TE", mainQuestion: "", answersMapping: {}};
 
@@ -94,12 +94,12 @@ export class ProcessQuestions {
     }
 
     //get the question values
-    let questionValues: String[] = dataset.getDatasetColumn(questionId);
+    let questionValues: string[] = dataset.getDatasetColumn(questionId);
 
     //remove the duplicate question values
-    let hashQuestionVals = new Map<String, null>();
+    let hashQuestionVals = new Map<string, null>();
 
-    let filteredQuestionValues: String[] = questionValues.filter((value: String) => {
+    let filteredQuestionValues: string[] = questionValues.filter((value: string) => {
       let has: Boolean = hashQuestionVals.has(value);
       hashQuestionVals.set(value, null);
 
@@ -107,19 +107,19 @@ export class ProcessQuestions {
     });
 
     let obj: any = {};
-    let mapValToId: Map<String, String> = new Map<String, String>();
+    let mapValToId: Map<string, string> = new Map<string, string>();
 
     //generate the choice order object
-    filteredQuestionValues.forEach((value: String, i) => {
+    filteredQuestionValues.forEach((value: string, i) => {
       //+1 and .Display to stay consistant with MC mapping
-      let id: String = (i+1).toString();
+      let id: string = (i+1).toString();
 
       obj[id.valueOf()] = {Display: value};
       mapValToId.set(value, id);
     });
 
     //gets the mainQuestion 
-    let mainQuestion: String | undefined = qsfFile.getMainQuestion(questionId);
+    let mainQuestion: string | undefined = qsfFile.getMainQuestion(questionId);
 
     if(!mainQuestion) {
       console.log(`Warning: Question ${questionId} doesn't have a MainQuestion attribute. (i.e. there wasn't any question text found.)`);
@@ -131,7 +131,7 @@ export class ProcessQuestions {
     dataset.updateQuestValues(questionId, mapValToId);
   }
 
-  private processMatrix(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: String, addToIndVar: Boolean) {
+  private processMatrix(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean) {
 
   }
 

@@ -42,21 +42,21 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
   let dataset: DatasetFetchWrapper = new DatasetFetchWrapper(csvFilePath);
 
   //get the question ids and loop over them
-  let depVars: String[] = dataset.getQuestionIds();
+  let depVars: string[] = dataset.getQuestionIds();
   depVars = qsfFile.removeQuestionToIgnoreFromList(depVars);
   depVars = qsfFile.reformatNecissaryQuestions(depVars, dataset);
 
-  let indVars: String[] = qsfFile.getIndependentVariables();
+  let indVars: string[] = qsfFile.getIndependentVariables();
   indVars = qsfFile.removeQuestionToIgnoreFromList(indVars);
   indVars = qsfFile.reformatNecissaryQuestions(indVars, dataset);
 
-  let hashIndVars: Map<String, any> = new Map<String, any>();
+  let hashIndVars: Map<string, any> = new Map<string, any>();
 
-  indVars.forEach((indVar: String) => {
+  indVars.forEach((indVar: string) => {
     hashIndVars.set(indVar, null);
   });
 
-  depVars = depVars.filter((depVar: String) => !hashIndVars.has(depVar));
+  depVars = depVars.filter((depVar: string) => !hashIndVars.has(depVar));
 
   //loop over the dependent variables
   for(let d = 0; d < depVars.length; d++) {
@@ -78,20 +78,20 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
   //write the dataset files
   let curYearFiles: FileStruct[] = new Array();
 
-  let newDataset : String[][] = dataset.getDatasetWithSwappedRowAndCol();
+  let newDataset : string[][] = dataset.getDatasetWithSwappedRowAndCol();
 
 
   //create a hashmap to test if a dependent variable or independent variable is in the mapping file (some might not but this greatly reduces the amount that there is)
-  let hashAllQuestIds: Map<String, null> = new Map<String, null>();
-  indVars.forEach((indVar: String) => {
+  let hashAllQuestIds: Map<string, null> = new Map<string, null>();
+  indVars.forEach((indVar: string) => {
     hashAllQuestIds.set(indVar, null);
   });
-  depVars.forEach((depVar: String) => {
+  depVars.forEach((depVar: string) => {
     hashAllQuestIds.set(depVar, null);
   });
 
   //write the colun files
-  newDataset.forEach((column: String[]) => {
+  newDataset.forEach((column: string[]) => {
     if(column[0] !== "" && column[0] !== " " && hashAllQuestIds.has(column[0])) {
       let fileName: string = column[0] + ".json";
       fileManager.writeFile(column, [datasetYearsDir[i]], fileName);

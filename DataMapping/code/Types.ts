@@ -1,8 +1,8 @@
 //parameters file
 export type paramters = {
-  independentVariables : String[];
-  metadata : String[];
-  variablesToIgnore : String[];
+  independentVariables : string[];
+  metadata : string[];
+  variablesToIgnore : string[];
 };
 
 //mapping file
@@ -17,7 +17,7 @@ export type AllQuestionTypes =   {
 
 type Question = {
     type: "MC" | "TE" | "Matrix" | "Slider";//types in the paramter file
-    mainQuestion: String;
+    mainQuestion: string;
     answersMapping: any;
 };
 
@@ -32,7 +32,7 @@ export interface TE extends Question{
 export interface Matrix extends Question {
   type: "Matrix";
   answersMapping: any;
-  subQuestion: String;
+  subQuestion: string;
 }
 
 export interface Slider extends Question {
@@ -43,12 +43,12 @@ export interface Slider extends Question {
 
 //dataset file
 export type Dataset = {
-  data: String[][];
+  data: string[][];
   errors: any[];
   meta: any;
 };
 
 export type FileStruct = {
-  name : String;
+  name : string;
   date: number;
 };
