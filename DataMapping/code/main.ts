@@ -60,12 +60,12 @@ for(let i = 0; i < datasetYearsDir.length; i++) {
 
   //loop over the dependent variables
   for(let d = 0; d < depVars.length; d++) {
-    processQuest.addQuestion(mappingFile, qsfFile, depVars[d], false, dataset);
+    processQuest.addQuestion(mappingFile, qsfFile, depVars[d], false, dataset, datasetYearsDir[i]);
   } 
 
   //loop over the independent variables
   for(let d = 0; d < indVars.length; d++) {
-    processQuest.addQuestion(mappingFile, qsfFile, indVars[d], true, dataset);
+    processQuest.addQuestion(mappingFile, qsfFile, indVars[d], true, dataset, datasetYearsDir[i]);
   }
 
 

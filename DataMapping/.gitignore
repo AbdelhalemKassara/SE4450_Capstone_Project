@@ -3,3 +3,5 @@ dist
 *.csv
 *.qsf
 *.dta
+
+outputFiles/

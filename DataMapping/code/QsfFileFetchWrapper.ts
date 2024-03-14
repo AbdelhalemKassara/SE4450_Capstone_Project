@@ -35,11 +35,12 @@ export class QsfFileFetchWrapper {
   public getMainQuestion(questionId: String): String | undefined {
     if(this.questIDToObj.has(questionId)) {
       let question: string = this.questIDToObj.get(questionId).Payload.QuestionText;
+      
+      //cleaining up the string
       question = stringStripHtml.stripHtml(question).result;
       question = question.replace('\n', ' ');
-      console.log(question);
       question = this.removeTemplateLiterals(question);
-      console.log(question);
+
       return question; 
     } else {
       return undefined;

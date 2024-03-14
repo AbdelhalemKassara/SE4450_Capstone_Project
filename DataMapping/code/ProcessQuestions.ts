@@ -6,11 +6,25 @@ export class ProcessQuestions {
   constructor() {
   }
 
-  public addQuestion(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: String, addToIndVar: Boolean, dataset: DatasetFetchWrapper) {
+  public addQuestion(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: String, addToIndVar: Boolean, dataset: DatasetFetchWrapper, year: string) {
 
     let type: String = qsfFile.getQuestionType(questionId);
+    
+    let split: String[] = questionId.split(/(?=_)/);//spilits in the form "asdf_asdf_asdf" to "asdf", "_asdf", "_asdf"
+    split.pop();
+    let type1: String = qsfFile.getQuestionType(split.join());
+
     if(type === "Slider") {
-      console.log("There is a Slider question.");
+      console.log("There is a Slider question. original code ", questionId, year);
+
+      //the last _# needs to be remove inorder to process this type of file (There might be the filtering part that will exculde because of this)
+    }
+
+
+    if(type1 === "Slider") {
+      console.log("There is a Slider question. not original code ", questionId, year);
+
+      //the last _# needs to be remove inorder to process this type of file (There might be the filtering part that will exculde because of this)
     }
 
     //skip over the ones that don't exist in the qsf or don't have a type we can process
@@ -118,6 +132,10 @@ export class ProcessQuestions {
   }
 
   private processMatrix(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: String, addToIndVar: Boolean) {
+
+  }
+
+  private processSlider() {
 
   }
 
