@@ -1,10 +1,10 @@
-import { MappingFileName, DatasetName, Dataset } from "./NewTypes";
+import { MappingFileName, DatasetName, Dataset, QuestionText } from "./NewTypes";
 let instance : FileFetcher;
 import { FileStruct, Mapping, AllQuestionTypes, MC, TE, Matrix, Slider } from "../../../DataMapping/code/Types";
  
 class FileFetcher {
   //note none of the ids have a .json or any file ending
-  private mappingsPromise: Map<DatasetName, Promise<Mapping>> = new Map<MappingFileName, Promise<Mapping>>();// key is dataset year
+  private mappingsPromise: Map<DatasetName, Promise<Mapping>> = new Map<DatasetName, Promise<Mapping>>();// key is dataset year
   private datasetsPromise: Map<DatasetName, Dataset> = new Map();//key is dataset year, string[column][row]
   
   private datasetIdsPromise !: Promise<FileStruct[]>;
@@ -111,6 +111,18 @@ class FileFetcher {
 
   public async getFeduid(datasetId: string): Promise<string[]> {
     return this.getRawColVals(datasetId, "feduid");
+  }
+
+  public async getAnswerIds(datasetid: string, colId: string): Promise<Map<QuestionText, number>> {
+    let question: MC | TE | Matrix | Slider = await this.getAnswerMappingObj(datasetid, colId);
+    let out: Map<QuestionText, number> = new Map<QuestionText, number>();
+
+    for(let [key, value] of Object.entries(question.answersMapping)) {
+      //@ts-ignore: value.Display will always be defined
+      out.set(value.Display, key);
+    }
+
+    return out;
   }
 
   /*private functions*/
