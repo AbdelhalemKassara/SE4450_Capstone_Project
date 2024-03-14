@@ -9,9 +9,15 @@ import CDemFooter from "../HomePage/Footer/CdemFooter";
 import { Chart } from 'react-google-charts';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import MapComponent from "../MapComponent/MapComponent";
+
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 import "./index.scss";
-
 
 export default function DataAnalysisTool(): JSX.Element {
   const database = useContext(DatabaseContext);
@@ -22,6 +28,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [indVar, setIndVar] = useState<String>(); //demographic variable
 
   const [data, setData] = useState(false);
+  const [mapType, setMapType] = useState<string>('province');
 
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string>("");
@@ -83,6 +90,10 @@ export default function DataAnalysisTool(): JSX.Element {
     setSelectedButton(value);
 
   }
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMapType((event.target as HTMLInputElement).value);
+  };
+
 
   function Export() {
 
@@ -160,6 +171,24 @@ export default function DataAnalysisTool(): JSX.Element {
             }}
           />
         </div>
+        <div id='data_map_component'>
+          <div>
+            <FormControl>
+              <FormLabel id="map-control-group">Map Type</FormLabel>
+              <RadioGroup
+                aria-labelledby="map-control-group"
+                name="cmap-control-group"
+                value={mapType}
+                onChange={handleChange}
+              >
+                <FormControlLabel value="province" control={<Radio />} label="Province" />
+                <FormControlLabel value="riding" control={<Radio />} label="Riding" />
+              </RadioGroup>
+            </FormControl>
+          </div>
+          <MapComponent dataset={dataset} mapType={mapType} />
+        </div>
+
       </div>
       {< CDemFooter />}
     </div>

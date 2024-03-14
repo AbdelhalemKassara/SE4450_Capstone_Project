@@ -8,61 +8,74 @@ import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
 import province from './province.json'
 import { electoralRidings, section } from './helper'
 
-const MapComponent = () => {
+const MapComponent = ({ dataset, mapType }) => {
   const database = useContext(DatabaseContext);
-  const [dataset, setDataset] = useState<string>("2022-dataset.json"); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
-  const [depVar, setDepVar] = useState<string>("dc22_democratic_sat"); //dependent variable
-  const [indVar, setIndVar] = useState<string>("dc22_age_in_years"); //demographic variable
+
   const [provinceCount, setProvinceCount] = useState({})
-  const [currentProvince, setCurrentProvince] = useState({});
+  const [currentHover, setCurrentHover] = useState({});
   const [selectedLayer, setSelectedLayer] = useState({})
   const [selectedStyle, setSelectedStyle] = useState({})
   const [ridingCount, setRidingCount] = useState({})
-  const elec = { ...electoralRidings() };
-  const provinceGeoData = { ...province }
   const [heatValues, setHeatValues] = useState([])
-  const multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-
-
-
+  const [maxValue, setMaxValue] = useState({ province: 0, riding: 0 })
+  const [provinceMapData, setProvinceMapData] = useState({ ...province })
+  const [ridingMapData, setRidingMapData] = useState({ ...electoralRidings() })
+  const [hasData, setHasData] = useState<boolean>(false)
+  const multipliers = [0, 0.05, 0.1125, 0.225, 0.3, 0.4, 0.5, 0.6, 0.7, 0.85]
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setProvinceCount(await database.getProvinceCount("2022-dataset.json", "dc22_province"))
-        setRidingCount(await database.getRidingCount("2022-dataset.json"))
+        const provinceCountData = await database.getProvinceCount(dataset, "dc22_province");
+        setProvinceCount(provinceCountData);
 
+        const ridingCountData = await database.getRidingCount(dataset);
+        setRidingCount(ridingCountData);
+
+        let maxProvinceCount = 0;
+        let updatedProvinceMapData = [...provinceMapData.features];
         Object.values(provinceCount).forEach((v) => {
-          for (let i = 0; i < provinceGeoData?.features.length; i++) {
-            const provinceProperty = provinceGeoData?.features?.[i]?.properties;
+          for (let i = 0; i < provinceMapData?.features.length; i++) {
+            const provinceProperty = updatedProvinceMapData?.[i]?.properties;
             if (v?.province_id && provinceProperty?.province_id == v?.province_id) {
-              provinceProperty.density = v.total
+              maxProvinceCount = Math.max(maxProvinceCount, v.total)
+              provinceProperty.density = v.total;
+              break;
             }
           }
         })
-        let maxV = 0
+        let maxRidingCount = 0
+        let updatedRidingMapData = [...ridingMapData.features];
         Object.entries(ridingCount).forEach(([key, value]) => {
-          maxV = Math.max(maxV, value)
-          for (let i = 0; i < elec.features.length; i++) {
-            const elecProperties = elec?.features?.[i]?.properties;
+          for (let i = 0; i < ridingMapData.features.length; i++) {
+            const elecProperties = updatedRidingMapData?.[i]?.properties;
             if (key && elecProperties?.feduid == key) {
-              elecProperties.density = value
+              maxRidingCount = Math.max(maxRidingCount, value);
+              elecProperties.density = value;
+              break;
             }
           }
         })
+        setRidingMapData({ ...ridingMapData, features: [...updatedRidingMapData] })
+        setProvinceMapData({ ...provinceMapData, features: [...updatedProvinceMapData] })
+        setMaxValue({ ...maxValue, riding: maxRidingCount, province: maxProvinceCount })
+        setHasData(true)
+        console.log(hasData)
 
-        const multipliersMax = multipliers.map((val) => {
-          return Math.ceil(val * maxV)
-        });
-
-        setHeatValues(multipliersMax);
       } catch (error) {
         console.error('Error fetching data: ', error);
       }
     };
     fetchData();
-  }, []);
-  console.log(elec)
+  }, [dataset]);
+
+  useEffect(() => {
+    const multipliersMax = multipliers.map((val) => {
+      return Math.ceil(val * maxValue[mapType])
+    });
+    console.log(maxValue)
+    setHeatValues(multipliersMax);
+  }, [mapType, provinceMapData, ridingMapData])
 
   useEffect(() => {
     if (selectedLayer && selectedLayer.setStyle) {
@@ -84,23 +97,23 @@ const MapComponent = () => {
   }
   const getColor = (value) => {
     // You can customize this function based on your data
-    return value > heatValues[8]
+    return value > heatValues[9]
       ? red[900]
-      : value > heatValues[7]
+      : value > heatValues[8]
         ? red[800]
-        : value > heatValues[6]
+        : value > heatValues[7]
           ? red[700] :
-          value > heatValues[5]
+          value > heatValues[6]
             ? orange[900]
-            : value > heatValues[4]
+            : value > heatValues[5]
               ? amber[900]
-              : value > heatValues[3]
+              : value > heatValues[4]
                 ? amber[700]
-                : value > heatValues[2]
+                : value > heatValues[3]
                   ? amber[500]
-                  : value > heatValues[1]
+                  : value > heatValues[2]
                     ? amber[300] :
-                    value > heatValues[0] ?
+                    value > heatValues[1] ?
                       amber[100]
                       : amber[50];
   };
@@ -114,7 +127,7 @@ const MapComponent = () => {
       dashArray: '',
       fillOpacity: 0.7,
     })
-    setCurrentProvince({ name: properties?.name, count: properties?.density })
+    setCurrentHover({ name: properties?.name, count: properties?.density })
   };
 
   const resetHighlight = (e) => {
@@ -143,30 +156,31 @@ const MapComponent = () => {
     layer.bindPopup(popupContent);
   };
 
-
   return (
     <div id='map_box'>
-      <MapContainer center={[56.505, -92.09]}
-        zoom={4}
-        scrollWheelZoom={false}
-      >
-        <TileLayer
-          attribution='<a href="https://www.jawg.io" target="_blank">© Jawg</a> | © OpenStreetMap contributors'
-          url='https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=bqE3ggBOk5o1bJSHS5niKahBnM7ubg2mdUHa13PP33GcCN5MJ1D254LcGz6x6W32'
-        />
-        {provinceGeoData && (
+      {hasData &&
+        <MapContainer center={[56.505, -92.09]}
+          zoom={4}
+          scrollWheelZoom={false}
+        >
+          <TileLayer
+            attribution='<a href="https://www.jawg.io" target="_blank">© Jawg</a> | © OpenStreetMap contributors'
+            url='https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=bqE3ggBOk5o1bJSHS5niKahBnM7ubg2mdUHa13PP33GcCN5MJ1D254LcGz6x6W32'
+          />
           <GeoJSON
-            data={elec}
+            key={JSON.stringify(mapType === "province" ? provinceMapData : ridingMapData)}
+            data={mapType === "province" ? provinceMapData : ridingMapData}
             style={style}
             onEachFeature={onEachFeature}
           />
-        )}
-        <Legend getColor={getColor} heatValues={heatValues} />
-        <InfoControl currentProvince={currentProvince} />
+          <Legend getColor={getColor} heatValues={heatValues} />
+          <InfoControl currentHover={currentHover} mapType = {mapType}/>
 
 
-      </MapContainer>
-    </div>
+
+        </MapContainer>
+      }
+    </div >
   );
 };
 
