@@ -320,6 +320,7 @@ class csvQuery {
       for (let i = 1; i < data.length; i++) {
         // Get the current answer for the specified question.
         let curAnswer = valueToAnswerId.get(data[i][col]);
+        let answerId = data[i][col]; // Assuming the answer ID is the same as the data value.
         let provinceAnswer = valueToProvinceId.get(data[i][provinceCol]);
 
         console.log(curAnswer)
@@ -354,12 +355,23 @@ class csvQuery {
 
         // Count occurrences of each answer and store the counts in the 'out' object.
         if (out[curAnswer]) {
+<<<<<<< Updated upstream
           console.log(out)
           out[curAnswer]++;
         } else if (curAnswer !== undefined) {
           // If the answer is not undefined, initialize the count to 1.
           out[curAnswer] = 1;
         }
+=======
+          // If the answer exists in 'out', increase its count.
+          out[curAnswer].count++;
+          // Overwrite the IDs property with the integer value of the answerId.
+          out[curAnswer].id = answerId;
+      } else if (curAnswer !== undefined) {
+          // If the answer is not undefined, initialize the count to 1 and set the ID.
+          out[curAnswer] = { count: 1, id: answerId };
+      }
+>>>>>>> Stashed changes
         if (provinceCount[provinceAnswer]) {
           provinceCount[provinceAnswer]++;
         } else if (provinceAnswer !== undefined) {//removes the -99 or no response
@@ -374,7 +386,15 @@ class csvQuery {
           ridingCount[data[i][feduid]] = 1
         }
       }
+<<<<<<< Updated upstream
+=======
+      // Return the object containing the count of filtered answers.
+      console.log(out)
+      console.log(provinceCount)
+      console.log(ridingCount)
+>>>>>>> Stashed changes
       mapData = { ...mapData, out: out, province: { ...provinceCount }, riding: [...ridingCount] }
+      //console.log("This is the result: "+ mapData);
       return mapData;
 
     }
