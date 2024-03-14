@@ -5,7 +5,7 @@ import { FileStruct, Mapping, AllQuestionTypes, MC, TE, Matrix, Slider } from ".
 class FileFetcher {
   //note none of the ids have a .json or any file ending
   private mappingsPromise: Map<DatasetName, Promise<Mapping>> = new Map<MappingFileName, Promise<Mapping>>();// key is dataset year
-  private datasetsPromise: Map<DatasetName, Dataset> = new Map();//key is dataset year, String[column][row]
+  private datasetsPromise: Map<DatasetName, Dataset> = new Map();//key is dataset year, string[column][row]
   
   private datasetIdsPromise !: Promise<FileStruct[]>;
   private datasetFileNamesPromise : Map<DatasetName, Promise<FileStruct[]>> = new Map<DatasetName, Promise<FileStruct[]>>();
@@ -30,8 +30,8 @@ class FileFetcher {
   
   
   /*fuctions to get the various ids */
-  public async getDatasetsIds(): Promise<String[]> {
-    let datasetIds: String[] = [];
+  public async getDatasetsIds(): Promise<string[]> {
+    let datasetIds: string[] = [];
 
     (await this.datasetIdsPromise).forEach((val: FileStruct) => {
       datasetIds.push(val.name);
@@ -39,42 +39,42 @@ class FileFetcher {
     return datasetIds;
   }
 
-  public async getIndependentVarsIds(datasetId: String): Promise<String[]> {
+  public async getIndependentVarsIds(datasetId: string): Promise<string[]> {
     return this.getVarsIds(datasetId, "independent");
   }
 
-  public async getDependentVarsIds(datsetId: String): Promise<String[]> {
+  public async getDependentVarsIds(datsetId: string): Promise<string[]> {
     return this.getVarsIds(datsetId, "dependent");
   }
   
-  public async getAllVarIds(datasetId: String): Promise<String[]> {
-    let independent: String[] = await this.getIndependentVarsIds(datasetId);
-    let dependent: String[] = await this.getDependentVarsIds(datasetId);
+  public async getAllVarIds(datasetId: string): Promise<string[]> {
+    let independent: string[] = await this.getIndependentVarsIds(datasetId);
+    let dependent: string[] = await this.getDependentVarsIds(datasetId);
 
     return [...independent, ...dependent];
   }
 
 
   /*functions to get stuff from the mapping file */
-  public async getQuestionText(datasetId: String, colId: String): Promise<String> {
+  public async getQuestionText(datasetId: string, colId: string): Promise<string> {
     let answerMap: (MC | TE | Matrix | Slider) = await this.getAnswerMappingObj(datasetId, colId);
     return answerMap.mainQuestion;
   }
 
-  public async getType(datasetId: String, colId: String): Promise<String> {
+  public async getType(datasetId: string, colId: string): Promise<string> {
     let answerMap: (MC | TE | Matrix | Slider) = await this.getAnswerMappingObj(datasetId, colId);
     return answerMap.type;
   }
 
 
   /*functions to get data from the dataset */
-  public async getColsVals(datasetId: String, colId: String): Promise<String[]> {
-    let rawColValues: String[] = await this.getRawColVals(datasetId, colId);
-    let answerMap: Map<String, String> = await this.getAnswerMapping(datasetId, colId);
+  public async getColsVals(datasetId: string, colId: string): Promise<string[]> {
+    let rawColValues: string[] = await this.getRawColVals(datasetId, colId);
+    let answerMap: Map<string, string> = await this.getAnswerMapping(datasetId, colId);
 
-    let output: String[] = [];
+    let output: string[] = [];
 
-    rawColValues.forEach((answerId: String) => {
+    rawColValues.forEach((answerId: string) => {
       let answer = answerMap.get(answerId);
       if(answer) {
         output.push(answer);
@@ -89,13 +89,13 @@ class FileFetcher {
   }
 
   //this doesn't change the array length so we can compare two differnt columns together
-  public async getColValsFullList(datasetId: String, colId: String): Promise<(undefined | String)[]> {
-    let rawColValues: String[] = await this.getRawColVals(datasetId, colId);
-    let answerMap: Map<String, String> = await this.getAnswerMapping(datasetId, colId);
+  public async getColValsFullList(datasetId: string, colId: string): Promise<(undefined | string)[]> {
+    let rawColValues: string[] = await this.getRawColVals(datasetId, colId);
+    let answerMap: Map<string, string> = await this.getAnswerMapping(datasetId, colId);
 
-    let output: (undefined | String)[] = [];
+    let output: (undefined | string)[] = [];
 
-    rawColValues.forEach((answerId: String) => {
+    rawColValues.forEach((answerId: string) => {
       let answer = answerMap.get(answerId);
       if(answer) {
         output.push(answer);
@@ -112,7 +112,7 @@ class FileFetcher {
   /*private functions*/
 
   //this gets the answer mapping from the mapping file
-  private async getAnswerMappingObj(datasetId: String, colId: String): Promise<MC | TE | Matrix | Slider> {
+  private async getAnswerMappingObj(datasetId: string, colId: string): Promise<MC | TE | Matrix | Slider> {
     let questionsMap: Mapping | undefined = await this.mappingsPromise.get(datasetId);
     if(questionsMap) {
       let question: MC | TE | Matrix | Slider | undefined = undefined;
@@ -143,8 +143,8 @@ class FileFetcher {
   }
 
   //this gets the answer mapping in the form of a hashmap in the mapping file
-  private async getAnswerMapping(datasetId: String, colId: String): Promise<Map<String, String>> {
-    let map: Map<String, String> = new Map<String, String>();
+  private async getAnswerMapping(datasetId: string, colId: string): Promise<Map<string, string>> {
+    let map: Map<string, string> = new Map<string, string>();
     let answerMapObj: MC | TE | Matrix | Slider = await this.getAnswerMappingObj(datasetId, colId);
 
     for(let [key, value] of Object.entries(answerMapObj.answersMapping)) {
@@ -161,7 +161,7 @@ class FileFetcher {
   }
 
   //fetches the column values
-  private async getRawColVals(datasetId: String, colId: String): Promise<String[]> {
+  private async getRawColVals(datasetId: string, colId: string): Promise<string[]> {
     let datasetMapTemp: Dataset | undefined;
     let datasetMap: Dataset;
     if(this.datasetsPromise.has(datasetId)) {
@@ -177,7 +177,7 @@ class FileFetcher {
         return this.getColValueFromDatasetMap(colId, datasetMap);
       } else {
         //fetch the file
-        let data: Promise<String[]> = this.fetchJsonFile<String[]>(datasetId + "/" + colId + ".json");
+        let data: Promise<string[]> = this.fetchJsonFile<string[]>(datasetId + "/" + colId + ".json");
 
         datasetMap = datasetMap.set(colId, data);
         return this.getColValueFromDatasetMap(colId, datasetMap);
@@ -189,23 +189,23 @@ class FileFetcher {
   }
 
   //helper function for getRawColVals
-  private async getColValueFromDatasetMap(colId: String, datasetMap: Dataset): Promise<String[]>  {
-    let colvals: String[] | undefined = await datasetMap.get(colId);
+  private async getColValueFromDatasetMap(colId: string, datasetMap: Dataset): Promise<string[]>  {
+    let colvals: string[] | undefined = await datasetMap.get(colId);
     if(colvals) {
-      let vals: String[] = [...colvals];
+      let vals: string[] = [...colvals];
 
       vals.shift();
       return vals;
     } else {
-      throw new Error("The columns String[] is undefined for some reason.");
+      throw new Error("The columns string[] is undefined for some reason.");
     }
   }
 
-  private async getVarsIds(datasetId: String, type: "independent" | "dependent"): Promise<String[]> {
+  private async getVarsIds(datasetId: string, type: "independent" | "dependent"): Promise<string[]> {
     if(this.mappingsPromise.has(datasetId)) {
       let Questions: AllQuestionTypes | undefined = (await this.mappingsPromise.get(datasetId))?.[type];
       
-      let questionIds: String[] = [];
+      let questionIds: string[] = [];
       if(Questions) {
         for(let [key] of Object.entries(Questions)) {
           questionIds.push(key);
@@ -228,7 +228,7 @@ class FileFetcher {
     //datasetId/datasetFileNames.json
     (await this.datasetIdsPromise).forEach((val: FileStruct) => {
       this.datasetFileNamesPromise.set(val.name, this.fetchJsonFile<FileStruct[]>(val.name + "/" + "datasetFileNames.json"));
-      this.datasetsPromise.set(val.name, new Map<String, Promise<String[]>>());
+      this.datasetsPromise.set(val.name, new Map<string, Promise<string[]>>());
     });    
   }
 

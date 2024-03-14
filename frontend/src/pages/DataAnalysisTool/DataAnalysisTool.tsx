@@ -11,78 +11,49 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
 import "./index.scss";
+import FilterButtons from "./components/FilterButtons";
 
 
 export default function DataAnalysisTool(): JSX.Element {
-  const database = useContext(DatabaseContext);
   const datasetQ = useContext(datasetQuery);
 
-  const [dataset, setDataset] = useState<String>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
-  const [depVar, setDepVar] = useState<String>(); //dependent variable
-  const [indVar, setIndVar] = useState<String>(); //demographic variable
+  const [dataset, setDataset] = useState<string | undefined>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
+  const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
+  const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
 
-  const [data, setData] = useState(false);
-
+  const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
-  const [selectedButton, setSelectedButton] = useState<string>("");
+  const [selectedButton, setSelectedButton] = useState<string | undefined>();
 
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
   //these are used for the temporary display output (might not )
-  const [indVarAnswrCnt, setIndVarAnswrCnt] = useState([]);
-  const [depVarAnswrCnt, setDepVarAnswrCnt] = useState([]);
-  useEffect(() => {
-    console.log("current independent variable", indVar);
-  }, [indVar]);
+  const [indVarAnswrCnt, setIndVarAnswrCnt] = useState<Map<string, number> | undefined>();
   
-
   useEffect(() => {
-    console.log("Dataset, DepVar, IndVar, SelectedButton:", dataset, depVar, indVar, selectedButton);
-    database.getAnswersCount(dataset, indVar).then((val) => {
-      console.log("IndVarAnswrCnt after getAnswersCount:", val);
-      setIndVarAnswrCnt(val);
+    if(dataset && indVar) {
+      datasetQ.getAnswersCount(dataset, indVar).then((val: Map<string, number>) => {
+        setIndVarAnswrCnt(val);
+      });  
+    }
 
-    });
   }, [dataset, indVar]);
 
 
-
-
   useEffect(() => {
-    console.log("DepVarAnswrCnt before getFilteredAnswersCount:", depVarAnswrCnt);
-    database.getFilteredAnswersCount(dataset, depVar, indVar, selectedButton).then((val) => {
-      console.log("DepVarAnswrCnt after getFilteredAnswersCount:", val);
-      setDepVarAnswrCnt(val);
-
-
-    });
+    if(dataset && depVar && selectedButton && indVar) {
+      datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
+        const barData: [string, number | string][] = [['Category', 'Count']];
+        val?.forEach((value, key) => {
+          barData.push([`${key} (${value})`, value]);
+        });
+        
+        setData(barData);
+      });
+    }
   }, [dataset, depVar, indVar, selectedButton]);
 
-  useEffect(() => {
-    const dummyData = [['Category', 'Profit']];
-    Object.entries(depVarAnswrCnt).forEach(([key, value]) => {
-      // Append the value next to the label
-      dummyData.push([`${key} (${value})`, value]);
-    });
-    setData(dummyData);
-  }, [depVarAnswrCnt]);
 
-  useEffect(() => {
-    const barData = [['Category', 'Count']];
-    Object.entries(depVarAnswrCnt).forEach(([key, value]) => {
-      // Append the value next to the label
-      barData.push([`${key} (${value})`, value]);
-    });
-    setData(barData);
-  }, [depVarAnswrCnt]);
-
-
-
-  function handleButtonClick(value: string) {
-    console.log("Button Clicked:", value);
-    setSelectedButton(value);
-
-  }
 
   function Export() {
 
@@ -90,7 +61,6 @@ export default function DataAnalysisTool(): JSX.Element {
     html2canvas(exportitem, {}).then(canvas => {
 
       const imgData = canvas.toDataURL('image/png');
-      console.log(imgData);
 
       const pdf = new jsPDF("p", "mm", "a4");
 
@@ -107,36 +77,16 @@ export default function DataAnalysisTool(): JSX.Element {
   }
 
 
-  function createButtons(obj: any, title: any) {
-    let out: JSX.Element[] = [];
-    for (let [key, value] of Object.entries(obj)) {
-      //@ts-ignore
-
-
-      out.push(
-        <button key={key} onClick={() => handleButtonClick(key)} >
-          {key}
-        </button>
-      );
-    }
-
-
-    return (
-      <>
-        <p>{title}</p>
-        {out}
-      </>
-    );
-  }
-
   return (
     <div id="data_page">
       <CdemHeader />
       <div className='text'>
         <div className="container">
           <SelectionTool dataset={dataset} setDataset={setDataset} />
-          <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} />
-          {createButtons(indVarAnswrCnt, "Select a filter: ")}
+          <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar}/>
+
+          <FilterButtons indVarAnswrCnt={indVarAnswrCnt} setSelectedButton={setSelectedButton}/>
+          
           <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
         </div>
         <StatsBar dataset={dataset} depVar={depVar} />

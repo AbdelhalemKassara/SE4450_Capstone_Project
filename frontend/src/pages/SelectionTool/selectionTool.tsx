@@ -9,18 +9,18 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useContext, useEffect } from "react";
-import { DatabaseContext } from "../../components/DatabaseContext";
-import Button from '@mui/material/Button';
+import { datasetQuery } from "../../components/DatabaseContext";
 import './selectionTool.css';
 
 
-export default function SelectionTool({ dataset, setDataset}: { setDataset: React.Dispatch<React.SetStateAction<string>>, dataset: string }): JSX.Element {
+export default function SelectionTool({ dataset, setDataset}: { setDataset: React.Dispatch<React.SetStateAction<string| undefined>>, dataset: (string | undefined) }): JSX.Element {
 
-    const database = useContext(DatabaseContext);
+    const datasetQ = useContext(datasetQuery);
+
     const [datasets, setDatasets] = useState<string[]>([]);
 
     useEffect(() => {
-        database.getDatasetsNames().then((val) => {
+        datasetQ.getDatasetsNames().then((val: string[]) => {
             setDatasets(val);
         });
     }, []);
@@ -33,7 +33,7 @@ export default function SelectionTool({ dataset, setDataset}: { setDataset: Reac
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={dataset}
+                value={dataset ? dataset : ""}
                 label="DataSet Years"
                 onChange={(event: SelectChangeEvent) => {
                     setDataset(event.target.value);
