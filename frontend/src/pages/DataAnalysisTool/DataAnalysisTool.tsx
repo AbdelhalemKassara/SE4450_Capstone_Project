@@ -19,6 +19,7 @@ import FormLabel from '@mui/material/FormLabel';
 
 import "./index.scss";
 import FilterButtons from "./components/FilterButtons";
+import { FilteredMapData } from "@components/NewTypes";
 
 export default function DataAnalysisTool(): JSX.Element {
   const datasetQ = useContext(datasetQuery);
@@ -27,7 +28,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
   const [mapType, setMapType] = useState<string>('province');
-  const [mapData, setMapData] = useState({ province: {}, riding: [] })
+  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: [] })
   const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string | undefined>();
@@ -46,6 +47,9 @@ export default function DataAnalysisTool(): JSX.Element {
         });
 
         setData(barData);
+      });
+      datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
+        setMapData(val);
       });
     }
   }, [dataset, depVar, indVar, selectedButton]);
@@ -109,7 +113,7 @@ export default function DataAnalysisTool(): JSX.Element {
           <StatsBar dataset={dataset} depVar={depVar} />
 
           <div id='data_map_component'>
-            {/* <MapComponent mapData={mapData} mapType={mapType} /> */}
+            <MapComponent mapData={mapData} mapType={mapType} />
           </div>
 
           <div id='my-table'>
