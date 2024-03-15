@@ -78,7 +78,7 @@ class FileFetcher {
       let answer = answerMap.get(answerId);
       if(answer) {
         output.push(answer);
-      } else if(answerId === "-99" || answerId === undefined || answerId === null || answerId === "NA" || answerId === '') {
+      } else if(answer === "-99" || answer === undefined || answer === null || answer === "NA" || answer === '') {
         //this means there was no response  
       } else {
         throw new Error(`We couldn't find the mapping for datasetId ${datasetId} colId ${colId} and answerId ${answerId}.`);
@@ -99,7 +99,7 @@ class FileFetcher {
       let answer = answerMap.get(answerId);
       if(answer) {
         output.push(answer);
-      } else if(answerId === "-99" || answerId === undefined || answerId === null || answerId === "NA") {
+      } else if(answer === "-99" || answer === undefined || answer === null || answer === "NA") {
         output.push(undefined);
       } else {
         throw new Error(`We couldn't find the mapping for datasetId ${datasetId} colId ${colId} and answerId ${answerId}.`);
