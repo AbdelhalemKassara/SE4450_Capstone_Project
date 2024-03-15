@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Select, MenuItem, SelectChangeEvent,InputLabel, FormControl } from '@mui/material';
 import { datasetQuery } from "../../../components/DatabaseContext";
 import { QuestionId, QuestionText } from '../../../components/NewTypes';
+import * as React from 'react'
 
 function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: string | undefined, setDependentQuestion: React.Dispatch<React.SetStateAction<string | undefined>>, depVar: string | undefined}): JSX.Element {
   const [questions, setQuestions] = useState<Map<QuestionId, QuestionText>>();

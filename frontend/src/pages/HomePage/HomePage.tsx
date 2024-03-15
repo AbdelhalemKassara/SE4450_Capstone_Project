@@ -4,6 +4,7 @@ import "./index.scss";
 import Button from "@mui/material/Button";
 import CDemFooter from "./Footer/CdemFooter";
 import { yellow } from "@mui/material/colors";
+import * as React from 'react'
 
 const HomePage = () => {
   const navigateTo = useNavigate();

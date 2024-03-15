@@ -10,6 +10,7 @@ import { Chart } from 'react-google-charts';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import MapComponent from "../MapComponent/MapComponent";
+import * as React from 'react'
 
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';

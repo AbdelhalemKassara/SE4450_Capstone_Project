@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
 import province from './province.json'
 import { electoralRidings, section } from './helper'
 import * as stringSimilarity from "string-similarity";
+import * as React from 'react';
 
 
 const MapComponent = ({ mapData, mapType }) => {

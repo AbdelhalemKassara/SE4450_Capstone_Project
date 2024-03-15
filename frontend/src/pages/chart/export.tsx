@@ -1,6 +1,7 @@
 import { useContext, useState} from "react";
 import { DatabaseContext } from "../../components/DatabaseContext"; 
 import { Chart } from 'react-google-charts';
+import * as React from 'react'
 
 export default function Export() {
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useMap } from 'react-leaflet';
+import * as React from 'react'
 
 import L from 'leaflet';
 export const Legend = ({ getColor, heatValues }) => {

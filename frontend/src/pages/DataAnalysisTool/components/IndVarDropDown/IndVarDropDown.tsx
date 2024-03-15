@@ -5,6 +5,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DatabaseContext, datasetQuery } from '../../../../components/DatabaseContext';
 import { useContext, useState, useEffect } from 'react';
 import { QuestionId, QuestionText } from '../../../../components/NewTypes';
+import * as React from 'react'
 
 export default function IndVarDropDown({setIndVar, indVar, dataset, depVar}: 
   {setIndVar: React.Dispatch<React.SetStateAction<string | undefined>>, indVar: string | undefined, dataset: string | undefined, depVar:(string | undefined)}): JSX.Element{

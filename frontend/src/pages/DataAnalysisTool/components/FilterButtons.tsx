@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { datasetQuery } from '../../../components/DatabaseContext';
+import * as React from 'react'
 
 export default function FilterButtons({dataset, indVar, setSelectedButton}: {dataset: string | undefined, indVar: string | undefined, setSelectedButton: React.Dispatch<React.SetStateAction<string | undefined>>,}): JSX.Element {
   const datasetQ = useContext(datasetQuery);

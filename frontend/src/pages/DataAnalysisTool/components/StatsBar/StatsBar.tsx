@@ -2,6 +2,7 @@ import styles from './styles.module.css'
 
 import { useContext, useEffect, useState } from "react";
 import {  datasetQuery } from "../../../../components/DatabaseContext";
+import * as React from 'react';
 
 
 export default function StatsBar({ dataset, depVar }: { dataset: string | undefined,depVar: string | undefined }): JSX.Element {
