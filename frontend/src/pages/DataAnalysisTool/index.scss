@@ -17,16 +17,23 @@
 
 
     .filter_container {
-      margin: 0 auto;
       flex-direction: column;
       display: flex;
-      .update_sizing{
+      margin-left: 2rem;
+      margin-right: 2rem;
+
+      .update_sizing {
         text-overflow: ellipsis;
         // display: grid;
       }
 
       >* {
         box-sizing: border-box;
+      }
+      .data_filter_buttons{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
       }
 
       button {
