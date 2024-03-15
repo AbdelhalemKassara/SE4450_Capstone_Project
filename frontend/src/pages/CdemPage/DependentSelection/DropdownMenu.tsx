@@ -1,17 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
-import { Select, MenuItem, SelectChangeEvent,InputLabel, FormControl } from '@mui/material';
+import { Select, MenuItem, SelectChangeEvent, InputLabel, FormControl } from '@mui/material';
 import { datasetQuery } from "../../../components/DatabaseContext";
 import { QuestionId, QuestionText } from '../../../components/NewTypes';
 
-function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: string | undefined, setDependentQuestion: React.Dispatch<React.SetStateAction<string | undefined>>, depVar: string | undefined}): JSX.Element {
+function DropdownMenu({ dataset, setDependentQuestion, depVar }: { dataset: string | undefined, setDependentQuestion: React.Dispatch<React.SetStateAction<string | undefined>>, depVar: string | undefined }): JSX.Element {
   const [questions, setQuestions] = useState<Map<QuestionId, QuestionText>>();
   const datasetQ = useContext(datasetQuery);
 
   useEffect(() => {
     async function fetchData() {
-      if(dataset) {
+      if (dataset) {
         const questionsData = await datasetQ.getDependentQuestions(dataset);
-        setQuestions(questionsData);  
+        setQuestions(questionsData);
       } else {
         setQuestions(new Map());
         setDependentQuestion(undefined);
@@ -29,20 +29,20 @@ function DropdownMenu({ dataset, setDependentQuestion, depVar}: { dataset: strin
 
   return (
     <FormControl fullWidth>
-    <InputLabel id="another-id">Dependent Variables</InputLabel>
-      <Select value={depVar? depVar : ''} onChange={handleSelectChange}>
+      <InputLabel id="another-id">Dependent Variables</InputLabel>
+      <Select value={depVar ? depVar : ''} onChange={handleSelectChange}>
         {(
           () => {
-          let out: JSX.Element[] = [];
-            if(questions) {
-              for(let [key, value] of questions) {
+            let out: JSX.Element[] = [];
+            if (questions) {
+              for (let [key, value] of questions) {
                 out.push(<MenuItem key={key} value={key}>{value}</MenuItem>);
               }
             }
-          return out;
-        })()}      
+            return out;
+          })()}
       </Select>
-    </FormControl>  
+    </FormControl>
 
   );
 }

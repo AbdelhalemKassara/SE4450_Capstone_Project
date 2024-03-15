@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { datasetQuery } from '../../../components/DatabaseContext';
 
-export default function FilterButtons({dataset, indVar, setSelectedButton}: {dataset: string | undefined, indVar: string | undefined, setSelectedButton: React.Dispatch<React.SetStateAction<string | undefined>>,}): JSX.Element {
+export default function FilterButtons({ dataset, indVar, setSelectedButton }: { dataset: string | undefined, indVar: string | undefined, setSelectedButton: React.Dispatch<React.SetStateAction<string | undefined>>, }): JSX.Element {
   const datasetQ = useContext(datasetQuery);
 
   const [indVarAnswrCnt, setIndVarAnswrCnt] = useState<Map<string, number> | undefined>();
@@ -20,19 +20,21 @@ export default function FilterButtons({dataset, indVar, setSelectedButton}: {dat
 
   return (<>
     <p>Select a filter: </p>
-    {(() => {
-      let out: JSX.Element[] = [];
-      if(indVarAnswrCnt) {
-        for (let [key] of indVarAnswrCnt) {
-          out.push(
-            <button key={key} onClick={() => {setSelectedButton(key)}} >
-              {key}
-            </button>
-          );
+    <div className='data_filter_buttons'>
+      {(() => {
+        let out: JSX.Element[] = [];
+        if (indVarAnswrCnt) {
+          for (let [key] of indVarAnswrCnt) {
+            out.push(
+              <button key={key} onClick={() => { setSelectedButton(key) }} >
+                {key}
+              </button>
+            );
+          }
         }
-      }
-      return out;
-    })()}
+        return out;
+      })()}
+    </div>
   </>);
 }
 
