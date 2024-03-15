@@ -28,6 +28,14 @@ export default function DataAnalysisTool(): JSX.Element {
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
   const [mapType, setMapType] = useState<string>('province');
   const [mapData, setMapData] = useState({ province: {}, riding: [] })
+  const [answerIds, setAnswerIds] = useState<Map<string, number>>(new Map());
+  const [multipliedValues, setMultipliedValues] = useState(new Map());
+  const [averageValue, setAverageValue] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [median, setMedian] = useState<number>(0);
+  const [standardDeviation, setStandardDeviation] = useState<number>(0);
+
+
 
   const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
@@ -47,6 +55,7 @@ export default function DataAnalysisTool(): JSX.Element {
         });
 
         setData(barData);
+
       });
     }
   }, [dataset, depVar, indVar, selectedButton]);
@@ -54,6 +63,61 @@ export default function DataAnalysisTool(): JSX.Element {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
   };
+
+  useEffect(() => {
+    if (dataset && depVar) {
+      const fetchData = async () => {
+        try {
+          const answerIds = await datasetQ.getAnswerIds(dataset, depVar);
+  
+          // Rescale the IDs within the Map
+          const rescaledIds = new Map<string, number>();
+          const values = Array.from(answerIds.values());
+          const rescaledValues = rescaleTo100(values);
+
+          answerIds.forEach((value, key, map) => {
+            rescaledIds.set(key, rescaledValues.shift() || 0);
+          });
+  
+          setAnswerIds(rescaledIds);
+        } catch (error) {
+          console.error("Error fetching and rescaling answer IDs:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [dataset, depVar, datasetQ]); 
+
+  useEffect(() => {
+    if (answerIds && data && answerIds.size > 0 && data.length > 0) {
+      const calculatedValues = new Map();
+      let totalCount = 0;
+      let sumOfMultipliedValues = 0;
+  
+      for (const [key, value] of answerIds.entries()) {
+        const dataEntry = data.find(([text]) => {
+          const [category] = text.split(' (');
+          return category === key;
+        });
+  
+        if (dataEntry) {
+          const numericValue = Number(dataEntry[1]);
+          const multipliedValue = value * numericValue;
+          calculatedValues.set(key, multipliedValue);
+          totalCount += numericValue;
+          sumOfMultipliedValues += multipliedValue;
+        }
+      }
+  
+      const averageValue = totalCount > 0 ? sumOfMultipliedValues / totalCount : 0;
+      setTotalCount(totalCount);
+      setAverageValue(averageValue);
+      setMultipliedValues(calculatedValues);
+    }
+  }, [answerIds, data]);
+  
+  
+  
 
   function Export() {
 
@@ -75,6 +139,20 @@ export default function DataAnalysisTool(): JSX.Element {
       pdf.save("data.pdf");
     })
   }
+
+  function rescaleTo100(sequence: number[]): number[] {
+    const min = Math.min(...sequence);
+    const max = Math.max(...sequence);
+    const range = max - min;
+    const scaleFactor = 100 / range;
+  
+    const rescaledSequence = sequence.map(num => Math.round((max - num) * scaleFactor));
+  
+    return rescaledSequence;
+  }
+  
+  
+
 
 
   return (
@@ -108,7 +186,8 @@ export default function DataAnalysisTool(): JSX.Element {
         </div>
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
-
+          <p>Count: {totalCount}</p>
+          <p>The average value is: {averageValue}</p>
           <div id='data_map_component'>
             {/* <MapComponent mapData={mapData} mapType={mapType} /> */}
           </div>
