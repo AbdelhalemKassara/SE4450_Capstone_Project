@@ -8,3 +8,9 @@ export type QuestionId = string;
 export type QuestionText = string;
 export type AnswerText = string;
 export type Count = number;
+
+
+export type FilteredMapData = {
+    province: any;
+    riding: any;
+}

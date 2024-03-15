@@ -1,5 +1,5 @@
 import FileFetcher from "./FileFetcher";
-import { QuestionId, QuestionText, Count, AnswerText } from "./NewTypes";
+import { QuestionId, QuestionText, Count, AnswerText, FilteredMapData } from "./NewTypes";
 
 let instance: DatasetQuery;
 
@@ -38,8 +38,8 @@ class DatasetQuery {
 
     return out;
   }
-  
-  
+
+
   //public function to retreieve the Dependent Questions: Query2
   public async getDependentQuestions(datasetId: string): Promise<Map<QuestionId, QuestionText>> {
     let out: Map<QuestionId, QuestionText> = new Map<QuestionId, QuestionText>();
@@ -48,7 +48,7 @@ class DatasetQuery {
 
     for (const id of dependentVarsIds) {
       const questionText = await this.fileFetcher.getQuestionText(datasetId, id);
-      out.set(id,questionText);
+      out.set(id, questionText);
     }
 
     return out;
@@ -66,14 +66,14 @@ class DatasetQuery {
   //created a function to retrieve the answers: Query5
   public async getAnswersCount(datasetId: string, questionId: string): Promise<Map<AnswerText, Count>> {
     let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
-    
+
     const colVals = await this.fileFetcher.getColsVals(datasetId, questionId);
 
     // Count occurrences of each answer
     colVals.forEach((answer: string) => {
       const stringValue: string = answer.valueOf(); // Convert string to string
-      let curCount : number | undefined = out.get(stringValue);
-      if(curCount) {
+      let curCount: number | undefined = out.get(stringValue);
+      if (curCount) {
         out.set(stringValue, curCount + 1);
       } else {
         out.set(stringValue, 1);
@@ -84,10 +84,10 @@ class DatasetQuery {
     return out;
   }
 
-  public async getAnswerCount(datasetId: string, questionId: string, answerText: string) : Promise<number> {
+  public async getAnswerCount(datasetId: string, questionId: string, answerText: string): Promise<number> {
     let out: number | undefined = (await this.getAnswersCount(datasetId, questionId)).get(answerText);
 
-    if(out) {
+    if (out) {
       return out;
     } else {
       throw new Error(`Either the datasetId (${datasetId}) questionId (${questionId}) or answerText (${answerText}) is an invalid value getting passed into the getAnswerCount function.`);
@@ -97,11 +97,11 @@ class DatasetQuery {
   public async getAnswers(datasetId: string, questionId: string): Promise<string[]> {
     let colVals: AnswerText[] = await this.fileFetcher.getColsVals(datasetId, questionId);
 
-    let map:Map<AnswerText, null> = new Map<AnswerText, null>();
+    let map: Map<AnswerText, null> = new Map<AnswerText, null>();
     colVals = colVals.filter((questText: AnswerText) => {
       let bool: Boolean = map.has(questText);
-      
-      if(!bool) {
+
+      if (!bool) {
         map.set(questText, null);
       }
 
@@ -124,14 +124,16 @@ class DatasetQuery {
     //these will have the same length
     let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
     let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
+    // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
 
-    for(let i = 0; i < indAnswers.length; i++) {
-      if(indAnswers[i] === depAnswer && depAnswers[i]) {
+    for (let i = 0; i < indAnswers.length; i++) {
+      if (indAnswers[i] === depAnswer && depAnswers[i]) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
         let id: string = depAnswers[i];
         let curCount: number | undefined = out.get(id);
-        
-        if(curCount) {
+
+        if (curCount) {
           out.set(id, curCount + 1);
         } else {
           out.set(id, 1);
@@ -148,13 +150,13 @@ class DatasetQuery {
     let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
     let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
 
-    for(let i = 0; i < indAnswers.length; i++) {
-      if(indAnswers[i] === depAnswer && depAnswers[i]) {
+    for (let i = 0; i < indAnswers.length; i++) {
+      if (indAnswers[i] === depAnswer && depAnswers[i]) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
         let id: string = depAnswers[i];
         let curCount: number | undefined = out.get(id);
-        
-        if(curCount) {
+
+        if (curCount) {
           out.set(id, curCount + 1);
         } else {
           out.set(id, 1);
@@ -168,35 +170,50 @@ class DatasetQuery {
   public async getFeduid(datasetId: string): Promise<string[]> {
     return this.fileFetcher.getFeduid(datasetId);
   }
-  
+
   public async getAnswerIds(datasetid: string, colId: string): Promise<Map<QuestionText, number>> {
     return this.fileFetcher.getAnswerIds(datasetid, colId);
   }
-  
-  //when merging remove this, and put in the other code
-  // public async getFilteredAnswersCount(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string): Promise<Map<AnswerText, Count>> {
-  //   let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
+  public async getFilteredMapData(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string): Promise<FilteredMapData> {
 
-  //   //these will have the same length
-  //   let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
-  //   let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    let out: FilteredMapData = {
+      province: {},
+      riding: {}
+    };
 
-  //   for(let i = 0; i < indAnswers.length; i++) {
-  //     if(indAnswers[i] === depAnswer && depAnswers[i]) {
-  //       //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
-  //       let id: string = depAnswers[i];
-  //       let curCount: number | undefined = out.get(id);
-        
-  //       if(curCount) {
-  //         out.set(id, curCount + 1);
-  //       } else {
-  //         out.set(id, 1);
-  //       }
-  //     }
-  //   }
 
-  //   return out;
-  // }
+    //these will have the same length
+    let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
+    let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    let provAns: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, `${depQuestId.slice(0, 4)}_province`);
+    let feduid: string[] = await this.fileFetcher.getFeduid(datasetId);
+
+    for (let i = 0; i < indAnswers.length; i++) {
+      if (indAnswers[i] === depAnswer && depAnswers[i] && provAns[i] && feduid[i]) {
+        //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
+
+        let provinceId: string = provAns[i];
+        let provCount: number | undefined = out.province[provinceId];
+        let ridingId: string = feduid[i];
+        let fedCount: number | undefined = out.riding[ridingId]
+
+        if (provCount) {
+          out.province[provinceId] = provCount + 1;
+        } else {
+          out.province[provinceId] = 1;
+        }
+        if (fedCount) {
+          out.riding[ridingId] = fedCount + 1;
+        } else {
+          out.riding[ridingId] = 1;
+        }
+      }
+
+    }
+
+    return out;
+  }
+
 
 }
 
