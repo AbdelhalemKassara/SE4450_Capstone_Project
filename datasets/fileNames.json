@@ -1,0 +1,10 @@
+[
+  {
+    "dataset": "2020-dataset.json",
+    "mapping": "2020-mapping.json"
+  },
+  {
+    "dataset": "2022-dataset.json",
+    "mapping": "2022-mapping.json"
+  }
+]
