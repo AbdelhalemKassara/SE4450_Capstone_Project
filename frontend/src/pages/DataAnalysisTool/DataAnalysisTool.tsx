@@ -74,6 +74,7 @@ export default function DataAnalysisTool(): JSX.Element {
           const rescaledIds = new Map<string, number>();
           const values = Array.from(answerIds.values());
           const rescaledValues = rescaleTo100(values);
+          //console.log("hello " + rescaledIds);
 
           answerIds.forEach((value, key, map) => {
             rescaledIds.set(key, rescaledValues.shift() || 0);
@@ -93,6 +94,10 @@ export default function DataAnalysisTool(): JSX.Element {
       const calculatedValues = new Map();
       let totalCount = 0;
       let sumOfMultipliedValues = 0;
+      const multipliedValuesArray = []; // Array to store multiplied values for median calculation
+
+      console.log(answerIds);
+      console.log(data);
   
       for (const [key, value] of answerIds.entries()) {
         const dataEntry = data.find(([text]) => {
@@ -101,7 +106,13 @@ export default function DataAnalysisTool(): JSX.Element {
         });
   
         if (dataEntry) {
+          console.log(dataEntry);
+          console.log(value);
           const numericValue = Number(dataEntry[1]);
+          console.log(numericValue);
+          for (let i = 0; i < numericValue; i++) {
+            multipliedValuesArray.push(value); // Add multiplied value to array
+          }
           const multipliedValue = value * numericValue;
           calculatedValues.set(key, multipliedValue);
           totalCount += numericValue;
@@ -110,6 +121,25 @@ export default function DataAnalysisTool(): JSX.Element {
       }
   
       const averageValue = totalCount > 0 ? sumOfMultipliedValues / totalCount : 0;
+
+      const sortedMultipliedValues = multipliedValuesArray.sort((a, b) => a - b);
+      const median =
+        sortedMultipliedValues.length % 2 === 0
+          ? (sortedMultipliedValues[sortedMultipliedValues.length / 2 - 1] +
+              sortedMultipliedValues[sortedMultipliedValues.length / 2]) /
+            2
+          : sortedMultipliedValues[Math.floor(sortedMultipliedValues.length / 2)];
+      setMedian(median);
+      console.log("this is the median " + median)
+  
+      // Calculate standard deviation
+      const mean = averageValue;
+      const squaredDifferences = multipliedValuesArray.map(value => Math.pow(value - mean, 2));
+      const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / multipliedValuesArray.length;
+      const stdDeviation = Math.sqrt(variance);
+      setStandardDeviation(stdDeviation);
+      console.log("this is the standard deviation " + stdDeviation)
+      
       setTotalCount(totalCount);
       setAverageValue(averageValue);
       setMultipliedValues(calculatedValues);
@@ -187,7 +217,9 @@ export default function DataAnalysisTool(): JSX.Element {
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
           <p>Count: {totalCount}</p>
-          <p>The average value is: {averageValue}</p>
+          <p>The mean is: {averageValue}</p>
+          <p>The median is: {median}</p>
+          <p>The standard deviation is: {standardDeviation}</p>
           <div id='data_map_component'>
             {/* <MapComponent mapData={mapData} mapType={mapType} /> */}
           </div>
