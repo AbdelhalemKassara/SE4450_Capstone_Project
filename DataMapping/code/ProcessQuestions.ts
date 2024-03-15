@@ -1,4 +1,4 @@
-import { AllQuestionTypes, Mapping, Matrix, MC, TE } from "./Types";
+import { AllQuestionTypes, Mapping, Matrix, MC, Slider, TE } from "./Types";
 import { QsfFileFetchWrapper } from "./QsfFileFetchWrapper";
 import { DatasetFetchWrapper } from "./DatasetFetchWrapper";
 
@@ -31,8 +31,9 @@ export class ProcessQuestions {
     type = qsfFile.getQuestionType(newQuestionId);
     
     if(type === "Slider") {
-      // console.log(questionId);
+      this.processSlider(mappingFile, qsfFile, newQuestionId, addToIndVar, dataset, questionId, subQId.slice(1));
     } else if(type === "Matrix") {
+      //i might have accedentally swapped newQuestionId and quesitonId
       this.processMatrix(mappingFile, qsfFile, newQuestionId, addToIndVar, dataset, questionId, subQId.slice(1));
     }
 
@@ -205,8 +206,85 @@ export class ProcessQuestions {
 
   }
 
-  private processSlider() {
+  private processSlider(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean, dataset: DatasetFetchWrapper, originalQuestId: string, subQId: string) {
+    let snapToPos: Boolean | undefined = qsfFile.getSnapToPos(questionId);
 
+    if(snapToPos) {
+      //create the current questions mapping
+      let curQuestMap: Slider = {type: "Slider", mainQuestion: "", answersMapping: {}};
+      let datasetUpdateMapOldTNew: Map<string, string> = new Map<string, string>();
+
+      //for some reason MappingFile.independent isn't getting passed by refrence or something (basically the one in main isn't getting modified)
+      if(addToIndVar) {
+        mappingFile.independent[originalQuestId.valueOf()] = curQuestMap;// the .valueOf() is to convert it from a string object to a string primitive
+      } else {
+        mappingFile.dependent[originalQuestId.valueOf()] = curQuestMap;// the .valueOf() is to convert it from a string object to a string primitive
+      }
+
+      //gets the mainQuestion 
+      let temp: any = qsfFile.getMainQuestion(questionId);
+      let mainQuestion: string = temp;
+      if(!temp) {
+        console.log(`Warning: Question ${questionId} doesn't have a MainQuestion attribute. (i.e. there wasn't any question text found.)`);
+      } else {
+        curQuestMap.mainQuestion = mainQuestion;
+      }
+
+
+
+      //get and assign values for the subQuestion
+      let choices = qsfFile.getAnswerMappingObj(questionId);
+
+      //remap the subquestion map with the choice order array
+      temp = qsfFile.getChoiceOrderArr(questionId);
+      if(!temp) {
+        console.log(`Warning: Question ${questionId} doesn't have a ChoiceOrder array. (The answers may be mapped incorrectly).`);
+      } else {
+        let choiceOrder: string[] = temp;
+        let newAnswerMapping: AllQuestionTypes = {};
+
+        choiceOrder.forEach((choiceId: string, i: number) => {
+          newAnswerMapping[(i + 1).toString()] = choices[choiceId.valueOf()];
+        });
+
+        choices = newAnswerMapping;
+      }
+
+      //some questions are using references to elements in the qsf file. we haven't implemented that kind of functionalty yet.
+      if(!choices || !choices[subQId] || !choices[subQId].Display) {
+        if(addToIndVar) {
+          delete mappingFile.independent[originalQuestId.valueOf()];
+        } else {
+          delete mappingFile.dependent[originalQuestId.valueOf()];
+        }
+        return;
+      }
+      
+      curQuestMap.mainQuestion += "   " + choices[subQId].Display;
+
+      //set the answers in answer mapping (same code as above)
+      let answers = qsfFile.getAnswerMappingObjSliderNMatrix(questionId);
+      curQuestMap.answersMapping = {...answers};
+
+      temp = qsfFile.getAnswersOrderArr(questionId);
+      if(!temp) {
+        console.log(`Warning: Question ${questionId} doesn't have a ChoiceOrder array. (The answers may be mapped incorrectly).`);
+      } else {
+        let choiceOrder: string[] = temp;
+        let newAnswerMapping: AllQuestionTypes = {};
+
+        choiceOrder.forEach((choiceId: string, i: number) => {
+          newAnswerMapping[(i + 1).toString()] = curQuestMap.answersMapping[choiceId.valueOf()];
+        });
+
+        curQuestMap.answersMapping = newAnswerMapping;
+      }
+      
+      console.log(curQuestMap);
+    } 
+
+
+    //if Payload.SnapToGrid === true then treat is as a mc question, if it's not then treat it as it's own question type
   }
 
 }
