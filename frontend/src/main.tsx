@@ -10,7 +10,6 @@ import PageNotFound from "./pages/404/PageNotFound.tsx";
 import LandingPage from "./pages/LandingPage/landingPage.tsx";
 import "./index.css";
 import Export from "./pages/chart/export.tsx"
-import TestPageDeleteThis from './pages/testPageDeleteThis/testPageDeleteThis.tsx';
 import MapComponent from './pages/MapComponent/MapComponent.tsx';
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -24,7 +23,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/selection" element={<SelectionTool />} />
         <Route path="/bar" element={<LandingPage />} />
         <Route path="/chart" element={<Export />}/>
-        <Route path="/testPage" element={<TestPageDeleteThis />}/>
         <Route path="/maptest" element={<MapComponent />} />
       </Routes>
     </BrowserRouter>
