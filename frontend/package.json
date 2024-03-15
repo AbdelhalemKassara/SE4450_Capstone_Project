@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.19",
     "@mui/types": "^7.2.10",
+    "@types/geojson": "^7946.0.14",
     "chart.js": "^4.4.1",
     "html2canvas": "^1.4.1",
     "install": "^0.13.0",

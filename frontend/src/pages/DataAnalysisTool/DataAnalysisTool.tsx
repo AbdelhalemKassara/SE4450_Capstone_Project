@@ -29,7 +29,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
   const [mapType, setMapType] = useState<string>('province');
   const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
-  const [data, setData] = useState<undefined | [string, number | string][]>();
+  const [data, setData] = useState<undefined | [[string, string], ...Array<[string, number]>]>();
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string | undefined>();
 
@@ -41,7 +41,7 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
       datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
-        const barData: [string, number | string][] = [['Category', 'Count']];
+        const barData: [[string, string], ...Array<[string, number]>] = [['Category', 'Count']];
         val?.forEach((value, key) => {
           barData.push([`${key} (${value})`, value]);
         });

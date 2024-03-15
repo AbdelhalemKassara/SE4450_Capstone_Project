@@ -143,29 +143,6 @@ class DatasetQuery {
 
     return out;
   }
-  public async getFilteredAnswersCountIds(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string): Promise<Map<AnswerText, Count>> {
-    let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
-
-    //these will have the same length
-    let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
-    let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
-
-    for (let i = 0; i < indAnswers.length; i++) {
-      if (indAnswers[i] === depAnswer && depAnswers[i]) {
-        //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
-        let id: string = depAnswers[i];
-        let curCount: number | undefined = out.get(id);
-
-        if (curCount) {
-          out.set(id, curCount + 1);
-        } else {
-          out.set(id, 1);
-        }
-      }
-    }
-
-    return out;
-  }
 
   public async getFeduid(datasetId: string): Promise<string[]> {
     return this.fileFetcher.getFeduid(datasetId);
@@ -174,6 +151,11 @@ class DatasetQuery {
   public async getAnswerIds(datasetid: string, colId: string): Promise<Map<QuestionText, number>> {
     return this.fileFetcher.getAnswerIds(datasetid, colId);
   }
+
+  public async getGeoJsonFile(): Promise<any> {
+    return this.fileFetcher.getGeoJsonFile();
+  }
+
   public async getFilteredMapData(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string): Promise<FilteredMapData> {
 
     let out: FilteredMapData = {
