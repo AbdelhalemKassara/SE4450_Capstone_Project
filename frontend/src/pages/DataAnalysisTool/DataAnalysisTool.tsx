@@ -77,7 +77,6 @@ export default function DataAnalysisTool(): JSX.Element {
           reorderedData.push([`${answerText} (${count})`, count]);
         });
 
-        console.log(reorderedData);
         setData(reorderedData);
       })()
       datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
@@ -115,7 +114,7 @@ export default function DataAnalysisTool(): JSX.Element {
       const fetchData = async () => {
         try {
           const answerIds = await datasetQ.getAnswerIds(dataset, depVar);
-  
+
           // Rescale the IDs within the Map
           const rescaledIds = new Map<string, number>();
           const values = Array.from(answerIds.values());
@@ -125,7 +124,7 @@ export default function DataAnalysisTool(): JSX.Element {
           answerIds.forEach((value, key, map) => {
             rescaledIds.set(key, rescaledValues.shift() || 0);
           });
-  
+
           setAnswerIds(rescaledIds);
         } catch (error) {
           console.error("Error fetching and rescaling answer IDs:", error);
@@ -133,7 +132,7 @@ export default function DataAnalysisTool(): JSX.Element {
       };
       fetchData();
     }
-  }, [dataset, depVar, datasetQ]); 
+  }, [dataset, depVar, datasetQ]);
 
   useEffect(() => {
     if (answerIds && data && answerIds.size > 0 && data.length > 0) {
@@ -144,13 +143,13 @@ export default function DataAnalysisTool(): JSX.Element {
 
       console.log(answerIds);
       console.log(data);
-  
+
       for (const [key, value] of answerIds.entries()) {
         const dataEntry = data.find(([text]) => {
           const [category] = text.split(' (');
           return category === key;
         });
-  
+
         if (dataEntry) {
           console.log(dataEntry);
           console.log(value);
@@ -165,19 +164,19 @@ export default function DataAnalysisTool(): JSX.Element {
           sumOfMultipliedValues += multipliedValue;
         }
       }
-  
+
       const averageValue = totalCount > 0 ? sumOfMultipliedValues / totalCount : 0;
 
       const sortedMultipliedValues = multipliedValuesArray.sort((a, b) => a - b);
       const median =
         sortedMultipliedValues.length % 2 === 0
           ? (sortedMultipliedValues[sortedMultipliedValues.length / 2 - 1] +
-              sortedMultipliedValues[sortedMultipliedValues.length / 2]) /
-            2
+            sortedMultipliedValues[sortedMultipliedValues.length / 2]) /
+          2
           : sortedMultipliedValues[Math.floor(sortedMultipliedValues.length / 2)];
       setMedian(median);
       console.log("this is the median " + median)
-  
+
       // Calculate standard deviation
       const mean = averageValue;
       const squaredDifferences = multipliedValuesArray.map(value => Math.pow(value - mean, 2));
@@ -185,15 +184,15 @@ export default function DataAnalysisTool(): JSX.Element {
       const stdDeviation = Math.sqrt(variance);
       setStandardDeviation(stdDeviation);
       console.log("this is the standard deviation " + stdDeviation)
-      
+
       setTotalCount(totalCount);
       setAverageValue(averageValue);
       setMultipliedValues(calculatedValues);
     }
   }, [answerIds, data]);
-  
-  
-  
+
+
+
 
   function Export() {
 
@@ -221,13 +220,13 @@ export default function DataAnalysisTool(): JSX.Element {
     const max = Math.max(...sequence);
     const range = max - min;
     const scaleFactor = 100 / range;
-  
+
     const rescaledSequence = sequence.map(num => Math.round((max - num) * scaleFactor));
-  
+
     return rescaledSequence;
   }
-  
-  
+
+
 
 
 
@@ -262,10 +261,12 @@ export default function DataAnalysisTool(): JSX.Element {
         </div>
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
-          <p>Count: {totalCount}</p>
-          <p>The mean is: {averageValue}</p>
-          <p>The median is: {median}</p>
-          <p>The standard deviation is: {standardDeviation}</p>
+          <div className='data_stats'>
+            <p>Count: {totalCount}</p>
+            <p>The mean is: {Math.round(averageValue)}</p>
+            <p>The median is: {median}</p>
+            <p>The standard deviation is: {Math.round(standardDeviation)}</p>
+          </div>
           <div id='data_map_component'>
             <MapComponent mapData={mapData} mapType={mapType} />
           </div>

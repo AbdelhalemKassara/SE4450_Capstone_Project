@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { datasetQuery } from '../../../components/DatabaseContext';
+import Button from '@mui/material/Button';
+
 
 export default function FilterButtons({ dataset, indVar, setSelectedButton }: { dataset: string | undefined, indVar: string | undefined, setSelectedButton: React.Dispatch<React.SetStateAction<string | undefined>>, }): JSX.Element {
   const datasetQ = useContext(datasetQuery);
@@ -26,9 +28,9 @@ export default function FilterButtons({ dataset, indVar, setSelectedButton }: { 
         if (indVarAnswrCnt) {
           for (let [key] of indVarAnswrCnt) {
             out.push(
-              <button key={key} onClick={() => { setSelectedButton(key) }} >
+              <Button variant="outlined" key={key} onClick={() => { setSelectedButton(key) }} >
                 {key}
-              </button>
+              </Button>
             );
           }
         }

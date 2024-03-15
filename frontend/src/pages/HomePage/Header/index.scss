@@ -1,1 +1,31 @@
+.cdem_header {
+    position: fixed;
+    top: 0;
+    display: grid;
+    grid-template-columns: minmax(min-content, 8rem) minmax(20rem, auto) 1fr;
+    gap: 2rem;
+    align-items: center;
+    height: 6rem;
+    z-index: 9999;
+    background: rgb(255, 255, 255);
+    width: 100%;
+    box-shadow: 0px 0px 10px rgb(158, 158, 158);
 
+    .mapleLeaf_header {
+        margin: 0rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    }
+
+    .mapleLeaf_header:hover {
+        cursor: pointer;
+    }
+}
