@@ -1,10 +1,8 @@
 import { useContext, useState} from "react";
-import { DatabaseContext } from "../../components/DatabaseContext"; 
 import { Chart } from 'react-google-charts';
 
 export default function Export() {
 
-  const database = useContext(DatabaseContext);
 
   const [data, setData] = useState([
     ['Household', 5000],

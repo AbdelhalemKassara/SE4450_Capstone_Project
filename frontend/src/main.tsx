@@ -6,7 +6,6 @@ import DataAnalysisTool from "./pages/DataAnalysisTool/DataAnalysisTool.tsx";
 import SelectionTool from './pages/SelectionTool/selectionTool';
 // import DropdownMenu from './components/DropdownMenu.tsx';
 import PageNotFound from "./pages/404/PageNotFound.tsx";
-import LandingPage from "./pages/LandingPage/landingPage.tsx";
 import "./index.css";
 import Export from "./pages/chart/export.tsx"
 import MapComponent from './pages/MapComponent/MapComponent.tsx';
@@ -19,7 +18,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/dataAnalysisTool" element={<DataAnalysisTool />} />
         <Route path="/*" element={<PageNotFound />} />
         <Route path="/selection" element={<SelectionTool />} />
-        <Route path="/bar" element={<LandingPage />} />
         <Route path="/chart" element={<Export />}/>
         <Route path="/maptest" element={<MapComponent />} />
       </Routes>
