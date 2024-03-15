@@ -75,6 +75,13 @@ export class QsfFileFetchWrapper {
     }
   }
 
+  public getSnapToPos(questionId: string) : Boolean | undefined {
+    if(this.questIDToObj.has(questionId)) {
+      return this.questIDToObj.get(questionId)?.Payload?.Configuration?.SnapToGrid;
+    } else {
+      return undefined;
+    }
+  }
   public getAnswersOrderArr(questionId: string) : string[] | undefined {
     if(this.questIDToObj.has(questionId)) {
       return this.questIDToObj.get(questionId).Payload.AnswerOrder;
