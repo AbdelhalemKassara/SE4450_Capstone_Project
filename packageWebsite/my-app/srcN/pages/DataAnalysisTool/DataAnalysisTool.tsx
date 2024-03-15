@@ -1,0 +1,309 @@
+import { useContext, useEffect, useState } from "react";
+import { DatabaseContext, datasetQuery } from "../../components/DatabaseContext";
+import DropdownMenu from "../CdemPage/DependentSelection/DropdownMenu";
+import SelectionTool from "../SelectionTool/selectionTool";
+import StatsBar from "./components/StatsBar/StatsBar";
+import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
+import CdemHeader from "../HomePage/Header/CdemHeader";
+import CDemFooter from "../HomePage/Footer/CdemFooter";
+import { Chart } from 'react-google-charts';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import MapComponent from "../MapComponent/MapComponent";
+import * as React from 'react'
+
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+
+import "./index.scss";
+import FilterButtons from "./components/FilterButtons";
+import { FilteredMapData } from "@components/NewTypes";
+
+export default function DataAnalysisTool(): JSX.Element {
+  const datasetQ = useContext(datasetQuery);
+
+  const [dataset, setDataset] = useState<string | undefined>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
+  const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
+  const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
+  const [mapType, setMapType] = useState<string>('province');
+  //const [mapData, setMapData] = useState({ province: {}, riding: [] })
+  const [answerIds, setAnswerIds] = useState<Map<string, number>>(new Map());
+  const [multipliedValues, setMultipliedValues] = useState(new Map());
+  const [averageValue, setAverageValue] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [median, setMedian] = useState<number>(0);
+  const [standardDeviation, setStandardDeviation] = useState<number>(0);
+
+
+
+  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
+  const [data, setData] = useState<undefined | [string, number | string][]>();
+  // Inside your component function
+  const [selectedButton, setSelectedButton] = useState<string | undefined>();
+
+  //chart colours
+  const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
+  //these are used for the temporary display output (might not )
+
+
+  // useEffect(() => {
+  //   if (dataset && depVar && selectedButton && indVar) {
+  //     datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
+  //       const barData: [string, number | string][] = [['Category', 'Count']];
+  //       val?.forEach((value, key) => {
+  //         barData.push([`${key} (${value})`, value]);
+  //       });
+
+  //       setData(barData);
+  //     });
+  //     datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
+  //       setMapData(val);
+  //     });
+  //   }
+  // }, [dataset, depVar, indVar, selectedButton]);
+
+  useEffect(() => {
+    if (dataset && depVar && selectedButton && indVar) {
+      (async () => {
+        let val: Map<string, number> = await datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar);
+        let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
+        const reorderedData: [string, number | string][] = [['Category', 'Count']];
+
+        // Iterate over the answer IDs map and use them to reorder the data
+        answerIds.forEach((answerId: number, answerText: string) => {
+          const count = val.get(answerText) || 0; // Get the count for the current answer
+          reorderedData.push([`${answerText} (${count})`, count]);
+        });
+
+        console.log(reorderedData);
+        setData(reorderedData);
+      })()
+      datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
+        setMapData(val);
+      });
+    }
+  }, [dataset, depVar, indVar, selectedButton]);
+
+  // if (dataset && depVar && selectedButton && indVar) {
+  //   datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
+
+  //     datasetQ.getAnswerIds(dataset, depVar).then((answerIds: Map<string, number>) => {
+  //       // Create an array to hold the reordered data
+  //       const reorderedData: [string, number | string][] = [];
+
+  //       // Iterate over the answer IDs map and use them to reorder the data
+  //       answerIds.forEach((answerId: number, answerText: string) => {
+  //         const count = val.get(answerText) || 0; // Get the count for the current answer
+  //         reorderedData.push([`${answerText} (${count})`, count]);
+  //       });
+
+  //       // Set the reordered data
+  //       console.log(reorderedData);
+  //       setData(reorderedData);
+  //     });
+  //   });
+  // }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMapType((event.target as HTMLInputElement).value);
+  };
+
+  useEffect(() => {
+    if (dataset && depVar) {
+      const fetchData = async () => {
+        try {
+          const answerIds = await datasetQ.getAnswerIds(dataset, depVar);
+  
+          // Rescale the IDs within the Map
+          const rescaledIds = new Map<string, number>();
+          const values = Array.from(answerIds.values());
+          const rescaledValues = rescaleTo100(values);
+          //console.log("hello " + rescaledIds);
+
+          answerIds.forEach((value, key, map) => {
+            rescaledIds.set(key, rescaledValues.shift() || 0);
+          });
+  
+          setAnswerIds(rescaledIds);
+        } catch (error) {
+          console.error("Error fetching and rescaling answer IDs:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [dataset, depVar, datasetQ]); 
+
+  useEffect(() => {
+    if (answerIds && data && answerIds.size > 0 && data.length > 0) {
+      const calculatedValues = new Map();
+      let totalCount = 0;
+      let sumOfMultipliedValues = 0;
+      const multipliedValuesArray = []; // Array to store multiplied values for median calculation
+
+      console.log(answerIds);
+      console.log(data);
+  
+      for (const [key, value] of answerIds.entries()) {
+        const dataEntry = data.find(([text]) => {
+          const [category] = text.split(' (');
+          return category === key;
+        });
+  
+        if (dataEntry) {
+          console.log(dataEntry);
+          console.log(value);
+          const numericValue = Number(dataEntry[1]);
+          console.log(numericValue);
+          for (let i = 0; i < numericValue; i++) {
+            multipliedValuesArray.push(value); // Add multiplied value to array
+          }
+          const multipliedValue = value * numericValue;
+          calculatedValues.set(key, multipliedValue);
+          totalCount += numericValue;
+          sumOfMultipliedValues += multipliedValue;
+        }
+      }
+  
+      const averageValue = totalCount > 0 ? sumOfMultipliedValues / totalCount : 0;
+
+      const sortedMultipliedValues = multipliedValuesArray.sort((a, b) => a - b);
+      const median =
+        sortedMultipliedValues.length % 2 === 0
+          ? (sortedMultipliedValues[sortedMultipliedValues.length / 2 - 1] +
+              sortedMultipliedValues[sortedMultipliedValues.length / 2]) /
+            2
+          : sortedMultipliedValues[Math.floor(sortedMultipliedValues.length / 2)];
+      setMedian(median);
+      console.log("this is the median " + median)
+  
+      // Calculate standard deviation
+      const mean = averageValue;
+      const squaredDifferences = multipliedValuesArray.map(value => Math.pow(value - mean, 2));
+      const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / multipliedValuesArray.length;
+      const stdDeviation = Math.sqrt(variance);
+      setStandardDeviation(stdDeviation);
+      console.log("this is the standard deviation " + stdDeviation)
+      
+      setTotalCount(totalCount);
+      setAverageValue(averageValue);
+      setMultipliedValues(calculatedValues);
+    }
+  }, [answerIds, data]);
+  
+  
+  
+
+  function Export() {
+
+    const exportitem = document.getElementById('my-table') as HTMLElement;
+    html2canvas(exportitem, {}).then(canvas => {
+
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const PageHeight = 298;
+      const PageWidth = 210;
+
+      const height = canvas.height * PageHeight / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, PageWidth, height);
+
+
+      pdf.save("data.pdf");
+    })
+  }
+
+  function rescaleTo100(sequence: number[]): number[] {
+    const min = Math.min(...sequence);
+    const max = Math.max(...sequence);
+    const range = max - min;
+    const scaleFactor = 100 / range;
+  
+    const rescaledSequence = sequence.map(num => Math.round((max - num) * scaleFactor));
+  
+    return rescaledSequence;
+  }
+  
+  
+
+
+
+  return (
+    <div id="data_page">
+      <CdemHeader />
+      <div className='analysis_container'>
+        <div className="filter_container">
+          <SelectionTool dataset={dataset} setDataset={setDataset} setDepVar={setDepVar} setIndVar={setIndVar} />
+          <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar} />
+
+          <FilterButtons dataset={dataset} indVar={indVar} setSelectedButton={setSelectedButton} />
+
+          <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
+          <button
+            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
+            onClick={Export}>
+            Export PDF
+          </button>
+          <FormControl>
+            <FormLabel id="map-control-group">Map Type</FormLabel>
+            <RadioGroup
+              aria-labelledby="map-control-group"
+              name="cmap-control-group"
+              value={mapType}
+              onChange={handleChange}
+            >
+              <FormControlLabel value="province" control={<Radio />} label="Province" />
+              <FormControlLabel value="riding" control={<Radio />} label="Riding" />
+            </RadioGroup>
+          </FormControl>
+        </div>
+        <div className='data_container'>
+          <StatsBar dataset={dataset} depVar={depVar} />
+          <p>Count: {totalCount}</p>
+          <p>The mean is: {averageValue}</p>
+          <p>The median is: {median}</p>
+          <p>The standard deviation is: {standardDeviation}</p>
+          <div id='data_map_component'>
+            <MapComponent mapData={mapData} mapType={mapType} />
+          </div>
+
+          <div id='my-table'>
+            <Chart width={'100%'} chartType='PieChart' data={data}
+              options={{
+                colors: chartColors,
+
+              }}
+
+            />
+            <Chart chartType='BarChart' data={data}
+              options={{
+                colors: chartColors,
+                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area to ensure labels fit.
+                hAxis: {
+                  textStyle: {
+                    fontSize: 10 // Adjust the horizontal axis label font size
+                  }
+                },
+                vAxis: {
+                  textStyle: {
+                    fontSize: 8 // Adjust the vertical axis label font size
+                  }
+                },
+                bar: { groupWidth: '75%' }, // Adjust the bar width for better label visibility
+                legend: { position: 'none' }, // Adjust legend position or remove if not needed
+
+              }}
+
+            />
+          </div>
+
+        </div>
+      </div>
+      {< CDemFooter />}
+    </div >
+  );
+}
