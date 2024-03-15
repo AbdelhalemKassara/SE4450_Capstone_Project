@@ -1,0 +1,24 @@
+
+#cdem_page{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+
+    .cdem_page_body{
+        margin: 2rem;
+        display: grid;
+        grid-template-columns: 30% 70%;
+        gap: 2rem;        
+        align-items: center;
+        justify-content: center;
+        font-size: 6rem;
+        color: black;
+        .cdem_selection{
+            display: grid;
+            grid-template-columns: minmax(5rem, auto) minmax(min-content, 30rem) minmax(min-content, 30rem);
+            gap: 2rem;
+        }
+    }
+
+}

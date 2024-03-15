@@ -1,0 +1,40 @@
+#data_page {
+  position: relative;
+  width: 100vw;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  .analysis_container {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    color: black;
+    padding-top: 6rem;
+    /* Add padding to compensate for the fixed header height */
+    margin-bottom: 60px;
+    padding-bottom: 6rem;
+
+
+    .filter_container {
+      margin: 0 auto;
+      flex-direction: column;
+      display: flex;
+      .update_sizing{
+        text-overflow: ellipsis;
+        // display: grid;
+      }
+
+      >* {
+        box-sizing: border-box;
+      }
+
+      button {
+        width: fit-content;
+        margin: 5px;
+        float: left;
+        /* Set buttons to float next to each other */
+      }
+    }
+  }
+}
