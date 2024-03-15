@@ -12,5 +12,5 @@ export type Count = number;
 
 export type FilteredMapData = {
     province: any;
-    riding: any[];
+    riding: any;
 }

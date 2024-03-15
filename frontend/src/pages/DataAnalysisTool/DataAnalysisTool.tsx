@@ -28,7 +28,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
   const [mapType, setMapType] = useState<string>('province');
-  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: [] })
+  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
   const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string | undefined>();

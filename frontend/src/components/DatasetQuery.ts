@@ -127,13 +127,13 @@ class DatasetQuery {
     // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
     // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
 
-    for(let i = 0; i < indAnswers.length; i++) {
-      if(indAnswers[i] === depAnswer && depAnswers[i]) {
+    for (let i = 0; i < indAnswers.length; i++) {
+      if (indAnswers[i] === depAnswer && depAnswers[i]) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
         let id: string = depAnswers[i];
         let curCount: number | undefined = out.get(id);
-        
-        if(curCount) {
+
+        if (curCount) {
           out.set(id, curCount + 1);
         } else {
           out.set(id, 1);
@@ -170,7 +170,7 @@ class DatasetQuery {
   public async getFeduid(datasetId: string): Promise<string[]> {
     return this.fileFetcher.getFeduid(datasetId);
   }
-  
+
   public async getAnswerIds(datasetid: string, colId: string): Promise<Map<QuestionText, number>> {
     return this.fileFetcher.getAnswerIds(datasetid, colId);
   }
@@ -178,29 +178,37 @@ class DatasetQuery {
 
     let out: FilteredMapData = {
       province: {},
-      riding: []
+      riding: {}
     };
 
 
     //these will have the same length
     let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
     let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
-    let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, `${depQuestId.slice(0, 4)}_province`);
-    // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
-    console.log(proA)
+    let provAns: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, `${depQuestId.slice(0, 4)}_province`);
+    let feduid: string[] = await this.fileFetcher.getFeduid(datasetId);
 
     for (let i = 0; i < indAnswers.length; i++) {
-      if (indAnswers[i] === depAnswer && depAnswers[i] && proA[i]) {
+      if (indAnswers[i] === depAnswer && depAnswers[i] && provAns[i] && feduid[i]) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
-        let id: string = proA[i];
-        let curCount: number | undefined = out.province[id];
 
-        if (curCount) {
-          out.province[id] = curCount + 1;
+        let provinceId: string = provAns[i];
+        let provCount: number | undefined = out.province[provinceId];
+        let ridingId: string = feduid[i];
+        let fedCount: number | undefined = out.riding[ridingId]
+
+        if (provCount) {
+          out.province[provinceId] = provCount + 1;
         } else {
-          out.province[id] = 1;
+          out.province[provinceId] = 1;
+        }
+        if (fedCount) {
+          out.riding[ridingId] = fedCount + 1;
+        } else {
+          out.riding[ridingId] = 1;
         }
       }
+
     }
 
     return out;
