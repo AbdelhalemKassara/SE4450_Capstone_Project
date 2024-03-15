@@ -131,12 +131,43 @@ class DatasetQuery {
       if (indAnswers[i] === depAnswer && depAnswers[i]) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
         let id: string = depAnswers[i];
+        console.log("hi " + depAnswer);
         let curCount: number | undefined = out.get(id);
 
         if (curCount) {
           out.set(id, curCount + 1);
         } else {
           out.set(id, 1);
+        }
+      }
+    }
+
+    return out;
+  }
+
+  public async getFilteredAnswersCounts(datasetId: string, depQuestId: string, depAnswer: string[], indQuestId: string): Promise<Map<AnswerText, Count>> {
+    let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
+
+    //these will have the same length
+    let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
+    let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
+    // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
+//console.log("fuck you " + depAnswer);
+//console.log(depAnswer.length)
+    for (let j = 0; j < depAnswer.length; j++) {
+      for (let i = 0; i < indAnswers.length; i++) {
+        if (indAnswers[i] === depAnswer[j] && depAnswers[i]) {
+          //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
+          let id: string = depAnswers[i];
+          //console.log("fuck " + depAnswer[i]);
+          let curCount: number | undefined = out.get(id);
+
+          if (curCount) {
+            out.set(id, curCount + 1);
+          } else {
+            out.set(id, 1);
+          }
         }
       }
     }
@@ -193,6 +224,51 @@ class DatasetQuery {
 
     }
 
+    return out;
+  }
+
+  public async getFilteredMapDatas(datasetId: string, depQuestId: string, depAnswer: string[], indQuestId: string): Promise<FilteredMapData> {
+
+    let out: FilteredMapData = {
+      province: {},
+      riding: {}
+    };
+
+//console.log("hi");
+    //these will have the same length
+    let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
+    let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    //console.log(datasetId);
+    //console.log(`${depQuestId.slice(0, 4)}_province`);
+    let provAns: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, `${depQuestId.slice(0, 4)}_province`);
+    let feduid: string[] = await this.fileFetcher.getFeduid(datasetId);
+
+    for(let j = 0; j < depAnswer.length; j++){  
+      //console.log("jimLahey")
+      for (let i = 0; i < indAnswers.length; i++) {
+        if (indAnswers[i] === depAnswer[j] && depAnswers[i] && provAns[i] && feduid[i]) {
+          //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
+
+          let provinceId: string = provAns[i];
+          let provCount: number | undefined = out.province[provinceId];
+          let ridingId: string = feduid[i];
+          let fedCount: number | undefined = out.riding[ridingId]
+
+          if (provCount) {
+            out.province[provinceId] = provCount + 1;
+          } else {
+            out.province[provinceId] = 1;
+          }
+          if (fedCount) {
+            out.riding[ridingId] = fedCount + 1;
+          } else {
+            out.riding[ridingId] = 1;
+          }
+        }
+
+      }
+    }
+    //console.log("this is the result ", out);
     return out;
   }
 

@@ -41,7 +41,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
   const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
-  const [selectedButton, setSelectedButton] = useState<string | undefined>();
+  const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
 
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
@@ -67,7 +67,8 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
       (async () => {
-        let val: Map<string, number> = await datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar);
+        let val: Map<string, number> = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar);
+        //console.log("this is the selectedbutton " + selectedButton);
         let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
         const reorderedData: [string, number | string][] = [['Category', 'Count']];
 
@@ -79,7 +80,7 @@ export default function DataAnalysisTool(): JSX.Element {
 
         setData(reorderedData);
       })()
-      datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
+      datasetQ.getFilteredMapDatas(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
         setMapData(val);
       });
     }
@@ -141,8 +142,8 @@ export default function DataAnalysisTool(): JSX.Element {
       let sumOfMultipliedValues = 0;
       const multipliedValuesArray = []; // Array to store multiplied values for median calculation
 
-      console.log(answerIds);
-      console.log(data);
+      //console.log(answerIds);
+      //console.log(data);
 
       for (const [key, value] of answerIds.entries()) {
         const dataEntry = data.find(([text]) => {
@@ -151,10 +152,10 @@ export default function DataAnalysisTool(): JSX.Element {
         });
 
         if (dataEntry) {
-          console.log(dataEntry);
-          console.log(value);
+          //console.log(dataEntry);
+          //console.log(value);
           const numericValue = Number(dataEntry[1]);
-          console.log(numericValue);
+          //console.log(numericValue);
           for (let i = 0; i < numericValue; i++) {
             multipliedValuesArray.push(value); // Add multiplied value to array
           }
@@ -175,7 +176,7 @@ export default function DataAnalysisTool(): JSX.Element {
           2
           : sortedMultipliedValues[Math.floor(sortedMultipliedValues.length / 2)];
       setMedian(median);
-      console.log("this is the median " + median)
+      //console.log("this is the median " + median)
 
       // Calculate standard deviation
       const mean = averageValue;
@@ -183,7 +184,7 @@ export default function DataAnalysisTool(): JSX.Element {
       const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / multipliedValuesArray.length;
       const stdDeviation = Math.sqrt(variance);
       setStandardDeviation(stdDeviation);
-      console.log("this is the standard deviation " + stdDeviation)
+      //console.log("this is the standard deviation " + stdDeviation)
 
       setTotalCount(totalCount);
       setAverageValue(averageValue);
