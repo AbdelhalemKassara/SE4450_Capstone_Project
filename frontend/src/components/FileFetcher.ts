@@ -125,8 +125,8 @@ class FileFetcher {
     return out;
   }
   
-  public async getGeoJsonFile(): Promise<any> {
-    return this.fetchJsonFile<any>("/FED_CA_2021_EN Compressed.geojson");
+  public async getJSONPolygonFile(fileName: string): Promise<any> {
+    return this.fetchJsonFile<any>(`${fileName}.json`);
   }
 
 

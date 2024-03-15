@@ -1,64 +1,76 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { datasetQuery } from "../../components/DatabaseContext";
 import { red, amber, orange } from '@mui/material/colors';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { Legend, InfoControl } from './components';
 import "./index.scss";
 import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
-import province from './province.json'
-import { electoralRidings, section } from './helper'
 import * as stringSimilarity from "string-similarity";
+import { formatRidingData } from './helper.js'
 
 
 const MapComponent = ({ mapData, mapType }) => {
+  const datasetQ = useContext(datasetQuery);
 
   const [currentHover, setCurrentHover] = useState({});
   const [selectedLayer, setSelectedLayer] = useState({})
   const [selectedStyle, setSelectedStyle] = useState({})
   const [heatValues, setHeatValues] = useState([])
   const [maxValue, setMaxValue] = useState({ province: 0, riding: 0 })
-  const [provinceMapData, setProvinceMapData] = useState({ ...province })
-  const [ridingMapData, setRidingMapData] = useState({ ...electoralRidings() })
+  const [provinceMapData, setProvinceMapData] = useState({})
+  const [ridingMapData, setRidingMapData] = useState({})
   const multipliers = [0, 0.05, 0.1125, 0.225, 0.3, 0.4, 0.5, 0.6, 0.7, 0.85]
 
   useEffect(() => {
-    const provinceCount = mapData.province ?? {};
-    const ridingCount = mapData.riding ?? {};
-    let maxProvinceCount = 0;
-    let updatedProvinceMapData = [...provinceMapData.features];
-    Object.entries(provinceCount).forEach(([key, value]) => {
-      for (let i = 0; i < provinceMapData?.features.length; i++) {
-        const provinceProperty = updatedProvinceMapData?.[i]?.properties;
-        const similarity = stringSimilarity.compareTwoStrings(key, provinceProperty?.name);
-        if (similarity >= 0.9) {
-          maxProvinceCount = Math.max(maxProvinceCount, value)
-          provinceProperty.density = value;
-          break;
-        }
-      }
-    })
-    let maxRidingCount = 0
-    let updatedRidingMapData = [...ridingMapData.features];
-    Object.entries(ridingCount).forEach(([key, value]) => {
-      for (let i = 0; i < ridingMapData.features.length; i++) {
-        const elecProperties = updatedRidingMapData?.[i]?.properties;
-        if (key && elecProperties?.feduid == key) {
-          maxRidingCount = Math.max(maxRidingCount, value);
-          elecProperties.density = value;
-          break;
-        }
-      }
-    })
-    setRidingMapData({ ...ridingMapData, features: [...updatedRidingMapData] })
-    setProvinceMapData({ ...provinceMapData, features: [...updatedProvinceMapData] })
-    setMaxValue({ ...maxValue, riding: maxRidingCount, province: maxProvinceCount })
+    if (mapData) {
+      let maxProvinceCount = 0;
+      let maxRidingCount = 0
+
+      datasetQ.getJSONPolygonFile("province").then((polygon: any) => {
+        const provinceCount = mapData.province ?? {};
+        const geoData = { ...polygon };
+        let updatedProvinceMapData = [...geoData.features];
+        Object.entries(provinceCount).forEach(([key, value]) => {
+          for (let i = 0; i < provinceMapData?.features.length; i++) {
+            const provinceProperty = updatedProvinceMapData?.[i]?.properties;
+            const similarity = stringSimilarity.compareTwoStrings(key, provinceProperty?.name);
+            if (similarity >= 0.9) {
+              maxProvinceCount = Math.max(maxProvinceCount, value)
+              provinceProperty.density = value;
+              break;
+            }
+          }
+        })
+        setProvinceMapData({ ...provinceMapData, features: [...updatedProvinceMapData] })
+      });
+      datasetQ.getJSONPolygonFile("riding").then((polygon: any) => {
+        const ridingCount = mapData.riding ?? {};
+        const geoData = { ...formatRidingData(polygon) };
+
+        let updatedRidingMapData = [...geoData.features];
+        Object.entries(ridingCount).forEach(([key, value]) => {
+          for (let i = 0; i < ridingMapData.features.length; i++) {
+            const elecProperties = updatedRidingMapData?.[i]?.properties;
+            if (key && elecProperties?.feduid == key) {
+              maxRidingCount = Math.max(maxRidingCount, value);
+              elecProperties.density = value;
+              break;
+            }
+          }
+        })
+        setRidingMapData({ ...ridingMapData, features: [...updatedRidingMapData] })
+        setMaxValue({ ...maxValue, province: maxProvinceCount, riding: maxRidingCount })
+
+      })
+    };
   }, [mapData]);
 
   useEffect(() => {
     const multipliersMax = multipliers.map((val) => {
       return Math.ceil(val * maxValue[mapType])
     });
-    // console.log(maxValue)
     setHeatValues(multipliersMax);
+    console.log(maxValue)
   }, [mapType, provinceMapData, ridingMapData])
 
   useEffect(() => {

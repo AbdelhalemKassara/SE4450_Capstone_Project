@@ -152,8 +152,8 @@ class DatasetQuery {
     return this.fileFetcher.getAnswerIds(datasetid, colId);
   }
 
-  public async getGeoJsonFile(): Promise<any> {
-    return this.fileFetcher.getGeoJsonFile();
+  public async getJSONPolygonFile(fileName: string): Promise<any> {
+    return this.fileFetcher.getJSONPolygonFile(fileName);
   }
 
   public async getFilteredMapData(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string): Promise<FilteredMapData> {
