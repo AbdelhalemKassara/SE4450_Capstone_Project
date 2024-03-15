@@ -29,7 +29,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
   const [mapType, setMapType] = useState<string>('province');
   const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
-  const [data, setData] = useState<undefined | [[string, string], ...Array<[string, number]>]>();
+  const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string | undefined>();
 
@@ -56,12 +56,6 @@ export default function DataAnalysisTool(): JSX.Element {
 
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
-<<<<<<< HEAD
-      datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
-        const barData: [[string, string], ...Array<[string, number]>] = [['Category', 'Count']];
-        val?.forEach((value, key) => {
-          barData.push([`${key} (${value})`, value]);
-=======
       (async () => {
         let val: Map<string, number> = await datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar);
         let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
@@ -71,7 +65,6 @@ export default function DataAnalysisTool(): JSX.Element {
         answerIds.forEach((answerId: number, answerText: string) => {
           const count = val.get(answerText) || 0; // Get the count for the current answer
           reorderedData.push([`${answerText} (${count})`, count]);
->>>>>>> 3682c14 (created new mapping for charts)
         });
 
         console.log(reorderedData);
@@ -82,6 +75,7 @@ export default function DataAnalysisTool(): JSX.Element {
       });
     }
   }, [dataset, depVar, indVar, selectedButton]);
+
   // if (dataset && depVar && selectedButton && indVar) {
   //   datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
 
@@ -101,9 +95,6 @@ export default function DataAnalysisTool(): JSX.Element {
   //     });
   //   });
   // }
-
-
-
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
