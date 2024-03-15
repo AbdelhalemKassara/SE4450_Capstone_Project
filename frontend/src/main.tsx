@@ -1,6 +1,5 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom/client'
-import CdemPage from "./pages/CdemPage/CdemPage.tsx";
 import HomePage from "./pages/HomePage/HomePage.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DataAnalysisTool from "./pages/DataAnalysisTool/DataAnalysisTool.tsx";
@@ -19,7 +18,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<HomePage />} />
         <Route path="/dataAnalysisTool" element={<DataAnalysisTool />} />
         <Route path="/*" element={<PageNotFound />} />
-        <Route path="/cdemMap" element={<CdemPage />} />
         <Route path="/selection" element={<SelectionTool />} />
         <Route path="/bar" element={<LandingPage />} />
         <Route path="/chart" element={<Export />}/>

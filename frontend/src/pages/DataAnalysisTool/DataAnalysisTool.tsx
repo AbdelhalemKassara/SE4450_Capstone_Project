@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { DatabaseContext, datasetQuery } from "../../components/DatabaseContext";
-import DropdownMenu from "../CdemPage/DependentSelection/DropdownMenu";
+import DropdownMenu from "./DependentSelection/DropdownMenu";
 import SelectionTool from "../SelectionTool/selectionTool";
 import StatsBar from "./components/StatsBar/StatsBar";
 import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
