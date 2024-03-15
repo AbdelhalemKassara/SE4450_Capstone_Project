@@ -75,9 +75,25 @@ export class QsfFileFetchWrapper {
     }
   }
 
+  public getAnswersOrderArr(questionId: string) : string[] | undefined {
+    if(this.questIDToObj.has(questionId)) {
+      return this.questIDToObj.get(questionId).Payload.AnswerOrder;
+    } else {
+      return undefined;
+    }
+  }
+
   public getAnswerMappingObj(questionId: string): any {
     if(this.questIDToObj.has(questionId)) {
       return this.questIDToObj.get(questionId).Payload.Choices;
+    } else {
+      return undefined;
+    }
+  }
+
+  public getAnswerMappingObjSliderNMatrix(questionId: string): any {
+    if(this.questIDToObj.has(questionId)) {
+      return this.questIDToObj.get(questionId).Payload.Answers;
     } else {
       return undefined;
     }
