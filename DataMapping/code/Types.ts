@@ -31,14 +31,10 @@ export interface TE extends Question{
 
 export interface Matrix extends Question {
   type: "Matrix";
-  answersMapping: any;
-  subQuestion: string;
 }
 
 export interface Slider extends Question {
   type: "Slider";
-  answersMapping: any;
-  labels: any;
 }
 
 //dataset file

@@ -19,6 +19,7 @@ import FormLabel from '@mui/material/FormLabel';
 
 import "./index.scss";
 import FilterButtons from "./components/FilterButtons";
+import { FilteredMapData } from "@components/NewTypes";
 
 export default function DataAnalysisTool(): JSX.Element {
   const datasetQ = useContext(datasetQuery);
@@ -27,7 +28,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
   const [mapType, setMapType] = useState<string>('province');
-  const [mapData, setMapData] = useState({ province: {}, riding: [] })
+  //const [mapData, setMapData] = useState({ province: {}, riding: [] })
   const [answerIds, setAnswerIds] = useState<Map<string, number>>(new Map());
   const [multipliedValues, setMultipliedValues] = useState(new Map());
   const [averageValue, setAverageValue] = useState<number>(0);
@@ -37,6 +38,7 @@ export default function DataAnalysisTool(): JSX.Element {
 
 
 
+  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
   const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string | undefined>();
@@ -46,19 +48,63 @@ export default function DataAnalysisTool(): JSX.Element {
   //these are used for the temporary display output (might not )
 
 
+  // useEffect(() => {
+  //   if (dataset && depVar && selectedButton && indVar) {
+  //     datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
+  //       const barData: [string, number | string][] = [['Category', 'Count']];
+  //       val?.forEach((value, key) => {
+  //         barData.push([`${key} (${value})`, value]);
+  //       });
+
+  //       setData(barData);
+  //     });
+  //     datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
+  //       setMapData(val);
+  //     });
+  //   }
+  // }, [dataset, depVar, indVar, selectedButton]);
+
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
-      datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
-        const barData: [string, number | string][] = [['Category', 'Count']];
-        val?.forEach((value, key) => {
-          barData.push([`${key} (${value})`, value]);
+      (async () => {
+        let val: Map<string, number> = await datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar);
+        let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
+        const reorderedData: [string, number | string][] = [['Category', 'Count']];
+
+        // Iterate over the answer IDs map and use them to reorder the data
+        answerIds.forEach((answerId: number, answerText: string) => {
+          const count = val.get(answerText) || 0; // Get the count for the current answer
+          reorderedData.push([`${answerText} (${count})`, count]);
         });
 
-        setData(barData);
-
+        console.log(reorderedData);
+        setData(reorderedData);
+      })()
+      datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
+        setMapData(val);
       });
     }
   }, [dataset, depVar, indVar, selectedButton]);
+
+  // if (dataset && depVar && selectedButton && indVar) {
+  //   datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
+
+  //     datasetQ.getAnswerIds(dataset, depVar).then((answerIds: Map<string, number>) => {
+  //       // Create an array to hold the reordered data
+  //       const reorderedData: [string, number | string][] = [];
+
+  //       // Iterate over the answer IDs map and use them to reorder the data
+  //       answerIds.forEach((answerId: number, answerText: string) => {
+  //         const count = val.get(answerText) || 0; // Get the count for the current answer
+  //         reorderedData.push([`${answerText} (${count})`, count]);
+  //       });
+
+  //       // Set the reordered data
+  //       console.log(reorderedData);
+  //       setData(reorderedData);
+  //     });
+  //   });
+  // }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
@@ -221,22 +267,36 @@ export default function DataAnalysisTool(): JSX.Element {
           <p>The median is: {median}</p>
           <p>The standard deviation is: {standardDeviation}</p>
           <div id='data_map_component'>
-            {/* <MapComponent mapData={mapData} mapType={mapType} /> */}
+            <MapComponent mapData={mapData} mapType={mapType} />
           </div>
 
           <div id='my-table'>
-            <Chart width={'100%'} chartType='BarChart' data={data}
-              options={{
-                colors: chartColors,
-                legend: { position: 'top' }
-              }}
-
-            />
             <Chart width={'100%'} chartType='PieChart' data={data}
               options={{
                 colors: chartColors,
-                legend: { position: 'top' }
+
               }}
+
+            />
+            <Chart chartType='BarChart' data={data}
+              options={{
+                colors: chartColors,
+                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area to ensure labels fit.
+                hAxis: {
+                  textStyle: {
+                    fontSize: 10 // Adjust the horizontal axis label font size
+                  }
+                },
+                vAxis: {
+                  textStyle: {
+                    fontSize: 8 // Adjust the vertical axis label font size
+                  }
+                },
+                bar: { groupWidth: '75%' }, // Adjust the bar width for better label visibility
+                legend: { position: 'none' }, // Adjust legend position or remove if not needed
+
+              }}
+
             />
           </div>
 

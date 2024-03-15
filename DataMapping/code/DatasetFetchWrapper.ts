@@ -54,7 +54,8 @@ export class DatasetFetchWrapper {
       if(val) {
         this.dataset.data[i][columnIndex] = val;
       } else {
-        throw new Error(`There was an issue with updating the values for questionid ${questionId}, the mapping file can't find ${this.dataset.data[i][columnIndex]}.`);
+        //so we can skip some values
+        // throw new Error(`There was an issue with updating the values for questionid ${questionId}, the mapping file can't find ${this.dataset.data[i][columnIndex]}.`);
       }
     }
   }

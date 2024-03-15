@@ -22,7 +22,7 @@ const MapComponent = ({ mapData, mapType }) => {
 
   useEffect(() => {
     const provinceCount = mapData.province ?? {};
-    const ridingCount = mapData.riding ?? [];
+    const ridingCount = mapData.riding ?? {};
     let maxProvinceCount = 0;
     let updatedProvinceMapData = [...provinceMapData.features];
     Object.entries(provinceCount).forEach(([key, value]) => {
@@ -57,7 +57,7 @@ const MapComponent = ({ mapData, mapType }) => {
     const multipliersMax = multipliers.map((val) => {
       return Math.ceil(val * maxValue[mapType])
     });
-    console.log(maxValue)
+    // console.log(maxValue)
     setHeatValues(multipliersMax);
   }, [mapType, provinceMapData, ridingMapData])
 

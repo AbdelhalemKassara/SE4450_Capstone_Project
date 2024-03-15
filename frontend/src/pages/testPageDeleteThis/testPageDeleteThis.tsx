@@ -47,7 +47,7 @@ export default function TestPageDeleteThis(): JSX.Element {
 
       // console.log(await dataset.getAnswersCount("2022", "feduid"));
       // console.log((await dataset.getDependentQuestions("2022")).has("feduid"))
-      console.log(await dataset.getFeduid("2020"));
+      // console.log(await dataset.getFeduid("2020"));
     })();
 
   }, []);

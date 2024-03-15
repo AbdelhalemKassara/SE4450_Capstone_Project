@@ -78,7 +78,7 @@ class FileFetcher {
       let answer = answerMap.get(answerId);
       if(answer) {
         output.push(answer);
-      } else if(answerId === "-99" || answerId === undefined || answerId === null || answerId === "NA") {
+      } else if(answerId === "-99" || answerId === undefined || answerId === null || answerId === "NA" || answerId === '') {
         //this means there was no response  
       } else {
         throw new Error(`We couldn't find the mapping for datasetId ${datasetId} colId ${colId} and answerId ${answerId}.`);
@@ -124,6 +124,11 @@ class FileFetcher {
 
     return out;
   }
+  
+  public async getGeoJsonFile(): Promise<any> {
+    return this.fetchJsonFile<any>("/FED_CA_2021_EN Compressed.geojson");
+  }
+
 
   /*private functions*/
 
@@ -165,7 +170,7 @@ class FileFetcher {
 
     for(let [key, value] of Object.entries(answerMapObj.answersMapping)) {
       //@ts-expect-error: This is mostly because we can't assing a type in this kind of loop
-      if(value?.Display) {
+      if(value?.Display || value?.Display === '') {
         //@ts-expect-error: same as above 
         map.set(key, value.Display);
       } else {
