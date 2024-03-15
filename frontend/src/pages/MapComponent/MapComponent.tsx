@@ -57,7 +57,7 @@ const MapComponent = ({ mapData, mapType }) => {
     const multipliersMax = multipliers.map((val) => {
       return Math.ceil(val * maxValue[mapType])
     });
-    console.log(maxValue)
+    // console.log(maxValue)
     setHeatValues(multipliersMax);
   }, [mapType, provinceMapData, ridingMapData])
 

@@ -114,9 +114,10 @@ export class ProcessQuestions {
     filteredQuestionValues.forEach((value: string, i) => {
       //+1 and .Display to stay consistant with MC mapping
       let id: string = (i+1).toString();
-
-      obj[id.valueOf()] = {Display: value};
-      mapValToId.set(value, id);
+      if(value) {
+        obj[id.valueOf()] = {Display: value};
+        mapValToId.set(value, id);  
+      } 
     });
 
     //gets the mainQuestion 
@@ -280,10 +281,7 @@ export class ProcessQuestions {
         curQuestMap.answersMapping = newAnswerMapping;
       }
       
-      console.log(curQuestMap);
     } 
-
-
     //if Payload.SnapToGrid === true then treat is as a mc question, if it's not then treat it as it's own question type
   }
 
