@@ -152,7 +152,7 @@ class DatasetQuery {
     let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
     let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
     let fedUids: string[] = await this.fileFetcher.getFeduid(datasetId);
-    console.log(fedUids.filter((val: string) => val === feduid.toString()), feduid);
+
     // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
     // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
 //console.log("fuck you " + depAnswer);
