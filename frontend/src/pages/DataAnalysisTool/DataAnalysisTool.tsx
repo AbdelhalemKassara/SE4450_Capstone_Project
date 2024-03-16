@@ -36,7 +36,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [median, setMedian] = useState<number>(0);
   const [standardDeviation, setStandardDeviation] = useState<number>(0);
   const [selectedRiding, setSelectedRiding] = useState<number>(0);
-  // console.log(selectedRiding)
+  console.log(selectedRiding)
 
   const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
   const [data, setData] = useState<undefined | [string, number | string][]>();
@@ -228,15 +228,11 @@ export default function DataAnalysisTool(): JSX.Element {
     return rescaledSequence;
   }
 
-
-
-
-
   return (
     <div id="data_page">
       <CdemHeader />
       <div className='analysis_container'>
-        <div className="filter_container">
+        <div className="filter_container" onClick={() => { if (mapType === 'riding' && selectedRiding !== 0) { setSelectedRiding(0) } }}>
           <SelectionTool dataset={dataset} setDataset={setDataset} setDepVar={setDepVar} setIndVar={setIndVar} />
           <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar} />
 
