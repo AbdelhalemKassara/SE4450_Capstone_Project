@@ -9,7 +9,7 @@ import * as stringSimilarity from "string-similarity";
 import { formatRidingData } from './helper.js'
 
 
-const MapComponent = ({ mapData, mapType }) => {
+const MapComponent = ({ mapData, mapType, setSelectedRiding }) => {
   const datasetQ = useContext(datasetQuery);
 
   const [currentHover, setCurrentHover] = useState({});
@@ -20,7 +20,7 @@ const MapComponent = ({ mapData, mapType }) => {
   const [provinceMapData, setProvinceMapData] = useState({})
   const [ridingMapData, setRidingMapData] = useState({})
   const multipliers = [0, 0.05, 0.1125, 0.225, 0.3, 0.4, 0.5, 0.6, 0.7, 0.85]
-  
+
 
   useEffect(() => {
     if (mapData) {
@@ -116,6 +116,7 @@ const MapComponent = ({ mapData, mapType }) => {
   const highlightFeature = (e) => {
     const layer = e.target;
     const properties = layer?.feature?.properties ?? {};
+
     setSelectedLayer(layer)
     setSelectedStyle({
       weight: 3,
@@ -140,6 +141,9 @@ const MapComponent = ({ mapData, mapType }) => {
   const zoomToFeature = (e) => {
     const map = e.target._map;
     map.fitBounds(e.target.getBounds());
+    if (mapType === 'riding') {
+      setSelectedRiding(e.target.feature.properties.feduid ?? 0)
+    }
   };
   const onEachFeature = (feature, layer) => {
     layer.on({

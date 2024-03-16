@@ -35,8 +35,8 @@ export default function DataAnalysisTool(): JSX.Element {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [median, setMedian] = useState<number>(0);
   const [standardDeviation, setStandardDeviation] = useState<number>(0);
-
-
+  const [selectedRiding, setSelectedRiding] = useState<number>(0);
+  console.log(selectedRiding)
 
   const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
   const [data, setData] = useState<undefined | [string, number | string][]>();
@@ -108,6 +108,7 @@ export default function DataAnalysisTool(): JSX.Element {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
+    setSelectedRiding(0);
   };
 
   useEffect(() => {
@@ -269,7 +270,7 @@ export default function DataAnalysisTool(): JSX.Element {
             <p>The standard deviation is: {Math.round(standardDeviation)}</p>
           </div>
           <div id='data_map_component'>
-            <MapComponent mapData={mapData} mapType={mapType} />
+            <MapComponent mapData={mapData} mapType={mapType} setSelectedRiding={setSelectedRiding} />
           </div>
 
           <div id='my-table'>
