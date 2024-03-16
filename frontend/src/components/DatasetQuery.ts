@@ -239,8 +239,9 @@ class DatasetQuery {
     let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
     let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
     //console.log(datasetId);
-    //console.log(`${depQuestId.slice(0, 4)}_province`);
-    let provAns: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, `${depQuestId.slice(0, 4)}_province`);
+
+    //console.log(`${depQuestId.slice(0, 4)}_province`);  
+    let provAns: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, `${depQuestId.split(/(?=_)/)[0]}_province`);
     let feduid: string[] = await this.fileFetcher.getFeduid(datasetId);
 
     for(let j = 0; j < depAnswer.length; j++){  
