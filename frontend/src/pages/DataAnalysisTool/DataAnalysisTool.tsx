@@ -36,7 +36,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [median, setMedian] = useState<number>(0);
   const [standardDeviation, setStandardDeviation] = useState<number>(0);
   const [selectedRiding, setSelectedRiding] = useState<number>(0);
-  console.log(selectedRiding)
+  // console.log(selectedRiding)
 
   const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
   const [data, setData] = useState<undefined | [string, number | string][]>();
@@ -67,7 +67,7 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
       (async () => {
-        let val: Map<string, number> = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar);
+        let val: Map<string, number> = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar, selectedRiding);
         //console.log("this is the selectedbutton " + selectedButton);
         let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
         const reorderedData: [string, number | string][] = [['Category', 'Count']];
@@ -84,7 +84,7 @@ export default function DataAnalysisTool(): JSX.Element {
         setMapData(val);
       });
     }
-  }, [dataset, depVar, indVar, selectedButton]);
+  }, [dataset, depVar, indVar, selectedButton, selectedRiding]);
 
   // if (dataset && depVar && selectedButton && indVar) {
   //   datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
