@@ -68,7 +68,7 @@ class DatasetQuery {
     let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
 
     const colVals = await this.fileFetcher.getColsVals(datasetId, questionId);
-
+    console.log(questionId, colVals);
     // Count occurrences of each answer
     colVals.forEach((answer: string) => {
       const stringValue: string = answer.valueOf(); // Convert string to string
@@ -78,7 +78,7 @@ class DatasetQuery {
       } else {
         out.set(stringValue, 1);
       }
-
+      
     });
 
     return out;

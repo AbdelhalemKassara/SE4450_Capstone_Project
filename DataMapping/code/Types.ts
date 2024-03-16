@@ -3,7 +3,18 @@ export type paramters = {
   independentVariables : string[];
   metadata : string[];
   variablesToIgnore : string[];
+  surveyYear: number;
+  variableForAgeBrackets: string;
+  "AskingForBirthYearNotAge?": boolean;
+  maxBirthYear: number;
+  ageBrackets: AgeBracket[];
 };
+
+export type AgeBracket = {
+  minBirthYear: number;
+  bracketName: string;
+};
+
 
 //mapping file
 export type Mapping = {
@@ -13,6 +24,10 @@ export type Mapping = {
 
 export type AllQuestionTypes =   {
   [key: string]: MC | TE | Matrix | Slider
+};
+
+export type answersMapping =   {
+  [key: string]: {Display: string}
 };
 
 type Question = {
@@ -36,6 +51,7 @@ export interface Matrix extends Question {
 export interface Slider extends Question {
   type: "Slider";
 }
+
 
 //dataset file
 export type Dataset = {

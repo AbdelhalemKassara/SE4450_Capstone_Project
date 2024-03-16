@@ -16,6 +16,7 @@ export default function FilterButtons({ dataset, indVar, setSelectedButton }: Fi
     if (dataset && indVar) {
       datasetQ.getAnswersCount(dataset, indVar).then((val: Map<string, number>) => {
         const initialMap: Map<string, boolean> = new Map();
+
         val.forEach((_, key) => {
           initialMap.set(key, false);
         });

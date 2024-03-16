@@ -73,9 +73,11 @@ class FileFetcher {
     let answerMap: Map<string, string> = await this.getAnswerMapping(datasetId, colId);
 
     let output: string[] = [];
-    
+    console.log("raw", rawColValues);
+
     rawColValues.forEach((answerId: string) => {
       let answer = answerMap.get(answerId);
+      console.log(answerMap);
       if(answer) {
         output.push(answer);
       } else if(answer === "-99" || answer === undefined || answer === null || answer === "NA" || answer === '') {

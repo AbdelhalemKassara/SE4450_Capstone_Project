@@ -43,5 +43,37 @@
     "Attitudes1_politicianattitudes_D",
     "Attitudes1_politicianattitudes_0",
     "dc22_jurisdiction_t_Click_Count"    
-  ]
+  ],
+  "surveyYear" : 2023,
+  "variableForAgeBrackets": "dc23_age_in_years",
+  "AskingForBirthYearNotAge?" : false,
+  "maxBirthYear" : 2012,
+  "ageBrackets" : [{
+    "minBirthYear" : 1997,
+    "bracketName" : "Gen Z"
+  },
+  {
+    "minBirthYear" : 1965,
+    "bracketName" : "Gen X"
+  }, 
+  {
+    "minBirthYear" : 1981,
+    "bracketName" : "Millenials"
+  },
+  {
+    "minBirthYear" : 1955,
+    "bracketName" : "Bommers II"
+  },
+  {
+    "minBirthYear": 1946,
+    "bracketName" : "Bommers I"
+  },
+  {
+    "minBirthYear" : 1928,
+    "bracketName" : "Post War"
+  },
+  {
+    "minBirthYear" : 1922,
+    "bracketName" : "WWII"
+  }]
 }

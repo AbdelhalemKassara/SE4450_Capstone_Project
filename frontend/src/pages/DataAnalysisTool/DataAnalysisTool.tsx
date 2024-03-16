@@ -36,7 +36,6 @@ export default function DataAnalysisTool(): JSX.Element {
   const [median, setMedian] = useState<number>(0);
   const [standardDeviation, setStandardDeviation] = useState<number>(0);
   const [selectedRiding, setSelectedRiding] = useState<number>(0);
-  console.log(selectedRiding)
 
   const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
   const [data, setData] = useState<undefined | [string, number | string][]>();

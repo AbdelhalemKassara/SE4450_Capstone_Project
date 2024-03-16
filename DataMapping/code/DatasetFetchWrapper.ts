@@ -100,9 +100,10 @@ export class DatasetFetchWrapper {
 
     let out: string[] = [];
 
-    this.dataset.data.forEach((row: string[]) => {
+    for(let i = 1; i < this.dataset.data.length; i++) {
+      let row: string[] = this.dataset.data[i];
       out.push(row[columnIndex]);
-    });
+    }
 
     return out;
   }

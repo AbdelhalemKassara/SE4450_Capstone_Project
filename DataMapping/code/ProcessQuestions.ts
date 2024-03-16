@@ -1,4 +1,4 @@
-import { AllQuestionTypes, Mapping, Matrix, MC, Slider, TE } from "./Types";
+import { AgeBracket, AllQuestionTypes, answersMapping, Mapping, Matrix, MC, Slider, TE } from "./Types";
 import { QsfFileFetchWrapper } from "./QsfFileFetchWrapper";
 import { DatasetFetchWrapper } from "./DatasetFetchWrapper";
 
@@ -6,16 +6,18 @@ export class ProcessQuestions {
   constructor() {
   }
 
-  public addQuestion(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean, dataset: DatasetFetchWrapper, year: string) {
+  public addQuestion(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean, dataset: DatasetFetchWrapper) {
 
     let type: string = qsfFile.getQuestionType(questionId);
  
     //only process the ones we have implemented the code for processing (these should be enouph unless there are more question types added to qualtrics)
     if(type === "MC") {
       this.processMC(mappingFile, qsfFile, questionId, addToIndVar);
+      this.processAgeBrackets(mappingFile, qsfFile, questionId, addToIndVar, dataset);
       return;
     } else if(type === "TE") {
       this.processTE(mappingFile, qsfFile, questionId, addToIndVar, dataset);
+      this.processAgeBrackets(mappingFile, qsfFile, questionId, addToIndVar, dataset);
       return;
     } 
 
@@ -32,9 +34,11 @@ export class ProcessQuestions {
     
     if(type === "Slider") {
       this.processSlider(mappingFile, qsfFile, newQuestionId, addToIndVar, dataset, questionId, subQId.slice(1));
+      this.processAgeBrackets(mappingFile, qsfFile, questionId, addToIndVar, dataset);
     } else if(type === "Matrix") {
       //i might have accedentally swapped newQuestionId and quesitonId
       this.processMatrix(mappingFile, qsfFile, newQuestionId, addToIndVar, dataset, questionId, subQId.slice(1));
+      this.processAgeBrackets(mappingFile, qsfFile, questionId, addToIndVar, dataset);
     }
 
   }
@@ -285,4 +289,83 @@ export class ProcessQuestions {
     //if Payload.SnapToGrid === true then treat is as a mc question, if it's not then treat it as it's own question type
   }
 
+  private processAgeBrackets(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean, dataset: DatasetFetchWrapper): void {
+    if(questionId !== qsfFile.getVarForAgeBrac()) {
+      return;
+    }
+
+    if(!addToIndVar) {
+      console.log(`The variableForAgeBrackets in the paramters file should also be in the list for independentvariables for questionId ${questionId}.`);
+      return;
+    }
+
+
+    
+    let answerMap: any = mappingFile.independent[questionId].answersMapping;
+    //take a look at the mapping of each of the age questions to CORRECT the paramters.json on which store the age and which store the birth year
+    
+    //I think we just need to update the values in the mapping in this case
+    //this is wrong these aren't the ages this is remappping the ids
+    if(!qsfFile.getIsBirthYear()) {
+      //convert the dataset from age to birth year
+      let surveyYear: number = qsfFile.getSurveyYear();
+
+      for(let [id, obj] of Object.entries(answerMap)) {
+        //@ts-ignore
+        if(obj.Display !== undefined) {
+          //@ts-ignore
+          answerMap[id].Display = (surveyYear - Number(obj.Display)).toString();
+        } 
+      }
+    }
+
+    //process the ranges 
+    let ageBracs: AgeBracket[] = qsfFile.getAgeBrackets();
+    ageBracs.sort((a: AgeBracket, b: AgeBracket) => b.minBirthYear - a.minBirthYear);//youngest to oldest 
+
+    //create the new answer mappings
+    let newAnswerMapping: answersMapping = {};
+    
+    newAnswerMapping["1"] = {Display: `younger than ${ageBracs[0].bracketName} (${Number(ageBracs[0].minBirthYear)+1}+)`};
+
+    ageBracs.forEach((ageBrac: AgeBracket, i: number) => { //creates the new answer mapping
+      newAnswerMapping[(i+2).toString()] = {Display: `${ageBrac.bracketName} (${ageBrac.minBirthYear} - ${i === 0? qsfFile.getMaxBirthYear() : Number(ageBracs[i-1].minBirthYear)-1})`}//+2 because we are starting from 1 and for born before oldest bracket
+    });
+
+    newAnswerMapping[(ageBracs.length + 2).toString()] = {Display: `older than ${ageBracs[ageBracs.length-1].bracketName} (${Number(ageBracs[ageBracs.length-1].minBirthYear)-1}-)`};
+
+    //create the map that will be used to update the ids in the dataset
+    let oldIdsToNew: Map<string, string> = new Map<string, string>();
+    for(let [id, obj] of Object.entries(answerMap)) {
+        //@ts-ignore
+        let oldAnsYear = Number(obj.Display);
+
+        //@ts-ignore: younger than range
+        if(oldAnsYear > qsfFile.getMaxBirthYear()) {
+          oldIdsToNew.set(id, "1");
+          continue;
+        }
+
+        //in range
+        for(let i = 0; i < ageBracs.length; i++) {
+          //@ts-ignore
+          if(oldAnsYear >= Number(ageBracs[i].minBirthYear)) {
+            oldIdsToNew.set(id, (i+2).toString());
+            break;
+          }
+        }
+
+        //@ts-ignore: older than range
+        if(oldAnsYear < Number(ageBracs[ageBracs.length-1].minBirthYear)) {
+          oldIdsToNew.set(id, (ageBracs.length + 2).toString());
+        }
+    }
+
+    
+    mappingFile.independent[questionId].answersMapping = newAnswerMapping;
+    
+    //update the dataset with the new ids
+    dataset.updateQuestValues(questionId, oldIdsToNew);
+
+  }
 }

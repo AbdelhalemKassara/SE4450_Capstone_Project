@@ -1,5 +1,5 @@
 import fs, {PathLike} from 'fs';
-import { paramters } from './Types';
+import { AgeBracket, paramters } from './Types';
 import { DatasetFetchWrapper } from './DatasetFetchWrapper';
 const stringStripHtml = require('fix-esm').require('string-strip-html');
 
@@ -168,10 +168,30 @@ export class QsfFileFetchWrapper {
 
     return out;
   }
+
   public getIndependentVariables(): string[] {
     return this.parametersFile.independentVariables;
   }
 
+  public getSurveyYear(): number {
+    return this.parametersFile.surveyYear;
+  }
+
+  public getVarForAgeBrac(): string {
+    return this.parametersFile.variableForAgeBrackets;
+  }
+
+  public getIsBirthYear(): boolean {
+    return this.parametersFile["AskingForBirthYearNotAge?"];
+  }
+  
+  public getMaxBirthYear(): number {
+    return this.parametersFile.maxBirthYear;
+  }
+
+  public getAgeBrackets(): AgeBracket[] {
+    return this.parametersFile.ageBrackets;
+  }
 
   private hashQuestionIDToQuestionObject() {
     this.qsfFile.SurveyElements.forEach((row: any) => {
