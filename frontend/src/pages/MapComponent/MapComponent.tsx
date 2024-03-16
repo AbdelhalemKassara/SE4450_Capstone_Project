@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { datasetQuery } from "../../components/DatabaseContext";
 import { red, amber, orange } from '@mui/material/colors';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
+import { useMapEvents } from 'react-leaflet/hooks'
 import { Legend, InfoControl } from './components';
 import "./index.scss";
 import 'leaflet/dist/leaflet.css'; // Make sure to import Leaflet CSS
@@ -9,7 +10,7 @@ import * as stringSimilarity from "string-similarity";
 import { formatRidingData } from './helper.js'
 
 
-const MapComponent = ({ mapData, mapType }) => {
+const MapComponent = ({ mapData, mapType, setSelectedRiding }) => {
   const datasetQ = useContext(datasetQuery);
 
   const [currentHover, setCurrentHover] = useState({});
@@ -20,6 +21,17 @@ const MapComponent = ({ mapData, mapType }) => {
   const [provinceMapData, setProvinceMapData] = useState({})
   const [ridingMapData, setRidingMapData] = useState({})
   const multipliers = [0, 0.05, 0.1125, 0.225, 0.3, 0.4, 0.5, 0.6, 0.7, 0.85]
+  function MyComponent() {
+    useMapEvents({
+      click: () => {
+        if (mapType === 'riding') {
+          setSelectedRiding(0)
+        }
+      },
+    })
+    return null
+  }
+
 
   useEffect(() => {
     if (mapData) {
@@ -115,6 +127,7 @@ const MapComponent = ({ mapData, mapType }) => {
   const highlightFeature = (e) => {
     const layer = e.target;
     const properties = layer?.feature?.properties ?? {};
+
     setSelectedLayer(layer)
     setSelectedStyle({
       weight: 3,
@@ -139,6 +152,9 @@ const MapComponent = ({ mapData, mapType }) => {
   const zoomToFeature = (e) => {
     const map = e.target._map;
     map.fitBounds(e.target.getBounds());
+    if (mapType === 'riding') {
+      setSelectedRiding(e.target.feature.properties.feduid ?? 0)
+    }
   };
   const onEachFeature = (feature, layer) => {
     layer.on({
@@ -165,6 +181,7 @@ const MapComponent = ({ mapData, mapType }) => {
             style={style}
             onEachFeature={onEachFeature}
           />
+          <MyComponent />
           <Legend getColor={getColor} heatValues={heatValues} />
           <InfoControl currentHover={currentHover} mapType={mapType} />
         </MapContainer>
