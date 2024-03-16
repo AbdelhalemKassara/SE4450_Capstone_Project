@@ -29,7 +29,7 @@ function DropdownMenu({ dataset, setDependentQuestion, depVar }: { dataset: stri
 
   return (
     <FormControl fullWidth>
-      <InputLabel id="another-id">Dependent Variables</InputLabel>
+      <InputLabel id="demo-simple-select-label">Dependant Variables</InputLabel>
       <Select value={depVar ? depVar : ''} onChange={handleSelectChange}>
         {(
           () => {

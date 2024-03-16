@@ -42,6 +42,9 @@ export default function DataAnalysisTool(): JSX.Element {
   const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
+  const [chartType, setChartType] = useState<string>('PieChart');
+
+
 
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
@@ -108,6 +111,10 @@ export default function DataAnalysisTool(): JSX.Element {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
+  };
+
+  const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChartType((event.target as HTMLInputElement).value);
   };
 
   useEffect(() => {
@@ -259,20 +266,56 @@ export default function DataAnalysisTool(): JSX.Element {
               <FormControlLabel value="riding" control={<Radio />} label="Riding" />
             </RadioGroup>
           </FormControl>
+          <FormControl>
+            <FormLabel id="chart-control-group">Chart Type</FormLabel>
+            <RadioGroup
+              aria-labelledby="chart-control-group"
+              name="chart-control-group"
+              value={chartType}
+              onChange={handleChartChange}
+            >
+              <FormControlLabel value="BarChart" control={<Radio />} label="Bar" />
+              <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
+            </RadioGroup>
+          </FormControl>
         </div>
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
           <div className='data_stats'>
-            <p>Count: {totalCount}</p>
-            <p>The mean is: {Math.round(averageValue)}</p>
-            <p>The median is: {median}</p>
-            <p>The standard deviation is: {Math.round(standardDeviation)}</p>
+              <div className="statistic-box">
+              <p className="statistic-label">Count:</p>
+              <p className="statistic-value">{totalCount}</p>
+            </div>
+            <div className="statistic-box">
+              <p className="statistic-label">Mean:</p>
+              <p className="statistic-value">{Math.round(averageValue * 100)/100}</p>
+            </div>
+            <div className="statistic-box">
+              <p className="statistic-label">Median:</p>
+              <p className="statistic-value">{median}</p>
+            </div>
+            <div className="statistic-box">
+              <p className="statistic-label">Standard Deviation:</p>
+              <p className="statistic-value">{Math.round(standardDeviation * 100)/100}</p>
+            </div>
           </div>
           <div id='data_map_component'>
             <MapComponent mapData={mapData} mapType={mapType} />
           </div>
-
           <div id='my-table'>
+        <Chart
+          width={'100%'}
+          chartType={chartType} // Use the state variable for dynamic chart type
+          data={data}
+          options={{
+            colors: chartColors, // Example chart colors
+            chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
+            // Other chart options...
+          }}
+        />
+      </div>
+
+          {/* <div id='my-table'>
             <Chart width={'100%'} chartType='PieChart' data={data}
               options={{
                 colors: chartColors,
@@ -300,7 +343,7 @@ export default function DataAnalysisTool(): JSX.Element {
               }}
 
             />
-          </div>
+          </div> */}
 
         </div>
       </div>

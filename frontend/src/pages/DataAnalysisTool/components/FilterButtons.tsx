@@ -54,7 +54,7 @@ return newState;
           <button
             key={key}
             onClick={() => handleButtonClick(key)}
-            style={{ backgroundColor: isSelected ? 'lightblue' : 'inherit' }}
+            style={{ backgroundColor: isSelected ? 'gray' : '#fbc02d' }}
           >
             {key}
           </button>
