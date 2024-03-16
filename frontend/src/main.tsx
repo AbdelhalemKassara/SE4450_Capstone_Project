@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/SE4450_Capstone_Project" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/dataAnalysisTool" element={<DataAnalysisTool />} />
         <Route path="/*" element={<PageNotFound />} />
         <Route path="/selection" element={<SelectionTool />} />
