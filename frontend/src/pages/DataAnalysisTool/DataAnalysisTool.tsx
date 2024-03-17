@@ -47,30 +47,39 @@ export default function DataAnalysisTool(): JSX.Element {
 
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
-  //these are used for the temporary display output (might not )
+  // ColumnChart Class
+  const columnChart = async () => {
+    if (dataset && depVar && selectedButton && indVar) {
+      try {
+        const filteredAnswers = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar, selectedRiding);
+        const answerIds = await datasetQ.getAnswerIds(dataset, depVar);
 
+        const reorderedData: [string, string | number][] = [['Category', 'Count']];
+        // Iterate over the answer IDs map and use them to reorder the data
+        answerIds.forEach((answerId: number, answerText: string) => {
+          const count = filteredAnswers.get(answerText) || 0;
+          // Get the count for the current answer
+          reorderedData.push([`${answerText} (${count})`, count]);
+        });
+        setData(reorderedData);
+      } catch (error) {
+        console.error("Error fetching data for column chart:", error);
+      }
+    }
+  };
 
-  // useEffect(() => {
-  //   if (dataset && depVar && selectedButton && indVar) {
-  //     datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
-  //       const barData: [string, number | string][] = [['Category', 'Count']];
-  //       val?.forEach((value, key) => {
-  //         barData.push([`${key} (${value})`, value]);
-  //       });
-
-  //       setData(barData);
-  //     });
-  //     datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
-  //       setMapData(val);
-  //     });
-  //   }
-  // }, [dataset, depVar, indVar, selectedButton]);
-
+  // Call the columnChart function when needed
+  useEffect(() => {
+    if (chartType === 'ColumnChart') {
+      columnChart();
+    }
+  }, [dataset, depVar, selectedButton, indVar, selectedRiding, chartType]);
+  //function to add maps 
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
       (async () => {
         let val: Map<string, number> = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar, selectedRiding);
-        //console.log("this is the selectedbutton " + selectedButton);
+        console.log("this is the selectedbutton " + selectedButton);
         let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
         const reorderedData: [string, number | string][] = [['Category', 'Count']];
 
@@ -88,25 +97,6 @@ export default function DataAnalysisTool(): JSX.Element {
     }
   }, [dataset, depVar, indVar, selectedButton, selectedRiding]);
 
-  // if (dataset && depVar && selectedButton && indVar) {
-  //   datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
-
-  //     datasetQ.getAnswerIds(dataset, depVar).then((answerIds: Map<string, number>) => {
-  //       // Create an array to hold the reordered data
-  //       const reorderedData: [string, number | string][] = [];
-
-  //       // Iterate over the answer IDs map and use them to reorder the data
-  //       answerIds.forEach((answerId: number, answerText: string) => {
-  //         const count = val.get(answerText) || 0; // Get the count for the current answer
-  //         reorderedData.push([`${answerText} (${count})`, count]);
-  //       });
-
-  //       // Set the reordered data
-  //       console.log(reorderedData);
-  //       setData(reorderedData);
-  //     });
-  //   });
-  // }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
@@ -272,19 +262,20 @@ export default function DataAnalysisTool(): JSX.Element {
             >
               <FormControlLabel value="BarChart" control={<Radio />} label="Bar" />
               <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
+              <FormControlLabel value="ColumnChart" control={<Radio />} label="Column" />
             </RadioGroup>
           </FormControl>
         </div>
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
           <div className='data_stats'>
-              <div className="statistic-box">
+            <div className="statistic-box">
               <p className="statistic-label">Count:</p>
               <p className="statistic-value">{totalCount}</p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Mean:</p>
-              <p className="statistic-value">{Math.round(averageValue * 100)/100}</p>
+              <p className="statistic-value">{Math.round(averageValue * 100) / 100}</p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Median:</p>
@@ -292,24 +283,24 @@ export default function DataAnalysisTool(): JSX.Element {
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Standard Deviation:</p>
-              <p className="statistic-value">{Math.round(standardDeviation * 100)/100}</p>
+              <p className="statistic-value">{Math.round(standardDeviation * 100) / 100}</p>
             </div>
           </div>
           <div id='data_map_component'>
             <MapComponent mapData={mapData} mapType={mapType} setSelectedRiding={setSelectedRiding} />
           </div>
           <div id='my-table'>
-        <Chart
-          width={'100%'}
-          chartType={chartType} // Use the state variable for dynamic chart type
-          data={data}
-          options={{
-            colors: chartColors, // Example chart colors
-            chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
-            // Other chart options...
-          }}
-        />
-      </div>
+            <Chart
+              width={'100%'}
+              chartType={chartType} // Use the state variable for dynamic chart type
+              data={data}
+              options={{
+                colors: chartColors, // Example chart colors
+                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
+                // Other chart options...
+              }}
+            />
+          </div>
 
           {/* <div id='my-table'>
             <Chart width={'100%'} chartType='PieChart' data={data}
