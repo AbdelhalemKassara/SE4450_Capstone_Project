@@ -78,7 +78,7 @@ class DatasetQuery {
       } else {
         out.set(stringValue, 1);
       }
-      
+
     });
 
     return out;
@@ -155,8 +155,8 @@ class DatasetQuery {
 
     // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
     // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
-//console.log("fuck you " + depAnswer);
-//console.log(depAnswer.length)
+    //console.log("fuck you " + depAnswer);
+    //console.log(depAnswer.length)
     for (let j = 0; j < depAnswer.length; j++) {
       for (let i = 0; i < indAnswers.length; i++) {
         if (indAnswers[i] === depAnswer[j] && depAnswers[i] && (feduid < 10000 || fedUids[i] === feduid.toString())) {
@@ -236,7 +236,7 @@ class DatasetQuery {
       riding: {}
     };
 
-//console.log("hi");
+    //console.log("hi");
     //these will have the same length
     let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
     let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
@@ -246,7 +246,7 @@ class DatasetQuery {
     let provAns: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, `${depQuestId.split(/(?=_)/)[0]}_province`);
     let feduid: string[] = await this.fileFetcher.getFeduid(datasetId);
 
-    for(let j = 0; j < depAnswer.length; j++){  
+    for (let j = 0; j < depAnswer.length; j++) {
       //console.log("jimLahey")
       for (let i = 0; i < indAnswers.length; i++) {
         if (indAnswers[i] === depAnswer[j] && depAnswers[i] && provAns[i] && feduid[i]) {

@@ -44,29 +44,33 @@ export default function DataAnalysisTool(): JSX.Element {
   const [chartType, setChartType] = useState<string>('PieChart');
 
 
-
+  const [filteredData, setFilteredData] = useState<{ filter: string; data: [string, number | string][] }[]>([]);
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
   // ColumnChart Class
   const columnChart = async () => {
     if (dataset && depVar && selectedButton && indVar) {
-      try {
-        const filteredAnswers = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar, selectedRiding);
-        const answerIds = await datasetQ.getAnswerIds(dataset, depVar);
+      (async () => {
+        const filters = ['filter1', 'filter2', 'filter3']; // Add your filters here
+        const filteredDataArray = [];
 
-        const reorderedData: [string, string | number][] = [['Category', 'Count']];
-        // Iterate over the answer IDs map and use them to reorder the data
-        answerIds.forEach((answerId: number, answerText: string) => {
-          const count = filteredAnswers.get(answerText) || 0;
-          // Get the count for the current answer
-          reorderedData.push([`${answerText} (${count})`, count]);
-        });
-        setData(reorderedData);
-      } catch (error) {
-        console.error("Error fetching data for column chart:", error);
-      }
-    }
-  };
+        for (const filter of filters) {
+          let val: Map<string, number> = await datasetQ.getFilteredAnswersCount(dataset, depVar, filter, indVar);
+          let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
+
+          const reorderedData: [string, number | string][] = [['Category', 'Count']];
+          answerIds.forEach((value: number, key: string) => {
+            const count = val.get(value) || 0;
+            reorderedData.push([`${value} (${count})`, count]);
+          });
+
+          filteredDataArray.push({ filter: filter, data: reorderedData });
+        }
+        console.log(filteredDataArray);
+        setFilteredData(filteredDataArray);
+      })();
+    };
+  }
 
   // Call the columnChart function when needed
   useEffect(() => {
