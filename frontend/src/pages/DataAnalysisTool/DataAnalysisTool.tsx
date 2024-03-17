@@ -47,38 +47,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [filteredData, setFilteredData] = useState<{ filter: string; data: [string, number | string][] }[]>([]);
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
-  // ColumnChart Class
-  const columnChart = async () => {
-    if (dataset && depVar && selectedButton && indVar) {
-      (async () => {
-        const filters = ['filter1', 'filter2', 'filter3']; // Add your filters here
-        const filteredDataArray = [];
-
-        for (const filter of filters) {
-          let val: Map<string, number> = await datasetQ.getFilteredAnswersCount(dataset, depVar, filter, indVar);
-          let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
-
-          const reorderedData: [string, number | string][] = [['Category', 'Count']];
-          answerIds.forEach((value: number, key: string) => {
-            const count = val.get(value) || 0;
-            reorderedData.push([`${value} (${count})`, count]);
-          });
-
-          filteredDataArray.push({ filter: filter, data: reorderedData });
-        }
-        console.log(filteredDataArray);
-        setFilteredData(filteredDataArray);
-      })();
-    };
-  }
-
-  // Call the columnChart function when needed
-  useEffect(() => {
-    if (chartType === 'ColumnChart') {
-      columnChart();
-    }
-  }, [dataset, depVar, selectedButton, indVar, selectedRiding, chartType]);
-  //function to add maps 
+  
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
       (async () => {
