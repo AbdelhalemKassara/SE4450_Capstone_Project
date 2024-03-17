@@ -85,6 +85,25 @@ export default function DataAnalysisTool(): JSX.Element {
       datasetQ.getFilteredMapDatas(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
         setMapData(val);
       });
+    }else if (dataset && depVar && (!selectedButton && !indVar)){
+      console.log("ananda");
+      (async () => {
+        let val: Map<string, number> = await datasetQ.getTotalAnswerCount(dataset, depVar, selectedRiding);
+        //console.log("this is the selectedbutton " + selectedButton);
+        let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
+        const reorderedData: [string, number | string][] = [['Category', 'Count']];
+
+        // Iterate over the answer IDs map and use them to reorder the data
+        answerIds.forEach((answerId: number, answerText: string) => {
+          const count = val.get(answerText) || 0; // Get the count for the current answer
+          reorderedData.push([`${answerText} (${count})`, count]);
+        });
+
+        setData(reorderedData);
+      })()
+      datasetQ.getUnFilteredMapDatas(dataset, depVar).then((val: FilteredMapData) => {
+        setMapData(val);
+      });
     }
   }, [dataset, depVar, indVar, selectedButton, selectedRiding]);
 
