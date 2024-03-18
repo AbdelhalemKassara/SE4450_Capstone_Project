@@ -269,41 +269,43 @@ export default function DataAnalysisTool(): JSX.Element {
             onClick={Export}>
             Export PDF
           </button>
-          <FormControl>
-            <FormLabel id="map-control-group">Map Type</FormLabel>
-            <RadioGroup
-              aria-labelledby="map-control-group"
-              name="cmap-control-group"
-              value={mapType}
-              onChange={handleChange}
-            >
-              <FormControlLabel value="province" control={<Radio />} label="Province" />
-              <FormControlLabel value="riding" control={<Radio />} label="Riding" />
-            </RadioGroup>
-          </FormControl>
-          <FormControl>
-            <FormLabel id="chart-control-group">Chart Type</FormLabel>
-            <RadioGroup
-              aria-labelledby="chart-control-group"
-              name="chart-control-group"
-              value={chartType}
-              onChange={handleChartChange}
-            >
-              <FormControlLabel value="BarChart" control={<Radio />} label="Bar" />
-              <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
-            </RadioGroup>
-          </FormControl>
+          <div className='data_processing_radio'>
+            <FormControl>
+              <FormLabel id="map-control-group">Map Type</FormLabel>
+              <RadioGroup
+                aria-labelledby="map-control-group"
+                name="cmap-control-group"
+                value={mapType}
+                onChange={handleChange}
+              >
+                <FormControlLabel value="province" control={<Radio />} label="Province" />
+                <FormControlLabel value="riding" control={<Radio />} label="Riding" />
+              </RadioGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel id="chart-control-group">Chart Type</FormLabel>
+              <RadioGroup
+                aria-labelledby="chart-control-group"
+                name="chart-control-group"
+                value={chartType}
+                onChange={handleChartChange}
+              >
+                <FormControlLabel value="BarChart" control={<Radio />} label="Bar" />
+                <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
+              </RadioGroup>
+            </FormControl>
+          </div>
         </div>
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
           <div className='data_stats'>
-              <div className="statistic-box">
+            <div className="statistic-box">
               <p className="statistic-label">Count:</p>
               <p className="statistic-value">{totalCount}</p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Mean:</p>
-              <p className="statistic-value">{Math.round(averageValue * 100)/100}</p>
+              <p className="statistic-value">{Math.round(averageValue * 100) / 100}</p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Median:</p>
@@ -311,24 +313,24 @@ export default function DataAnalysisTool(): JSX.Element {
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Standard Deviation:</p>
-              <p className="statistic-value">{Math.round(standardDeviation * 100)/100}</p>
+              <p className="statistic-value">{Math.round(standardDeviation * 100) / 100}</p>
             </div>
           </div>
           <div id='data_map_component'>
             <MapComponent mapData={mapData} mapType={mapType} setSelectedRiding={setSelectedRiding} />
           </div>
           <div id='my-table'>
-        <Chart
-          width={'100%'}
-          chartType={chartType} // Use the state variable for dynamic chart type
-          data={data}
-          options={{
-            colors: chartColors, // Example chart colors
-            chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
-            // Other chart options...
-          }}
-        />
-      </div>
+            <Chart
+              width={'100%'}
+              chartType={chartType} // Use the state variable for dynamic chart type
+              data={data}
+              options={{
+                colors: chartColors, // Example chart colors
+                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
+                // Other chart options...
+              }}
+            />
+          </div>
 
           {/* <div id='my-table'>
             <Chart width={'100%'} chartType='PieChart' data={data}

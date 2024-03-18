@@ -1,15 +1,22 @@
 .cdem_header {
-    position: fixed;
-    top: 0;
     display: grid;
-    grid-template-columns: minmax(min-content, 8rem) minmax(20rem, auto) 1fr;
+    grid-template-columns: minmax(min-content, 8em) minmax(10rem, auto);
     gap: 2rem;
     align-items: center;
-    height: 6rem;
+    height: 4.5rem;
     z-index: 9999;
     background: rgb(255, 255, 255);
-    width: 100%;
     box-shadow: 0px 0px 10px rgb(158, 158, 158);
+
+    @media screen and (max-width: 600px) {
+        // display: flex;
+        // flex-direction: column;
+        gap: 0rem;
+        padding: 0.5rem;
+        height: unset;
+        grid-template-columns: minmax(min-content, 4rem) 1fr;
+
+    }
 
     .mapleLeaf_header {
         margin: 0rem 2rem;
@@ -17,6 +24,9 @@
         align-items: center;
         justify-content: center;
 
+        @media screen and (max-width: 600px) {
+            margin: 0rem;
+        }
 
         img {
             max-width: 100%;
@@ -27,5 +37,36 @@
 
     .mapleLeaf_header:hover {
         cursor: pointer;
+    }
+
+    .title_header {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #424242;
+
+        @media screen and (max-width: 600px) {
+            flex-wrap: wrap;
+            gap: 0rem;
+            font-size: 1.5rem;
+            justify-content: center;
+            text-align: center;
+
+            >span:nth-child(2) {
+                margin-left: 0.5rem;
+            }
+        }
+
+        >span:nth-child(2) {
+            color: #fbc02d;
+        }
+    }
+
+    .header_menu {
+        margin-right: 1rem;
+        display: flex;
+        justify-content: flex-end;
     }
 }

@@ -1,1 +1,19 @@
+.cdem_footer {
+    display: flex;
+    height: 4.5rem;
+    width: 100vw;
+    box-shadow: 0px 0px 10px rgb(158, 158, 158);
+    z-index: 9999;
+    background-color: white;
 
+    >.footer_text {
+        color: black;
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        padding:1rem;
+    }
+}

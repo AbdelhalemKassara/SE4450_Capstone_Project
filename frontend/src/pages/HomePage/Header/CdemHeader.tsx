@@ -21,8 +21,6 @@ const CdemHeader = () => {
         <span>Democracy</span>
         <span>Research</span>
       </div>
-      <div className="header_menu">
-      </div>
     </div>
   );
 };

@@ -17,8 +17,10 @@ const HomePage = () => {
       <div className="homePage_body">
         <div className="background_bar">
           <div className="background_text">
-            <span>Demo</span>
-            <span>cracy</span>
+            <div className='democracy_text'>
+              <span>Demo</span>
+              <span>cracy</span>
+            </div>
             <span>Starts</span>
             <span>Here</span>
           </div>
@@ -27,7 +29,7 @@ const HomePage = () => {
               id="basic-button"
               variant="contained"
               style={{ backgroundColor: yellow[700] }}
-              onClick ={handleNextPage}
+              onClick={handleNextPage}
             >
               <span>View Democratic Data</span>
             </Button>
@@ -35,7 +37,7 @@ const HomePage = () => {
         </div>
       </div>
       <CDemFooter />
-    </div>
+    </div >
   );
 };
 
