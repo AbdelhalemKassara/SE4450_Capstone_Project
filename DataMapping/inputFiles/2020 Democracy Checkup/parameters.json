@@ -1,6 +1,5 @@
 {
   "independentVariables" : [
-  "dc20_consent",
   "dc20_yob",
   "dc20_citizenship",
   "dc20_gender",
