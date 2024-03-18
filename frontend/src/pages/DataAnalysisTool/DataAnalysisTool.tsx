@@ -41,7 +41,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [data, setData] = useState<undefined | [string, number | string][]>();
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
-  const [chartType, setChartType] = useState<string>('PieChart');
+  const [chartType, setChartType] = useState<string>('BarChart');
 
 
 
