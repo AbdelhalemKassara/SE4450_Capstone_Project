@@ -27,7 +27,7 @@ export default function IndVarDropDown({ setIndVar, indVar, dataset, depVar }:
 
 
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth ref={elementRef}>
       <InputLabel id="demo-simple-select-label">Independent Variables</InputLabel>
       <Select
         labelId="demo-simple-select-label"
