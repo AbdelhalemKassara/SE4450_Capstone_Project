@@ -39,15 +39,52 @@ export default function DataAnalysisTool(): JSX.Element {
 
   const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
   const [data, setData] = useState<undefined | [string, number | string][]>();
+
   // Inside your component function
   const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
-  const [chartType, setChartType] = useState<string>('PieChart');
-
-
-  const [filteredData, setFilteredData] = useState<{ filter: string; data: [string, number | string][] }[]>([]);
+  const [chartType, setChartType] = useState<string>();
+  //for columnChart
+  const [columnChartType, setColumnChartType] = useState<string>(); // Initialize with default chart type
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
-  
+
+  // Declared filters and chart data
+  const [filter1, setFilter1] = useState<string | undefined>();
+  const [filter2, setFilter2] = useState<string | undefined>();
+  const [chartData, setChartData] = useState<string>(''); // Initialize with empty array for chart data
+
+  // useEffect to fetch and update chart data when filters change
+  useEffect(() => {
+    // Fetch filtered answers for filter 1
+    const fetchFilter1Data = async () => {
+      if (filter1 && filter2) {
+        const filter1Data = await datasetQ.getFilteredAnswersCount(chartData, depVar, filter1, indVar!);
+        const filter2Data = await datasetQ.getFilteredAnswersCount(chartData, depVar, filter2, indVar!);
+
+        // Construct chart data
+        const chartData = [['Category', 'Filter 1', 'Filter 2']]; // Initialize with header row
+        // Iterate through the answers and add them to the chart data
+        filter1Data.forEach((count, answer) => {
+          const filter2Count = filter2Data.get(answer) || 0; // Get count for filter 2, default to 0 if not found
+          chartData.push([answer, count, filter2Count]);
+        });
+        setChartData(chartData);
+      }
+    };
+
+    fetchFilter1Data();
+  }, [columnChartType, filter1, filter2, dataset, depVar, indVar, selectedRiding]);
+
+  //filters
+  // Function to handle filter changes
+  const handleFilterChange = (filterNumber: number, value: string) => {
+    if (filterNumber === 1) {
+      setFilter1(value);
+    } else if (filterNumber === 2) {
+      setFilter2(value);
+    }
+  };
+
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
       (async () => {
@@ -55,13 +92,11 @@ export default function DataAnalysisTool(): JSX.Element {
         console.log("this is the selectedbutton " + selectedButton);
         let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
         const reorderedData: [string, number | string][] = [['Category', 'Count']];
-
         // Iterate over the answer IDs map and use them to reorder the data
         answerIds.forEach((answerId: number, answerText: string) => {
           const count = val.get(answerText) || 0; // Get the count for the current answer
           reorderedData.push([`${answerText} (${count})`, count]);
         });
-
         setData(reorderedData);
       })()
       datasetQ.getFilteredMapDatas(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
@@ -78,6 +113,10 @@ export default function DataAnalysisTool(): JSX.Element {
 
   const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChartType((event.target as HTMLInputElement).value);
+  };
+
+  const handleChartChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setColumnChartType((event.target as HTMLInputElement).value);
   };
 
   useEffect(() => {
@@ -226,6 +265,19 @@ export default function DataAnalysisTool(): JSX.Element {
             </RadioGroup>
           </FormControl>
           <FormControl>
+            <FormLabel id="column-chart-control-group">Column Chart Type</FormLabel>
+            <RadioGroup
+              aria-labelledby="column-chart-control-group"
+              name="column-chart-control-group"
+              value={columnChartType}
+              onChange={handleChartChange2}
+            >
+              {/* Add radio buttons for different column chart types */}
+              <FormControlLabel value="ColumnChart" control={<Radio />} label="Column" />
+              {/* Add more options as needed */}
+            </RadioGroup>
+          </FormControl>
+          {/* <FormControl>
             <FormLabel id="chart-control-group">Chart Type</FormLabel>
             <RadioGroup
               aria-labelledby="chart-control-group"
@@ -237,7 +289,7 @@ export default function DataAnalysisTool(): JSX.Element {
               <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
               <FormControlLabel value="ColumnChart" control={<Radio />} label="Column" />
             </RadioGroup>
-          </FormControl>
+          </FormControl> */}
         </div>
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
@@ -266,6 +318,16 @@ export default function DataAnalysisTool(): JSX.Element {
             <Chart
               width={'100%'}
               chartType={chartType} // Use the state variable for dynamic chart type
+              data={data}
+              options={{
+                colors: chartColors, // Example chart colors
+                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
+                // Other chart options...
+              }}
+            />
+            <Chart
+              width={'100%'}
+              chartType={columnChartType} // Use the state variable for dynamic chart type
               data={data}
               options={{
                 colors: chartColors, // Example chart colors
