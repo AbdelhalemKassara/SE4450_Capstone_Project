@@ -68,7 +68,7 @@ class DatasetQuery {
     let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
 
     const colVals = await this.fileFetcher.getColsVals(datasetId, questionId);
-    console.log(questionId, colVals);
+    // console.log(questionId, colVals);
     // Count occurrences of each answer
     colVals.forEach((answer: string) => {
       const stringValue: string = answer.valueOf(); // Convert string to string
@@ -131,7 +131,7 @@ class DatasetQuery {
       if (indAnswers[i] === depAnswer && depAnswers[i]) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
         let id: string = depAnswers[i];
-        console.log("hi " + depAnswer);
+        // console.log("hi " + depAnswer);
         let curCount: number | undefined = out.get(id);
 
         if (curCount) {

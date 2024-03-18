@@ -57,23 +57,41 @@ export default function DataAnalysisTool(): JSX.Element {
   useEffect(() => {
     // Fetch filtered answers for filter 1
     const fetchFilter1Data = async () => {
-      if (filter1 && filter2) {
-        const filter1Data = await datasetQ.getFilteredAnswersCount(chartData, depVar, filter1, indVar!);
-        const filter2Data = await datasetQ.getFilteredAnswersCount(chartData, depVar, filter2, indVar!);
 
-        // Construct chart data
-        const chartData = [['Category', 'Filter 1', 'Filter 2']]; // Initialize with header row
-        // Iterate through the answers and add them to the chart data
-        filter1Data.forEach((count, answer) => {
-          const filter2Count = filter2Data.get(answer) || 0; // Get count for filter 2, default to 0 if not found
-          chartData.push([answer, count, filter2Count]);
-        });
-        setChartData(chartData);
+      if(!dataset || !depVar || !selectedButton || !indVar) {
+        return;
       }
+
+      const chartData = [['Category']]; // Initialize with header row
+      let depQuestAnsw = await datasetQ.getAnswers(dataset, depVar);
+
+      //set the question answers
+      depQuestAnsw.forEach((questionTxt: string) => {
+        chartData.push([questionTxt]);
+      });
+
+      //load the counts for each filter
+      selectedButton.forEach(async (filter: string, i) => {
+        let filterData = await datasetQ.getFilteredAnswersCount(dataset, depVar, filter, indVar);
+        chartData[0].push(filter);
+        
+        for(let i = 1; i < chartData.length; i++) {
+          let test = filterData.get(chartData[i][0]);
+          if(test) {
+            //@ts-ignore
+            chartData[i].push(test);
+          } else {
+            // @ts-ignore
+            chartData[i].push(0);
+          }
+        }
+        
+        setChartData(chartData);
+      });
     };
 
     fetchFilter1Data();
-  }, [columnChartType, filter1, filter2, dataset, depVar, indVar, selectedRiding]);
+  }, [columnChartType, filter1, filter2, dataset, depVar, indVar, selectedRiding, selectedButton]);
 
   //filters
   // Function to handle filter changes
@@ -89,7 +107,7 @@ export default function DataAnalysisTool(): JSX.Element {
     if (dataset && depVar && selectedButton && indVar) {
       (async () => {
         let val: Map<string, number> = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar, selectedRiding);
-        console.log("this is the selectedbutton " + selectedButton);
+        // console.log("this is the selectedbutton " + selectedButton);
         let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
         const reorderedData: [string, number | string][] = [['Category', 'Count']];
         // Iterate over the answer IDs map and use them to reorder the data
@@ -317,18 +335,8 @@ export default function DataAnalysisTool(): JSX.Element {
           <div id='my-table'>
             <Chart
               width={'100%'}
-              chartType={chartType} // Use the state variable for dynamic chart type
-              data={data}
-              options={{
-                colors: chartColors, // Example chart colors
-                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
-                // Other chart options...
-              }}
-            />
-            <Chart
-              width={'100%'}
               chartType={columnChartType} // Use the state variable for dynamic chart type
-              data={data}
+              data={chartData}
               options={{
                 colors: chartColors, // Example chart colors
                 chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
