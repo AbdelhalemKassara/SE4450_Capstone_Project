@@ -47,33 +47,13 @@
   "variableForAgeBrackets": "dc23_age_in_years",
   "AskingForBirthYearNotAge?" : false,
   "DisplayBirthYearsNotAge" : true,
-  "maxBirthYear" : 2012,
+  "maxBirthYear" : 2004,
   "ageBrackets" : [{
-    "minBirthYear" : 1997,
+    "minBirthYear" : 1989,
     "bracketName" : "Gen Z"
   },
   {
-    "minBirthYear" : 1965,
+    "minBirthYear" : 1959,
     "bracketName" : "Gen X"
-  }, 
-  {
-    "minBirthYear" : 1981,
-    "bracketName" : "Millenials"
-  },
-  {
-    "minBirthYear" : 1955,
-    "bracketName" : "Bommers II"
-  },
-  {
-    "minBirthYear": 1946,
-    "bracketName" : "Bommers I"
-  },
-  {
-    "minBirthYear" : 1928,
-    "bracketName" : "Post War"
-  },
-  {
-    "minBirthYear" : 1922,
-    "bracketName" : "WWII"
   }]
 }
