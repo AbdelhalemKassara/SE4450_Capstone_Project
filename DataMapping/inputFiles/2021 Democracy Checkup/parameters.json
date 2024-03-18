@@ -47,6 +47,8 @@
   "surveyYear" : 2021,
   "variableForAgeBrackets": "dc21_yob",
   "AskingForBirthYearNotAge?" : true,
+  "DisplayBirthYearsNotAge" : false,
+  "maxBirthYear" : 2012,
   "ageBrackets" : [{
     "minBirthYear" : 1997,
     "bracketName" : "Gen Z"

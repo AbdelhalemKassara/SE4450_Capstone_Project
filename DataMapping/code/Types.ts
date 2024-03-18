@@ -6,6 +6,7 @@ export type paramters = {
   surveyYear: number;
   variableForAgeBrackets: string;
   "AskingForBirthYearNotAge?": boolean;
+  DisplayBirthYearsNotAge : boolean;
   maxBirthYear: number;
   ageBrackets: AgeBracket[];
 };

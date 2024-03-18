@@ -47,6 +47,8 @@
   "surveyYear" : 2022,
   "variableForAgeBrackets": "dc22_age_in_years",
   "AskingForBirthYearNotAge?" : false,
+  "DisplayBirthYearsNotAge" : true,
+  "maxBirthYear" : 2012,
   "ageBrackets" : [{
     "minBirthYear" : 1997,
     "bracketName" : "Gen Z"

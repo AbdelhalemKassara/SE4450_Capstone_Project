@@ -192,6 +192,10 @@ export class QsfFileFetchWrapper {
   public getAgeBrackets(): AgeBracket[] {
     return this.parametersFile.ageBrackets;
   }
+  
+  public getDispBirthYear(): boolean {
+    return this.parametersFile.DisplayBirthYearsNotAge;
+  }
 
   private hashQuestionIDToQuestionObject() {
     this.qsfFile.SurveyElements.forEach((row: any) => {

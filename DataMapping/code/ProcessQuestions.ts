@@ -325,14 +325,25 @@ export class ProcessQuestions {
 
     //create the new answer mappings
     let newAnswerMapping: answersMapping = {};
+    const surveyYear = qsfFile.getSurveyYear();
     
-    newAnswerMapping["1"] = {Display: `younger than ${ageBracs[0].bracketName} (${Number(ageBracs[0].minBirthYear)+1}+)`};
+    let birthYear: number = Number(ageBracs[0].minBirthYear)+1;
+    if(!qsfFile.getDispBirthYear()) {
+      birthYear = surveyYear - birthYear;
+    }
+
+    newAnswerMapping["1"] = {Display: `younger than ${ageBracs[0].bracketName} (${birthYear}${qsfFile.getDispBirthYear() ? "+" : "-"})`};
 
     ageBracs.forEach((ageBrac: AgeBracket, i: number) => { //creates the new answer mapping
-      newAnswerMapping[(i+2).toString()] = {Display: `${ageBrac.bracketName} (${ageBrac.minBirthYear} - ${i === 0? qsfFile.getMaxBirthYear() : Number(ageBracs[i-1].minBirthYear)-1})`}//+2 because we are starting from 1 and for born before oldest bracket
+      let lowerBirthYear: number = ageBrac.minBirthYear;
+      let upperBirthYear: number = i === 0? qsfFile.getMaxBirthYear() : Number(ageBracs[i-1].minBirthYear)-1;
+      let DispBirthYear: boolean = qsfFile.getDispBirthYear();
+
+      newAnswerMapping[(i+2).toString()] = {Display: `${ageBrac.bracketName} (${DispBirthYear ? lowerBirthYear : surveyYear - upperBirthYear} - ${DispBirthYear ? upperBirthYear : surveyYear - lowerBirthYear})`}//+2 because we are starting from 1 and for born before oldest bracket
     });
 
-    newAnswerMapping[(ageBracs.length + 2).toString()] = {Display: `older than ${ageBracs[ageBracs.length-1].bracketName} (${Number(ageBracs[ageBracs.length-1].minBirthYear)-1}-)`};
+    birthYear = Number(ageBracs[ageBracs.length-1].minBirthYear)-1;
+    newAnswerMapping[(ageBracs.length + 2).toString()] = {Display: `older than ${ageBracs[ageBracs.length-1].bracketName} (${qsfFile.getDispBirthYear() ? birthYear: (surveyYear - birthYear)} ${qsfFile.getDispBirthYear() ? "-": "+"})`};
 
     //create the map that will be used to update the ids in the dataset
     let oldIdsToNew: Map<string, string> = new Map<string, string>();
