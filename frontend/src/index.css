@@ -1,4 +1,4 @@
-.cdem_header {
+/* .cdem_header {
   position: fixed;
   top: 0;
   display: grid;
@@ -16,8 +16,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
-    :hover {}
 
     img {
       max-width: 100%;
@@ -44,9 +42,9 @@
     display: flex;
     justify-content: flex-end;
   }
-}
+} */
 
-.cdem_footer {
+/* .cdem_footer {
   position: fixed;
   bottom: 0;
   display: flex;
@@ -67,7 +65,7 @@
     align-items: center;
     justify-content: center;
   }
-}
+} */
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

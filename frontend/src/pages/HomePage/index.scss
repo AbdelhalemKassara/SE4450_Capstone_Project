@@ -1,11 +1,14 @@
-
-#cdem_homepage{
+#cdem_homepage {
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100vh;
 
-    .homePage_body{
+    @media screen and (max-width: 750px) {
+        overflow: hidden;
+    }
+
+    .homePage_body {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -14,50 +17,64 @@
         font-size: 6rem;
         color: black;
         height: 100%;
+
         .background_bar {
-            display:flex;
+            display: flex;
             flex-direction: column;
             background-image: url("./darkFlag.jpg");
-            background-position: right;
+            background-position: center;
             width: 100%;
-            height: 80vh;
+            height: 100%;
             background-repeat: no-repeat;
-            background-size:cover;
+            background-size: cover;
             gap: 2rem;
 
-            >.background_text{
-                display:flex;
+            >.background_text {
+                display: flex;
                 justify-content: center;
                 align-items: end;
                 flex-direction: row;
                 flex: 1;
-                
-                >span{
-                    font-size: 4rem;
-                    color:rgb(255, 255, 255);
-                    font-weight: bold;
-                    
+                gap:1rem;
+
+                @media screen and (max-width: 750px) {
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: end;
+                    gap: unset;
                 }
-                >span:nth-child(2){
-                    color: #fbc02d;
+
+                .democracy_text {
+                    font-size: 4rem;
+                    color: rgb(255, 255, 255);
+                    font-weight: bold;
+
+                    span:last-child {
+                        color: #fbc02d;
+                    }
 
                 }
-                >span:nth-child(3){
-                    color: #fbc02d;
-                    margin-left: 1rem;
+
+                >span {
+                    font-size: 4rem;
+                    color: rgb(255, 255, 255);
+                    font-weight: bold;
+
                 }
-                >span:last-child{
-                    margin-left: 1rem;;
+
+                >span:last-child {
+                    color: #fbc02d;
                 }
             }
-            >.started_button{
-                display:flex;
+
+            >.started_button {
+                display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: start;
                 flex: 1;
             }
-            
+
         }
     }
 
