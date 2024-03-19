@@ -119,12 +119,12 @@ class DatasetQuery {
 
 
   public async getFilteredAnswersCount(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string, feduid: number): Promise<Map<AnswerText, Count>> {
-    let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
+    const out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
 
     //these will have the same length
-    let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
-    let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
-    let fedUids: string[] = await this.fileFetcher.getFeduid(datasetId);
+    const depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
+    const indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    const fedUids: string[] = await this.fileFetcher.getFeduid(datasetId);
 
     // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
     // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
@@ -132,9 +132,9 @@ class DatasetQuery {
     for (let i = 0; i < indAnswers.length; i++) {
       if (indAnswers[i] === depAnswer && depAnswers[i]  && (feduid < 10000 || fedUids[i] === feduid.toString())) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
-        let id: string = depAnswers[i];
+        const id: string = depAnswers[i];
         // console.log("hi " + depAnswer);
-        let curCount: number | undefined = out.get(id);
+        const curCount: number | undefined = out.get(id);
 
         if (curCount) {
           out.set(id, curCount + 1);
@@ -148,12 +148,12 @@ class DatasetQuery {
   }
 
   public async getFilteredAnswersCounts(datasetId: string, depQuestId: string, depAnswer: string[], indQuestId: string, feduid: number): Promise<Map<AnswerText, Count>> {
-    let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
+    const out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
 
     //these will have the same length
-    let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
-    let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
-    let fedUids: string[] = await this.fileFetcher.getFeduid(datasetId);
+    const depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
+    const indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    const fedUids: string[] = await this.fileFetcher.getFeduid(datasetId);
 
     // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
     // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
@@ -162,10 +162,9 @@ class DatasetQuery {
     for (let j = 0; j < depAnswer.length; j++) {
       for (let i = 0; i < indAnswers.length; i++) {
         if (indAnswers[i] === depAnswer[j] && depAnswers[i] && (feduid < 10000 || fedUids[i] === feduid.toString())) {
-          //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
-          let id: string = depAnswers[i];
+          const id: string = depAnswers[i];
           //console.log("fuck " + depAnswer[i]);
-          let curCount: number | undefined = out.get(id);
+          const curCount: number | undefined = out.get(id);
 
           if (curCount) {
             out.set(id, curCount + 1);
@@ -180,24 +179,15 @@ class DatasetQuery {
   }
 
   public async getTotalAnswerCount(datasetId: string, depQuestId: string, feduid: number): Promise<Map<AnswerText, Count>> {
-    let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
-
-    //these will have the same length
-    let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
-    //let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
-    let fedUids: string[] = await this.fileFetcher.getFeduid(datasetId);
-
-    // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
-    // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
-//console.log("fuck you " + depAnswer);
-//console.log(depAnswer.length)
-    //for (let j = 0; j < depAnswer.length; j++) {
+    const out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
+    const depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
+    const fedUids: string[] = await this.fileFetcher.getFeduid(datasetId);
       for (let i = 0; i < depAnswers.length; i++) {
         if ((feduid < 10000 || fedUids[i] === feduid.toString())) {
           //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
-          let id: string = depAnswers[i];
+          const id: string = depAnswers[i];
           //console.log("fuck " + depAnswer[i]);
-          let curCount: number | undefined = out.get(id);
+          const curCount: number | undefined = out.get(id);
 
           if (curCount) {
             out.set(id, curCount + 1);
