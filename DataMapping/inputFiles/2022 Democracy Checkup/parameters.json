@@ -6,7 +6,26 @@
   "dc22_education",
   "dc22_canada_born",
   "dc22_religion",
-  "dc22_citizenship"
+  "dc22_citizenship",
+  "dc22_trans",
+  "dc22_turnout_2021",
+  "dc22_vote_2021",
+  "dc22_vaccine1",
+  "dc22_country_born",
+  "dc22_immig_year",
+  "dc22_parent_born",
+  "dc22_two_spirit",
+  "dc22_health_physical",
+  "dc22_health_mental",
+  "dc22_employment",
+  "dc22_income_category",
+  "dc22_marital_status",
+  "dc22_disability",
+  "dc22_disabilitytype",
+  "dc22_children1",
+  "dc22_occupation_text",
+  "dc22_yob",
+  "dc22_denomination"
   ],
   "metadata" : [
     "Premier"
