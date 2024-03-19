@@ -44,7 +44,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
   const [chartType, setChartType] = useState<string>();
   //for columnChart
-  const [columnChartType, setColumnChartType] = useState<string>(); // Initialize with default chart type
+  const [columnChartType, setColumnChartType] = useState<string[][]>(); // Initialize with default chart type
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
 
@@ -52,32 +52,30 @@ export default function DataAnalysisTool(): JSX.Element {
   const [filter1, setFilter1] = useState<string | undefined>();
   const [filter2, setFilter2] = useState<string | undefined>();
   const [chartData, setChartData] = useState<string>(''); // Initialize with empty array for chart data
+  const [secondChartData, setSecondChartData] = useState<string[][]>('');
 
-  // useEffect to fetch and update chart data when filters change
   useEffect(() => {
-    // Fetch filtered answers for filter 1
     const fetchFilter1Data = async () => {
-
-      if(!dataset || !depVar || !selectedButton || !indVar) {
+      if (!dataset || !depVar || !selectedButton || !indVar) {
         return;
       }
 
       const chartData = [['Category']]; // Initialize with header row
       let depQuestAnsw = await datasetQ.getAnswers(dataset, depVar);
 
-      //set the question answers
+      // Set the question answers
       depQuestAnsw.forEach((questionTxt: string) => {
         chartData.push([questionTxt]);
       });
 
-      //load the counts for each filter
+      // Load the counts for each filter
       selectedButton.forEach(async (filter: string, i) => {
         let filterData = await datasetQ.getFilteredAnswersCount(dataset, depVar, filter, indVar);
         chartData[0].push(filter);
-        
-        for(let i = 1; i < chartData.length; i++) {
+
+        for (let i = 1; i < chartData.length; i++) {
           let test = filterData.get(chartData[i][0]);
-          if(test) {
+          if (test) {
             //@ts-ignore
             chartData[i].push(test);
           } else {
@@ -85,13 +83,23 @@ export default function DataAnalysisTool(): JSX.Element {
             chartData[i].push(0);
           }
         }
-        
-        setChartData(chartData);
+
+        // Set the chart data state only if the number of filters is less than or equal to 4
+        if (selectedButton.length <= 4) {
+          setChartData(chartData);
+        } else if (i === 3) {
+          // If there are more than 4 filters and this is the fourth filter, set the chart data for the second chart
+          setSecondChartData(chartData);
+        }
       });
     };
 
     fetchFilter1Data();
   }, [columnChartType, filter1, filter2, dataset, depVar, indVar, selectedRiding, selectedButton]);
+
+
+
+
 
   //filters
   // Function to handle filter changes
@@ -129,9 +137,9 @@ export default function DataAnalysisTool(): JSX.Element {
     setSelectedRiding(0);
   };
 
-  const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChartType((event.target as HTMLInputElement).value);
-  };
+  // const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setChartType((event.target as HTMLInputElement).value);
+  // };
 
   const handleChartChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setColumnChartType((event.target as HTMLInputElement).value);
@@ -344,7 +352,20 @@ export default function DataAnalysisTool(): JSX.Element {
               }}
             />
           </div>
-
+          {selectedButton?.length > 4 && secondChartData && (
+            <div id='second-chart'>
+              <Chart
+                width={'100%'}
+                chartType={columnChartType} // Use the state variable for dynamic chart type
+                data={secondChartData}
+                options={{
+                  colors: chartColors, // Example chart colors
+                  chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
+                  // Other chart options...
+                }}
+              />
+            </div>
+          )}
           {/* <div id='my-table'>
             <Chart width={'100%'} chartType='PieChart' data={data}
               options={{
