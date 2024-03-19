@@ -162,7 +162,7 @@ export default function DataAnalysisTool(): JSX.Element {
         // Iterate over the answer IDs map and use them to reorder the data
         answerIds.forEach((answerId: number, answerText: string) => {
           const count = val.get(answerText) || 0; // Get the count for the current answer
-          reorderedData.push([`${answerText} (${count})`, count]);
+          reorderedData.push([`${answerText}`, count]);
         });
         setData(reorderedData);
       })();
@@ -483,7 +483,7 @@ export default function DataAnalysisTool(): JSX.Element {
               <Chart
                 width={"100%"}
                 chartType={columnChartType} // Use the state variable for dynamic chart type
-                data={depChartData}
+                data={data}
                 options={{
                   colors: chartColors, // Example chart colors
                   chartArea: { width: "80%", height: "70%" }, // Adjust the chart area as needed
