@@ -1,21 +1,24 @@
 import { useContext, useEffect, useState } from "react";
-import { DatabaseContext, datasetQuery } from "../../components/DatabaseContext";
+import {
+  DatabaseContext,
+  datasetQuery,
+} from "../../components/DatabaseContext";
 import DropdownMenu from "./DependentSelection/DropdownMenu";
 import SelectionTool from "../SelectionTool/selectionTool";
 import StatsBar from "./components/StatsBar/StatsBar";
 import IndVarDropDown from "./components/IndVarDropDown/IndVarDropDown";
 import CdemHeader from "../HomePage/Header/CdemHeader";
 import CDemFooter from "../HomePage/Footer/CdemFooter";
-import { Chart } from 'react-google-charts';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
+import { Chart } from "react-google-charts";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 import MapComponent from "../MapComponent/MapComponent";
 
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
 import "./index.scss";
 import FilterButtons from "./components/FilterButtons";
@@ -27,7 +30,9 @@ export default function DataAnalysisTool(): JSX.Element {
   const [dataset, setDataset] = useState<string | undefined>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
   const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
-  const [selectedButton, setSelectedButton] = useState<string[] | undefined>([]);
+  const [selectedButton, setSelectedButton] = useState<string[] | undefined>(
+    []
+  );
 
   const [answerIds, setAnswerIds] = useState<Map<string, number>>(new Map());
   const [averageValue, setAverageValue] = useState<number>(0);
@@ -36,102 +41,152 @@ export default function DataAnalysisTool(): JSX.Element {
   const [standardDeviation, setStandardDeviation] = useState<number>(0);
   const [selectedRiding, setSelectedRiding] = useState<number>(0);
 
-  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} });
-  const [mapType, setMapType] = useState<string>('province');
+  const [mapData, setMapData] = useState<FilteredMapData>({
+    province: {},
+    riding: {},
+  });
+  const [mapType, setMapType] = useState<string>("province");
 
-  const [chartType, setChartType] = useState<string>();  // Inside your component function
-  const [columnChartType, setColumnChartType] = useState<string[][]>("ColumnChart"); // Initialize with default chart type
-  const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];  //chart colours
-
+  const [chartType, setChartType] = useState<string>(); // Inside your component function
+  const [columnChartType, setColumnChartType] =
+    useState<string[][]>("ColumnChart"); // Initialize with default chart type
+  const chartColors = ["#ffd700", "#ffc700", "#ffb700", "#ffa700", "#ff9700"]; //chart colours
 
   // Declared filters and chart data
-  const [setOfCharData, setSetOfChartData] = useState<any[][][]>([]);
+  const [depChartData, setDepChartData] = useState<any[][][]>([]);
   const [data, setData] = useState<undefined | [string, number | string][]>();
 
   useEffect(() => {
     const fetchFilter1Data = async () => {
-      if (!dataset || !depVar || !selectedButton || !indVar) {
-        return;
-      }
-
-      if (selectedButton.length === 0) {
-        setSetOfChartData([]);
-        return;
-      }
-
-      const chartData = [['Category']]; // Initialize with header row
-      let depQuestAnsw = await datasetQ.getAnswers(dataset, depVar);
-
-      // Set the question answers
-      depQuestAnsw.forEach((questionTxt: string) => {
-        chartData.push([questionTxt]);
-      });
-
-      // Load the counts for each filter
-      selectedButton.forEach(async (filter: string) => {
-        let filterData = await datasetQ.getFilteredAnswersCount(dataset, depVar, filter, indVar, selectedRiding);
-        chartData[0].push(filter);
-
-        for (let i = 1; i < chartData.length; i++) {
-          let AnswCountArr = filterData.get(chartData[i][0]);
-          if (AnswCountArr) {
-            //@ts-ignore
-            chartData[i].push(AnswCountArr);
-          } else {
-            // @ts-ignore
-            chartData[i].push(0);
+      if (dataset || depVar) {
+        if (selectedButton && indVar) {
+          if (selectedButton.length === 0) {
+            setDepChartData([]);
+            return;
           }
-        }
+          const chartData = [["Category"]]; // Initialize with header row
+          let depQuestAnsw = await datasetQ.getAnswers(dataset, depVar);
+          depQuestAnsw.forEach((questionTxt: string) => {
+            chartData.push([questionTxt]);
+          });
+          // Load the counts for each filter
+          selectedButton.forEach(async (filter: string) => {
+            let filterData = await datasetQ.getFilteredAnswersCount(
+              dataset,
+              depVar,
+              filter,
+              indVar,
+              selectedRiding
+            );
+            chartData[0].push(filter);
+            for (let i = 1; i < chartData.length; i++) {
+              let AnswCountArr = filterData.get(chartData[i][0]);
+              if (AnswCountArr) {
+                chartData[i].push(AnswCountArr);
+              } else {
+                chartData[i].push(0);
+              }
+            }
+            let header = chartData[0];
+            console.log(header);
+            let body = chartData.slice(1, chartData.length);
+            let out = [];
 
-        let header = chartData[0];
-        let body = chartData.slice(1, chartData.length);
-        let out = [];
-        console.log("b: " + body);
-        console.log("h: " + header)
-
-        if (3 < body.length) {
-          for (let i = 3; i < body.length; i += 4) {
+            if (3 < body.length) {
+              for (let i = 3; i < body.length; i += 4) {
+                //@ts-ignore
+                out.push([header, ...body.slice(i - 3, i)]);
+              }
+            } else {
+              out = [[header, ...body]];
+            }
+            console.log(out);
             //@ts-ignore
-            out.push([header, ...body.slice(i - 3, i)]);
-          }
+            setDepChartData(out);
+          });
         } else {
-          out = [[header, ...body]];
+          const chartData = [["Category", "Count"]]; // Initialize with header row
+          const depQuestAnsw = await datasetQ.getAnswers(dataset, depVar);
+
+          // Set the question answers
+          depQuestAnsw.forEach((questionTxt: string) => {
+            chartData.push([questionTxt]);
+          });
+          const filterData = await datasetQ.getTotalAnswerCount(
+            dataset,
+            depVar,
+            0
+          );
+          let c = 1;
+          for (const [k, v] of filterData.entries()) {
+            if (k) {
+              chartData[c].push(v);
+              c++;
+            } else {
+              break;
+            }
+          }
+          setDepChartData(chartData);
         }
-
-        console.log(chartData);
-        //@ts-ignore
-        setSetOfChartData(out);
-      });
+      }
     };
-
     fetchFilter1Data();
-  }, [columnChartType, dataset, depVar, indVar, selectedRiding, selectedButton]);
-
+  }, [
+    columnChartType,
+    dataset,
+    depVar,
+    indVar,
+    selectedRiding,
+    selectedButton,
+  ]);
 
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
       (async () => {
-        let val: Map<string, number> = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar, selectedRiding);
+        const val: Map<string, number> =
+          await datasetQ.getFilteredAnswersCounts(
+            dataset,
+            depVar,
+            selectedButton,
+            indVar,
+            selectedRiding
+          );
         // console.log("this is the selectedbutton " + selectedButton);
-        let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
-        const reorderedData: [string, number | string][] = [['Category', 'Count']];
+        const answerIds: Map<string, number> = await datasetQ.getAnswerIds(
+          dataset,
+          depVar
+        );
+        const reorderedData: [string, number | string][] = [
+          ["Category", "Count"],
+        ];
         // Iterate over the answer IDs map and use them to reorder the data
         answerIds.forEach((answerId: number, answerText: string) => {
           const count = val.get(answerText) || 0; // Get the count for the current answer
           reorderedData.push([`${answerText} (${count})`, count]);
         });
         setData(reorderedData);
-      })()
-      datasetQ.getFilteredMapDatas(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
-        setMapData(val);
-      });
+      })();
+      datasetQ
+        .getFilteredMapDatas(dataset, depVar, selectedButton, indVar)
+        .then((val: FilteredMapData) => {
+          setMapData(val);
+        });
     } else if (dataset && depVar) {
       console.log("ananda");
       (async () => {
-        let val: Map<string, number> = await datasetQ.getTotalAnswerCount(dataset, depVar, selectedRiding);
+        const val: Map<string, number> = await datasetQ.getTotalAnswerCount(
+          dataset,
+          depVar,
+          selectedRiding
+        );
         //console.log("this is the selectedbutton " + selectedButton);
-        let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
-        const reorderedData: [string, number | string][] = [['Category', 'Count']];
+        const answerIds: Map<string, number> = await datasetQ.getAnswerIds(
+          dataset,
+          depVar
+        );
+        const reorderedData: [string, number | string][] = [
+          ["Category", "Count"],
+        ];
 
         // Iterate over the answer IDs map and use them to reorder the data
         answerIds.forEach((answerId: number, answerText: string) => {
@@ -140,13 +195,14 @@ export default function DataAnalysisTool(): JSX.Element {
         });
 
         setData(reorderedData);
-      })()
-      datasetQ.getUnFilteredMapDatas(dataset, depVar).then((val: FilteredMapData) => {
-        setMapData(val);
-      });
+      })();
+      datasetQ
+        .getUnFilteredMapDatas(dataset, depVar)
+        .then((val: FilteredMapData) => {
+          setMapData(val);
+        });
     }
   }, [dataset, depVar, indVar, selectedButton, selectedRiding]);
-
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
@@ -198,7 +254,7 @@ export default function DataAnalysisTool(): JSX.Element {
 
       for (const [key, value] of answerIds.entries()) {
         const dataEntry = data.find(([text]) => {
-          const [category] = text.split(' (');
+          const [category] = text.split(" (");
           return category === key;
         });
 
@@ -217,22 +273,31 @@ export default function DataAnalysisTool(): JSX.Element {
         }
       }
 
-      const averageValue = totalCount > 0 ? sumOfMultipliedValues / totalCount : 0;
+      const averageValue =
+        totalCount > 0 ? sumOfMultipliedValues / totalCount : 0;
 
-      const sortedMultipliedValues = multipliedValuesArray.sort((a, b) => a - b);
+      const sortedMultipliedValues = multipliedValuesArray.sort(
+        (a, b) => a - b
+      );
       const median =
         sortedMultipliedValues.length % 2 === 0
           ? (sortedMultipliedValues[sortedMultipliedValues.length / 2 - 1] +
-            sortedMultipliedValues[sortedMultipliedValues.length / 2]) /
-          2
-          : sortedMultipliedValues[Math.floor(sortedMultipliedValues.length / 2)];
+              sortedMultipliedValues[sortedMultipliedValues.length / 2]) /
+            2
+          : sortedMultipliedValues[
+              Math.floor(sortedMultipliedValues.length / 2)
+            ];
       setMedian(median);
       //console.log("this is the median " + median)
 
       // Calculate standard deviation
       const mean = averageValue;
-      const squaredDifferences = multipliedValuesArray.map(value => Math.pow(value - mean, 2));
-      const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / multipliedValuesArray.length;
+      const squaredDifferences = multipliedValuesArray.map((value) =>
+        Math.pow(value - mean, 2)
+      );
+      const variance =
+        squaredDifferences.reduce((acc, val) => acc + val, 0) /
+        multipliedValuesArray.length;
       const stdDeviation = Math.sqrt(variance);
       setStandardDeviation(stdDeviation);
       //console.log("this is the standard deviation " + stdDeviation)
@@ -242,28 +307,22 @@ export default function DataAnalysisTool(): JSX.Element {
     }
   }, [answerIds, data]);
 
-
-
-
   function Export() {
-
-    const exportitem = document.getElementById('my-table') as HTMLElement;
-    html2canvas(exportitem, {}).then(canvas => {
-
-      const imgData = canvas.toDataURL('image/png');
+    const exportitem = document.getElementById("my-table") as HTMLElement;
+    html2canvas(exportitem, {}).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
 
       const pdf = new jsPDF("p", "mm", "a4");
 
       const PageHeight = 298;
       const PageWidth = 210;
 
-      const height = canvas.height * PageHeight / canvas.width;
+      const height = (canvas.height * PageHeight) / canvas.width;
 
-      pdf.addImage(imgData, 'PNG', 0, 0, PageWidth, height);
-
+      pdf.addImage(imgData, "PNG", 0, 0, PageWidth, height);
 
       pdf.save("data.pdf");
-    })
+    });
   }
 
   function rescaleTo100(sequence: number[]): number[] {
@@ -272,25 +331,52 @@ export default function DataAnalysisTool(): JSX.Element {
     const range = max - min;
     const scaleFactor = 100 / range;
 
-    const rescaledSequence = sequence.map(num => Math.round((max - num) * scaleFactor));
+    const rescaledSequence = sequence.map((num) =>
+      Math.round((max - num) * scaleFactor)
+    );
 
     return rescaledSequence;
   }
-
   return (
     <div id="data_page">
       <CdemHeader />
-      <div className='analysis_container'>
-        <div className="filter_container" onClick={() => { if (mapType === 'riding' && selectedRiding !== 0) { setSelectedRiding(0) } }}>
-          <SelectionTool dataset={dataset} setDataset={setDataset} setDepVar={setDepVar} setIndVar={setIndVar} />
-          <IndVarDropDown indVar={indVar} setIndVar={setIndVar} dataset={dataset} depVar={depVar} />
+      <div className="analysis_container">
+        <div
+          className="filter_container"
+          onClick={() => {
+            if (mapType === "riding" && selectedRiding !== 0) {
+              setSelectedRiding(0);
+            }
+          }}
+        >
+          <SelectionTool
+            dataset={dataset}
+            setDataset={setDataset}
+            setDepVar={setDepVar}
+            setIndVar={setIndVar}
+          />
+          <IndVarDropDown
+            indVar={indVar}
+            setIndVar={setIndVar}
+            dataset={dataset}
+            depVar={depVar}
+          />
 
-          <FilterButtons dataset={dataset} indVar={indVar} setSelectedButton={setSelectedButton} />
+          <FilterButtons
+            dataset={dataset}
+            indVar={indVar}
+            setSelectedButton={setSelectedButton}
+          />
 
-          <DropdownMenu dataset={dataset} setDependentQuestion={setDepVar} depVar={depVar} />
+          <DropdownMenu
+            dataset={dataset}
+            setDependentQuestion={setDepVar}
+            depVar={depVar}
+          />
           <button
-            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium'
-            onClick={Export}>
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus: ring-blue-300 font-medium"
+            onClick={Export}
+          >
             Export PDF
           </button>
           <FormControl>
@@ -301,8 +387,16 @@ export default function DataAnalysisTool(): JSX.Element {
               value={mapType}
               onChange={handleChange}
             >
-              <FormControlLabel value="province" control={<Radio />} label="Province" />
-              <FormControlLabel value="riding" control={<Radio />} label="Riding" />
+              <FormControlLabel
+                value="province"
+                control={<Radio />}
+                label="Province"
+              />
+              <FormControlLabel
+                value="riding"
+                control={<Radio />}
+                label="Riding"
+              />
             </RadioGroup>
           </FormControl>
           <FormControl>
@@ -314,8 +408,16 @@ export default function DataAnalysisTool(): JSX.Element {
               onChange={handleChartChange2}
             >
               {/* Add radio buttons for different column chart types */}
-              <FormControlLabel value="ColumnChart" control={<Radio />} label="Column" />
-              <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
+              <FormControlLabel
+                value="ColumnChart"
+                control={<Radio />}
+                label="Column"
+              />
+              <FormControlLabel
+                value="PieChart"
+                control={<Radio />}
+                label="Pie"
+              />
               {/* Add more options as needed */}
             </RadioGroup>
           </FormControl>
@@ -326,22 +428,21 @@ export default function DataAnalysisTool(): JSX.Element {
               name="chart-control-group"
               value={chartType}
               onChange={handleChartChange}
-            >
-
-
-            </RadioGroup>
+            ></RadioGroup>
           </FormControl>
         </div>
-        <div className='data_container'>
+        <div className="data_container">
           <StatsBar dataset={dataset} depVar={depVar} />
-          <div className='data_stats'>
+          <div className="data_stats">
             <div className="statistic-box">
               <p className="statistic-label">Count:</p>
               <p className="statistic-value">{totalCount}</p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Mean:</p>
-              <p className="statistic-value">{Math.round(averageValue * 100) / 100}</p>
+              <p className="statistic-value">
+                {Math.round(averageValue * 100) / 100}
+              </p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Median:</p>
@@ -349,41 +450,50 @@ export default function DataAnalysisTool(): JSX.Element {
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Standard Deviation:</p>
-              <p className="statistic-value">{Math.round(standardDeviation * 100) / 100}</p>
+              <p className="statistic-value">
+                {Math.round(standardDeviation * 100) / 100}
+              </p>
             </div>
           </div>
-          <div id='data_map_component'>
-            <MapComponent mapData={mapData} mapType={mapType} setSelectedRiding={setSelectedRiding} />
+          <div id="data_map_component">
+            <MapComponent
+              mapData={mapData}
+              mapType={mapType}
+              setSelectedRiding={setSelectedRiding}
+            />
           </div>
-          <div id='my-table'>
-            {setOfCharData.map((data) => {
-              return (
-                <Chart
-                  key={data} // assuming data has a unique key property
-                  width={'100%'}
-                  chartType={columnChartType} // Use the state variable for dynamic chart type
-                  data={data}
-                  options={{
-                    colors: chartColors, // Example chart colors
-                    chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
-                    // Other chart options...
-                  }}
-                />
-              );
-            })}
+          <div id="my-table">
+            {selectedButton && indVar ? (
+              depChartData.map((data, index) => {
+                return (
+                  <Chart
+                    key={index} // Assuming index can be used as a unique key
+                    width={"100%"}
+                    chartType={columnChartType} // Use the state variable for dynamic chart type
+                    data={data}
+                    options={{
+                      colors: chartColors, // Example chart colors
+                      chartArea: { width: "80%", height: "70%" }, // Adjust the chart area as needed
+                      // Other chart options...
+                    }}
+                  />
+                );
+              })
+            ) : (
+              <Chart
+                width={"100%"}
+                chartType={columnChartType} // Use the state variable for dynamic chart type
+                data={depChartData}
+                options={{
+                  colors: chartColors, // Example chart colors
+                  chartArea: { width: "80%", height: "70%" }, // Adjust the chart area as needed
+                }}
+              />
+            )}
           </div>
-
-          {/* <div id='my-table'> */}
-          {/* <Chart width={'100%'} chartType='PieChart' data={data}
-              options={{
-                colors: chartColors,
-              }}
-            /> */}
-          {/* </div> */}
-
         </div>
       </div>
-      {< CDemFooter />}
-    </div >
+      {<CDemFooter />}
+    </div>
   );
 }
