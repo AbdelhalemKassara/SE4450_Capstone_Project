@@ -44,7 +44,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
   const [chartType, setChartType] = useState<string>();
   //for columnChart
-  const [columnChartType, setColumnChartType] = useState<string[][]>(); // Initialize with default chart type
+  const [columnChartType, setColumnChartType] = useState<string[][]>("ColumnChart"); // Initialize with default chart type
   //chart colours
   const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
 
@@ -90,10 +90,10 @@ export default function DataAnalysisTool(): JSX.Element {
         let body = chartData.slice(1, chartData.length);
         let out = [];
 
-        if(3 < body.length) {
-          for(let i = 3; i < body.length; i += 4) {
+        if (3 < body.length) {
+          for (let i = 3; i < body.length; i += 4) {
             //@ts-ignore
-            out.push([header, ...body.slice(i-3, i)]);
+            out.push([header, ...body.slice(i - 3, i)]);
           }
         } else {
           out = [[header, ...body]];
@@ -159,9 +159,9 @@ export default function DataAnalysisTool(): JSX.Element {
     setSelectedRiding(0);
   };
 
-  // const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setChartType((event.target as HTMLInputElement).value);
-  // };
+  const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChartType((event.target as HTMLInputElement).value);
+  };
 
   const handleChartChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setColumnChartType((event.target as HTMLInputElement).value);
@@ -313,7 +313,7 @@ export default function DataAnalysisTool(): JSX.Element {
             </RadioGroup>
           </FormControl>
           <FormControl>
-            <FormLabel id="column-chart-control-group">Column Chart Type</FormLabel>
+            <FormLabel id="column-chart-control-group">Chart Type</FormLabel>
             <RadioGroup
               aria-labelledby="column-chart-control-group"
               name="column-chart-control-group"
@@ -322,22 +322,22 @@ export default function DataAnalysisTool(): JSX.Element {
             >
               {/* Add radio buttons for different column chart types */}
               <FormControlLabel value="ColumnChart" control={<Radio />} label="Column" />
+              <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
               {/* Add more options as needed */}
             </RadioGroup>
           </FormControl>
-          {/* <FormControl>
-            <FormLabel id="chart-control-group">Chart Type</FormLabel>
+          <FormControl>
+            <FormLabel id="chart-control-group"></FormLabel>
             <RadioGroup
               aria-labelledby="chart-control-group"
               name="chart-control-group"
               value={chartType}
               onChange={handleChartChange}
             >
-              <FormControlLabel value="BarChart" control={<Radio />} label="Bar" />
-              <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
-              <FormControlLabel value="ColumnChart" control={<Radio />} label="Column" />
+
+
             </RadioGroup>
-          </FormControl> */}
+          </FormControl>
         </div>
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
@@ -374,35 +374,13 @@ export default function DataAnalysisTool(): JSX.Element {
               }}
             />))}
           </div>
-          {/* <div id='my-table'>
-            <Chart width={'100%'} chartType='PieChart' data={data}
+          <div id='my-table'>
+            {/* <Chart width={'100%'} chartType='PieChart' data={data}
               options={{
                 colors: chartColors,
-
               }}
-
-            />
-            <Chart chartType='BarChart' data={data}
-              options={{
-                colors: chartColors,
-                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area to ensure labels fit.
-                hAxis: {
-                  textStyle: {
-                    fontSize: 10 // Adjust the horizontal axis label font size
-                  }
-                },
-                vAxis: {
-                  textStyle: {
-                    fontSize: 8 // Adjust the vertical axis label font size
-                  }
-                },
-                bar: { groupWidth: '75%' }, // Adjust the bar width for better label visibility
-                legend: { position: 'none' }, // Adjust legend position or remove if not needed
-
-              }}
-
-            />
-          </div> */}
+            /> */}
+          </div>
 
         </div>
       </div>
