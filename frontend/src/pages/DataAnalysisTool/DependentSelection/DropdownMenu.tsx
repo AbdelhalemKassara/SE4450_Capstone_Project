@@ -25,7 +25,6 @@ function DropdownMenu({ dataset, setDependentQuestion, depVar }: { dataset: stri
   }, [dataset]);
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
-    console.log(event.target.value);
     setDependentQuestion(event.target.value);
   };
 

@@ -57,6 +57,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [data, setData] = useState<undefined | [string, number | string][]>();
 
   useEffect(() => {
+    setDepChartData([]);
     const fetchFilter1Data = async () => {
       if (dataset || depVar) {
         if (selectedButton && indVar) {
@@ -88,7 +89,7 @@ export default function DataAnalysisTool(): JSX.Element {
               }
             }
             let header = chartData[0];
-            console.log(header);
+
             let body = chartData.slice(1, chartData.length);
             let out = [];
 
@@ -100,7 +101,7 @@ export default function DataAnalysisTool(): JSX.Element {
             } else {
               out = [[header, ...body]];
             }
-            console.log(out);
+
             //@ts-ignore
             setDepChartData(out);
           });
@@ -172,7 +173,6 @@ export default function DataAnalysisTool(): JSX.Element {
           setMapData(val);
         });
     } else if (dataset && depVar) {
-      console.log("ananda");
       (async () => {
         const val: Map<string, number> = await datasetQ.getTotalAnswerCount(
           dataset,
@@ -337,6 +337,8 @@ export default function DataAnalysisTool(): JSX.Element {
 
     return rescaledSequence;
   }
+
+
   return (
     <div id="data_page">
       <CdemHeader />
@@ -463,7 +465,7 @@ export default function DataAnalysisTool(): JSX.Element {
             />
           </div>
           <div id="my-table">
-            {selectedButton && indVar ? (
+            {columnChartType === "ColumnChart" ? (
               depChartData.map((data, index) => {
                 return (
                   <Chart
@@ -473,7 +475,7 @@ export default function DataAnalysisTool(): JSX.Element {
                     data={data}
                     options={{
                       colors: chartColors, // Example chart colors
-                      chartArea: { width: "80%", height: "70%" }, // Adjust the chart area as needed
+                      chartArea: { width: "60%", height: "70%" }, // Adjust the chart area as needed
                       // Other chart options...
                     }}
                   />
