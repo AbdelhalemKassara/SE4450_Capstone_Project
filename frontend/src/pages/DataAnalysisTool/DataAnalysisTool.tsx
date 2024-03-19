@@ -96,7 +96,7 @@ export default function DataAnalysisTool(): JSX.Element {
             out.push([header, ...body.slice(i-3, i)]);
           }
         } else {
-          out = [header, ...body];
+          out = [[header, ...body]];
         }
 
         console.log(out);
