@@ -27,59 +27,97 @@ export default function DataAnalysisTool(): JSX.Element {
   const [dataset, setDataset] = useState<string | undefined>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
   const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
-  const [mapType, setMapType] = useState<string>('province');
-  //const [mapData, setMapData] = useState({ province: {}, riding: [] })
+  const [selectedButton, setSelectedButton] = useState<string[] | undefined>([]);
+
   const [answerIds, setAnswerIds] = useState<Map<string, number>>(new Map());
-  const [multipliedValues, setMultipliedValues] = useState(new Map());
   const [averageValue, setAverageValue] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [median, setMedian] = useState<number>(0);
   const [standardDeviation, setStandardDeviation] = useState<number>(0);
   const [selectedRiding, setSelectedRiding] = useState<number>(0);
 
-  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
+  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} });
+  const [mapType, setMapType] = useState<string>('province');
+
+  const [chartType, setChartType] = useState<string>();  // Inside your component function
+  const [columnChartType, setColumnChartType] = useState<string[][]>("ColumnChart"); // Initialize with default chart type
+  const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];  //chart colours
+
+
+  // Declared filters and chart data
+  const [setOfCharData, setSetOfChartData] = useState<any[][][]>([]);
   const [data, setData] = useState<undefined | [string, number | string][]>();
-  // Inside your component function
-  const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
-  const [chartType, setChartType] = useState<string>('BarChart');
 
+  useEffect(() => {
+    const fetchFilter1Data = async () => {
+      if (!dataset || !depVar|| !selectedButton || !indVar) {
+        return;
+      }
+      
+      if(selectedButton.length === 0) {
+        setSetOfChartData([]);
+        return;
+      }
 
+      const chartData = [['Category']]; // Initialize with header row
+      let depQuestAnsw = await datasetQ.getAnswers(dataset, depVar);
 
-  //chart colours
-  const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
-  //these are used for the temporary display output (might not )
+      // Set the question answers
+      depQuestAnsw.forEach((questionTxt: string) => {
+        chartData.push([questionTxt]);
+      });
 
+      // Load the counts for each filter
+      selectedButton.forEach(async (filter: string) => {
+        let filterData = await datasetQ.getFilteredAnswersCount(dataset, depVar, filter, indVar, selectedRiding);
+        chartData[0].push(filter);
 
-  // useEffect(() => {
-  //   if (dataset && depVar && selectedButton && indVar) {
-  //     datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
-  //       const barData: [string, number | string][] = [['Category', 'Count']];
-  //       val?.forEach((value, key) => {
-  //         barData.push([`${key} (${value})`, value]);
-  //       });
+        for (let i = 1; i < chartData.length; i++) {
+          let AnswCountArr = filterData.get(chartData[i][0]);
+          if (AnswCountArr) {
+            //@ts-ignore
+            chartData[i].push(AnswCountArr);
+          } else {
+            // @ts-ignore
+            chartData[i].push(0);
+          }
+        }
 
-  //       setData(barData);
-  //     });
-  //     datasetQ.getFilteredMapData(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
-  //       setMapData(val);
-  //     });
-  //   }
-  // }, [dataset, depVar, indVar, selectedButton]);
+        let header = chartData[0];
+        let body = chartData.slice(1, chartData.length);
+        let out = [];
+
+        if (3 < body.length) {
+          for (let i = 3; i < body.length; i += 4) {
+            //@ts-ignore
+            out.push([header, ...body.slice(i - 3, i)]);
+          }
+        } else {
+          out = [[header, ...body]];
+        }
+
+        console.log(chartData);
+        //@ts-ignore
+        setSetOfChartData(out);
+      });
+    };
+
+    fetchFilter1Data();
+  }, [columnChartType, dataset, depVar, indVar, selectedRiding, selectedButton]);
+
 
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
       (async () => {
         let val: Map<string, number> = await datasetQ.getFilteredAnswersCounts(dataset, depVar, selectedButton, indVar, selectedRiding);
-        //console.log("this is the selectedbutton " + selectedButton);
+        // console.log("this is the selectedbutton " + selectedButton);
         let answerIds: Map<string, number> = await datasetQ.getAnswerIds(dataset, depVar);
         const reorderedData: [string, number | string][] = [['Category', 'Count']];
-
         // Iterate over the answer IDs map and use them to reorder the data
         answerIds.forEach((answerId: number, answerText: string) => {
           const count = val.get(answerText) || 0; // Get the count for the current answer
           reorderedData.push([`${answerText} (${count})`, count]);
         });
-
         setData(reorderedData);
       })()
       datasetQ.getFilteredMapDatas(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
@@ -107,25 +145,6 @@ export default function DataAnalysisTool(): JSX.Element {
     }
   }, [dataset, depVar, indVar, selectedButton, selectedRiding]);
 
-  // if (dataset && depVar && selectedButton && indVar) {
-  //   datasetQ.getFilteredAnswersCount(dataset, depVar, selectedButton, indVar).then((val: Map<string, number>) => {
-
-  //     datasetQ.getAnswerIds(dataset, depVar).then((answerIds: Map<string, number>) => {
-  //       // Create an array to hold the reordered data
-  //       const reorderedData: [string, number | string][] = [];
-
-  //       // Iterate over the answer IDs map and use them to reorder the data
-  //       answerIds.forEach((answerId: number, answerText: string) => {
-  //         const count = val.get(answerText) || 0; // Get the count for the current answer
-  //         reorderedData.push([`${answerText} (${count})`, count]);
-  //       });
-
-  //       // Set the reordered data
-  //       console.log(reorderedData);
-  //       setData(reorderedData);
-  //     });
-  //   });
-  // }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
@@ -134,6 +153,10 @@ export default function DataAnalysisTool(): JSX.Element {
 
   const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChartType((event.target as HTMLInputElement).value);
+  };
+
+  const handleChartChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setColumnChartType((event.target as HTMLInputElement).value);
   };
 
   useEffect(() => {
@@ -214,7 +237,6 @@ export default function DataAnalysisTool(): JSX.Element {
 
       setTotalCount(totalCount);
       setAverageValue(averageValue);
-      setMultipliedValues(calculatedValues);
     }
   }, [answerIds, data]);
 
@@ -269,32 +291,44 @@ export default function DataAnalysisTool(): JSX.Element {
             onClick={Export}>
             Export PDF
           </button>
-          <div className='data_processing_radio'>
-            <FormControl>
-              <FormLabel id="map-control-group">Map Type</FormLabel>
-              <RadioGroup
-                aria-labelledby="map-control-group"
-                name="cmap-control-group"
-                value={mapType}
-                onChange={handleChange}
-              >
-                <FormControlLabel value="province" control={<Radio />} label="Province" />
-                <FormControlLabel value="riding" control={<Radio />} label="Riding" />
-              </RadioGroup>
-            </FormControl>
-            <FormControl>
-              <FormLabel id="chart-control-group">Chart Type</FormLabel>
-              <RadioGroup
-                aria-labelledby="chart-control-group"
-                name="chart-control-group"
-                value={chartType}
-                onChange={handleChartChange}
-              >
-                <FormControlLabel value="BarChart" control={<Radio />} label="Bar" />
-                <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
-              </RadioGroup>
-            </FormControl>
-          </div>
+          <FormControl>
+            <FormLabel id="map-control-group">Map Type</FormLabel>
+            <RadioGroup
+              aria-labelledby="map-control-group"
+              name="cmap-control-group"
+              value={mapType}
+              onChange={handleChange}
+            >
+              <FormControlLabel value="province" control={<Radio />} label="Province" />
+              <FormControlLabel value="riding" control={<Radio />} label="Riding" />
+            </RadioGroup>
+          </FormControl>
+          <FormControl>
+            <FormLabel id="column-chart-control-group">Chart Type</FormLabel>
+            <RadioGroup
+              aria-labelledby="column-chart-control-group"
+              name="column-chart-control-group"
+              value={columnChartType}
+              onChange={handleChartChange2}
+            >
+              {/* Add radio buttons for different column chart types */}
+              <FormControlLabel value="ColumnChart" control={<Radio />} label="Column" />
+              <FormControlLabel value="PieChart" control={<Radio />} label="Pie" />
+              {/* Add more options as needed */}
+            </RadioGroup>
+          </FormControl>
+          <FormControl>
+            <FormLabel id="chart-control-group"></FormLabel>
+            <RadioGroup
+              aria-labelledby="chart-control-group"
+              name="chart-control-group"
+              value={chartType}
+              onChange={handleChartChange}
+            >
+
+
+            </RadioGroup>
+          </FormControl>
         </div>
         <div className='data_container'>
           <StatsBar dataset={dataset} depVar={depVar} />
@@ -320,47 +354,24 @@ export default function DataAnalysisTool(): JSX.Element {
             <MapComponent mapData={mapData} mapType={mapType} setSelectedRiding={setSelectedRiding} />
           </div>
           <div id='my-table'>
-            <Chart
+            {setOfCharData.map((data) => (<Chart
               width={'100%'}
-              chartType={chartType} // Use the state variable for dynamic chart type
+              chartType={columnChartType} // Use the state variable for dynamic chart type
               data={data}
               options={{
                 colors: chartColors, // Example chart colors
                 chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
                 // Other chart options...
               }}
-            />
+            />))}
           </div>
-
-          {/* <div id='my-table'>
-            <Chart width={'100%'} chartType='PieChart' data={data}
+          <div id='my-table'>
+            {/* <Chart width={'100%'} chartType='PieChart' data={data}
               options={{
                 colors: chartColors,
-
               }}
-
-            />
-            <Chart chartType='BarChart' data={data}
-              options={{
-                colors: chartColors,
-                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area to ensure labels fit.
-                hAxis: {
-                  textStyle: {
-                    fontSize: 10 // Adjust the horizontal axis label font size
-                  }
-                },
-                vAxis: {
-                  textStyle: {
-                    fontSize: 8 // Adjust the vertical axis label font size
-                  }
-                },
-                bar: { groupWidth: '75%' }, // Adjust the bar width for better label visibility
-                legend: { position: 'none' }, // Adjust legend position or remove if not needed
-
-              }}
-
-            />
-          </div> */}
+            /> */}
+          </div>
 
         </div>
       </div>

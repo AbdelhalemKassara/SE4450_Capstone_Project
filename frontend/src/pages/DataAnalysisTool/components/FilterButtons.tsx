@@ -42,8 +42,7 @@ return newState;
       .filter(([, isSelected]) => isSelected)
       .map(([key]) => key);
 
-    console.log("Updated Array:", updatedArray);
-
+    // console.log("Updated Array:", updatedArray);
     setSelectedButton(updatedArray);
   };
 
