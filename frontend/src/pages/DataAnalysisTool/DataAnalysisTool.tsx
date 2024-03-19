@@ -50,11 +50,11 @@ export default function DataAnalysisTool(): JSX.Element {
 
   useEffect(() => {
     const fetchFilter1Data = async () => {
-      if (!dataset || !depVar|| !selectedButton || !indVar) {
+      if (!dataset || !depVar || !selectedButton || !indVar) {
         return;
       }
-      
-      if(selectedButton.length === 0) {
+
+      if (selectedButton.length === 0) {
         setSetOfChartData([]);
         return;
       }
@@ -86,6 +86,8 @@ export default function DataAnalysisTool(): JSX.Element {
         let header = chartData[0];
         let body = chartData.slice(1, chartData.length);
         let out = [];
+        console.log("b: " + body);
+        console.log("h: " + header)
 
         if (3 < body.length) {
           for (let i = 3; i < body.length; i += 4) {
@@ -123,7 +125,7 @@ export default function DataAnalysisTool(): JSX.Element {
       datasetQ.getFilteredMapDatas(dataset, depVar, selectedButton, indVar).then((val: FilteredMapData) => {
         setMapData(val);
       });
-    }else if (dataset && depVar && (!selectedButton && !indVar)){
+    } else if (dataset && depVar) {
       console.log("ananda");
       (async () => {
         let val: Map<string, number> = await datasetQ.getTotalAnswerCount(dataset, depVar, selectedRiding);
@@ -354,24 +356,30 @@ export default function DataAnalysisTool(): JSX.Element {
             <MapComponent mapData={mapData} mapType={mapType} setSelectedRiding={setSelectedRiding} />
           </div>
           <div id='my-table'>
-            {setOfCharData.map((data) => (<Chart
-              width={'100%'}
-              chartType={columnChartType} // Use the state variable for dynamic chart type
-              data={data}
-              options={{
-                colors: chartColors, // Example chart colors
-                chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
-                // Other chart options...
-              }}
-            />))}
+            {setOfCharData.map((data) => {
+              return (
+                <Chart
+                  key={data} // assuming data has a unique key property
+                  width={'100%'}
+                  chartType={columnChartType} // Use the state variable for dynamic chart type
+                  data={data}
+                  options={{
+                    colors: chartColors, // Example chart colors
+                    chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
+                    // Other chart options...
+                  }}
+                />
+              );
+            })}
           </div>
-          <div id='my-table'>
-            {/* <Chart width={'100%'} chartType='PieChart' data={data}
+
+          {/* <div id='my-table'> */}
+          {/* <Chart width={'100%'} chartType='PieChart' data={data}
               options={{
                 colors: chartColors,
               }}
             /> */}
-          </div>
+          {/* </div> */}
 
         </div>
       </div>
