@@ -41,7 +41,8 @@
     "dc22_consent",
     "Attitudes1_politicianattitudes_D",
     "Attitudes1_politicianattitudes_0",
-    "dc22_jurisdiction_t_Click_Count"    
+    "dc22_jurisdiction_t_Click_Count",
+    "cps21_consent"    
   ],
   "surveyYear" : 2021,
   "variableForAgeBrackets": "cps21_yob",
@@ -50,10 +51,10 @@
   "maxBirthYear" : 2003,
   "ageBrackets" : [{
     "minBirthYear" : 1987,
-    "bracketName" : "Gen Z"
+    "bracketName" : ""
   },
   {
     "minBirthYear" : 1957,
-    "bracketName" : "Gen X"
+    "bracketName" : ""
   }]
 }

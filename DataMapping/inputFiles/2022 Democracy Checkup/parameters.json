@@ -41,19 +41,21 @@
     "dc22_consent",
     "Attitudes1_politicianattitudes_D",
     "Attitudes1_politicianattitudes_0",
-    "dc22_jurisdiction_t_Click_Count"    
+    "dc22_jurisdiction_t_Click_Count",
+    "dc22_lr_party",
+    "dc22_lr_self"       
   ],
   "surveyYear" : 2022,
-  "variableForAgeBrackets": "dc22_age_in_years",
+  "variableForAgeBrackets": "dc21_age_in_years",
   "AskingForBirthYearNotAge?" : false,
-  "DisplayBirthYearsNotAge" : true,
+  "DisplayBirthYearsNotAge" : false,
   "maxBirthYear" : 2004,
   "ageBrackets" : [{
     "minBirthYear" : 1988,
-    "bracketName" : "Gen Z"
+    "bracketName" : ""
   },
   {
     "minBirthYear" : 1958,
-    "bracketName" : "Gen X"
+    "bracketName" : ""
   }]
 }

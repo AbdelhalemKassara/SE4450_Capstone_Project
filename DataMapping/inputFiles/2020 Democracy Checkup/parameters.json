@@ -46,34 +46,14 @@
   "surveyYear" : 2020,
   "variableForAgeBrackets": "dc20_yob",
   "AskingForBirthYearNotAge?" : true,
-  "maxBirthYear" : 2012,
+  "maxBirthYear" : 2002,
   "DisplayBirthYearsNotAge" : false,
   "ageBrackets" : [{
-    "minBirthYear" : 1997,
-    "bracketName" : "Gen Z"
+    "minBirthYear" : 1986,
+    "bracketName" : ""
   },
   {
-    "minBirthYear" : 1965,
-    "bracketName" : "Gen X"
-  }, 
-  {
-    "minBirthYear" : 1981,
-    "bracketName" : "Millenials"
-  },
-  {
-    "minBirthYear" : 1955,
-    "bracketName" : "Bommers II"
-  },
-  {
-    "minBirthYear": 1946,
-    "bracketName" : "Bommers I"
-  },
-  {
-    "minBirthYear" : 1928,
-    "bracketName" : "Post War"
-  },
-  {
-    "minBirthYear" : 1922,
-    "bracketName" : "WWII"
+    "minBirthYear" : 1956,
+    "bracketName" : ""
   }]
 }

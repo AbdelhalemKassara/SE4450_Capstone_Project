@@ -14,13 +14,13 @@
   "variablesToIgnore" : [
     " ",
     "",
-    "dc22_jurisdiction_t_Last_Click",
-    "dc22_jurisdiction_t_Last_Click",
-    "dc22_jurisdiction_t_First_Click",
-    "dc22_jurisdiction_t_Page_Submit",
+    "dc23_jurisdiction_t_Last_Click",
+    "dc23_jurisdiction_t_Last_Click",
+    "dc23_jurisdiction_t_First_Click",
+    "dc23_jurisdiction_t_Page_Submit",
     "fedname",
     "pccf_problem",
-    "dc22_quota_weight",
+    "dc23_quota_weight",
     "emb",
     "EMB_fr",
     "pid_fr",
@@ -34,26 +34,26 @@
     "ResponseId",
     "UserLanguage",
     "survey_wave",
-    "dc22_consent_t_First_Click",
-    "dc22_consent_t_Last_Click",
-    "dc22_consent_t_Page_Submit",
-    "dc22_consent_t_Click_Count",
-    "dc22_consent",
+    "dc23_consent_t_First_Click",
+    "dc23_consent_t_Last_Click",
+    "dc23_consent_t_Page_Submit",
+    "dc23_consent_t_Click_Count",
+    "dc23_consent",
     "Attitudes1_politicianattitudes_D",
     "Attitudes1_politicianattitudes_0",
-    "dc22_jurisdiction_t_Click_Count"    
+    "dc23_jurisdiction_t_Click_Count"
   ],
   "surveyYear" : 2023,
   "variableForAgeBrackets": "dc23_age_in_years",
   "AskingForBirthYearNotAge?" : false,
-  "DisplayBirthYearsNotAge" : true,
+  "DisplayBirthYearsNotAge" : false,
   "maxBirthYear" : 2004,
   "ageBrackets" : [{
     "minBirthYear" : 1989,
-    "bracketName" : "Gen Z"
+    "bracketName" : ""
   },
   {
     "minBirthYear" : 1959,
-    "bracketName" : "Gen X"
+    "bracketName" : ""
   }]
 }

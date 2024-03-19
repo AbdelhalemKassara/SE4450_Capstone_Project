@@ -38,7 +38,7 @@
     "dc22_consent_t_Last_Click",
     "dc22_consent_t_Page_Submit",
     "dc22_consent_t_Click_Count",
-    "dc22_consent",
+    "dc21_consent",
     "Attitudes1_politicianattitudes_D",
     "Attitudes1_politicianattitudes_0",
     "dc22_jurisdiction_t_Click_Count"    
@@ -50,10 +50,10 @@
   "maxBirthYear" : 2003,
   "ageBrackets" : [{
     "minBirthYear" : 1987,
-    "bracketName" : "Gen Z"
+    "bracketName" : ""
   },
   {
     "minBirthYear" : 1957,
-    "bracketName" : "Gen X"
+    "bracketName" : ""
   }]
 }
