@@ -118,17 +118,19 @@ class DatasetQuery {
   }
 
 
-  public async getFilteredAnswersCount(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string): Promise<Map<AnswerText, Count>> {
+  public async getFilteredAnswersCount(datasetId: string, depQuestId: string, depAnswer: string, indQuestId: string, feduid: number): Promise<Map<AnswerText, Count>> {
     let out: Map<AnswerText, Count> = new Map<AnswerText, Count>();
 
     //these will have the same length
     let depAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, depQuestId);
     let indAnswers: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, indQuestId);
+    let fedUids: string[] = await this.fileFetcher.getFeduid(datasetId);
+
     // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
     // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
 
     for (let i = 0; i < indAnswers.length; i++) {
-      if (indAnswers[i] === depAnswer && depAnswers[i]) {
+      if (indAnswers[i] === depAnswer && depAnswers[i]  && (feduid < 10000 || fedUids[i] === feduid.toString())) {
         //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
         let id: string = depAnswers[i];
         // console.log("hi " + depAnswer);

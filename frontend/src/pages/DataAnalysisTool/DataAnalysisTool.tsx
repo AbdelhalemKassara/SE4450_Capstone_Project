@@ -53,6 +53,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [filter2, setFilter2] = useState<string | undefined>();
   const [chartData, setChartData] = useState<string>(''); // Initialize with empty array for chart data
   const [secondChartData, setSecondChartData] = useState<string[][]>('');
+  const [setOfCharData, setSetOfChartData] = useState<any[][][]>([]);
 
   useEffect(() => {
     const fetchFilter1Data = async () => {
@@ -69,28 +70,49 @@ export default function DataAnalysisTool(): JSX.Element {
       });
 
       // Load the counts for each filter
-      selectedButton.forEach(async (filter: string, i) => {
-        let filterData = await datasetQ.getFilteredAnswersCount(dataset, depVar, filter, indVar);
+      selectedButton.forEach(async (filter: string) => {
+        let filterData = await datasetQ.getFilteredAnswersCount(dataset, depVar, filter, indVar, selectedRiding);
         chartData[0].push(filter);
 
         for (let i = 1; i < chartData.length; i++) {
-          let test = filterData.get(chartData[i][0]);
-          if (test) {
+          let AnswCountArr = filterData.get(chartData[i][0]);
+          if (AnswCountArr) {
             //@ts-ignore
-            chartData[i].push(test);
+            chartData[i].push(AnswCountArr);
           } else {
             // @ts-ignore
             chartData[i].push(0);
           }
         }
 
-        // Set the chart data state only if the number of filters is less than or equal to 4
-        if (selectedButton.length <= 4) {
-          setChartData(chartData);
-        } else if (i === 3) {
-          // If there are more than 4 filters and this is the fourth filter, set the chart data for the second chart
-          setSecondChartData(chartData);
+        // let out = [];
+        let header = chartData[0];
+        let body = chartData.slice(1, chartData.length);
+        let out = [];
+
+        if(3 < body.length) {
+          for(let i = 3; i < body.length; i += 4) {
+            //@ts-ignore
+            out.push([header, ...body.slice(i-3, i)]);
+          }
+        } else {
+          out = [header, ...body];
         }
+
+        console.log(out);
+        //@ts-ignore
+        setSetOfChartData(out);
+
+        // // Set the chart data state only if the number of filters is less than or equal to 4
+        // if (selectedButton.length <= 4) {
+        //   //@ts-ignore
+        //   setChartData(chartData.slice(3));
+        // } else if (i === 3) {
+        //   // If there are more than 4 filters and this is the fourth filter, set the chart data for the second chart
+        //   //@ts-ignore
+        //   setSecondChartData([chartData[0], ...chartData.slice(3, chartData.length-1)]);
+        // }
+
       });
     };
 
@@ -341,31 +363,17 @@ export default function DataAnalysisTool(): JSX.Element {
             <MapComponent mapData={mapData} mapType={mapType} setSelectedRiding={setSelectedRiding} />
           </div>
           <div id='my-table'>
-            <Chart
+            {setOfCharData.map((data) => (<Chart
               width={'100%'}
               chartType={columnChartType} // Use the state variable for dynamic chart type
-              data={chartData}
+              data={data}
               options={{
                 colors: chartColors, // Example chart colors
                 chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
                 // Other chart options...
               }}
-            />
+            />))}
           </div>
-          {selectedButton?.length > 4 && secondChartData && (
-            <div id='second-chart'>
-              <Chart
-                width={'100%'}
-                chartType={columnChartType} // Use the state variable for dynamic chart type
-                data={secondChartData}
-                options={{
-                  colors: chartColors, // Example chart colors
-                  chartArea: { width: '80%', height: '70%' }, // Adjust the chart area as needed
-                  // Other chart options...
-                }}
-              />
-            </div>
-          )}
           {/* <div id='my-table'>
             <Chart width={'100%'} chartType='PieChart' data={data}
               options={{
