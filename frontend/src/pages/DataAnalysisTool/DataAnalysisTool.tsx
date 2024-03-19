@@ -27,7 +27,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [dataset, setDataset] = useState<string | undefined>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
   const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
-  const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
+  const [selectedButton, setSelectedButton] = useState<string[] | undefined>([]);
 
   const [answerIds, setAnswerIds] = useState<Map<string, number>>(new Map());
   const [averageValue, setAverageValue] = useState<number>(0);
@@ -50,7 +50,12 @@ export default function DataAnalysisTool(): JSX.Element {
 
   useEffect(() => {
     const fetchFilter1Data = async () => {
-      if (!dataset || !depVar || !selectedButton || !indVar) {
+      if (!dataset || !depVar|| !selectedButton || !indVar) {
+        return;
+      }
+      
+      if(selectedButton.length === 0) {
+        setSetOfChartData([]);
         return;
       }
 
@@ -78,7 +83,6 @@ export default function DataAnalysisTool(): JSX.Element {
           }
         }
 
-        // let out = [];
         let header = chartData[0];
         let body = chartData.slice(1, chartData.length);
         let out = [];
@@ -92,7 +96,7 @@ export default function DataAnalysisTool(): JSX.Element {
           out = [[header, ...body]];
         }
 
-        console.log(out);
+        console.log(chartData);
         //@ts-ignore
         setSetOfChartData(out);
       });

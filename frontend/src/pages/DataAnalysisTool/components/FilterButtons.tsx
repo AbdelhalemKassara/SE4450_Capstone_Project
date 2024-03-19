@@ -43,7 +43,6 @@ return newState;
       .map(([key]) => key);
 
     // console.log("Updated Array:", updatedArray);
-
     setSelectedButton(updatedArray);
   };
 
