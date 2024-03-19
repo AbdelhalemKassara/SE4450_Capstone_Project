@@ -27,33 +27,26 @@ export default function DataAnalysisTool(): JSX.Element {
   const [dataset, setDataset] = useState<string | undefined>(); //this(the hardcoding a valid dataset) is a janky fix for the IndVarDropDown where fetchting independent variables without a valid dataset throws an error
   const [depVar, setDepVar] = useState<string | undefined>(); //dependent variable
   const [indVar, setIndVar] = useState<string | undefined>(); //demographic variable
-  const [mapType, setMapType] = useState<string>('province');
-  //const [mapData, setMapData] = useState({ province: {}, riding: [] })
+  const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
+
   const [answerIds, setAnswerIds] = useState<Map<string, number>>(new Map());
-  const [multipliedValues, setMultipliedValues] = useState(new Map());
   const [averageValue, setAverageValue] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [median, setMedian] = useState<number>(0);
   const [standardDeviation, setStandardDeviation] = useState<number>(0);
   const [selectedRiding, setSelectedRiding] = useState<number>(0);
 
-  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} })
-  const [data, setData] = useState<undefined | [string, number | string][]>();
+  const [mapData, setMapData] = useState<FilteredMapData>({ province: {}, riding: {} });
+  const [mapType, setMapType] = useState<string>('province');
 
-  // Inside your component function
-  const [selectedButton, setSelectedButton] = useState<string[] | undefined>();
-  const [chartType, setChartType] = useState<string>();
-  //for columnChart
+  const [chartType, setChartType] = useState<string>();  // Inside your component function
   const [columnChartType, setColumnChartType] = useState<string[][]>("ColumnChart"); // Initialize with default chart type
-  //chart colours
-  const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];
+  const chartColors = ['#ffd700', '#ffc700', '#ffb700', '#ffa700', '#ff9700'];  //chart colours
+
 
   // Declared filters and chart data
-  const [filter1, setFilter1] = useState<string | undefined>();
-  const [filter2, setFilter2] = useState<string | undefined>();
-  const [chartData, setChartData] = useState<string>(''); // Initialize with empty array for chart data
-  const [secondChartData, setSecondChartData] = useState<string[][]>('');
   const [setOfCharData, setSetOfChartData] = useState<any[][][]>([]);
+  const [data, setData] = useState<undefined | [string, number | string][]>();
 
   useEffect(() => {
     const fetchFilter1Data = async () => {
@@ -102,36 +95,12 @@ export default function DataAnalysisTool(): JSX.Element {
         console.log(out);
         //@ts-ignore
         setSetOfChartData(out);
-
-        // // Set the chart data state only if the number of filters is less than or equal to 4
-        // if (selectedButton.length <= 4) {
-        //   //@ts-ignore
-        //   setChartData(chartData.slice(3));
-        // } else if (i === 3) {
-        //   // If there are more than 4 filters and this is the fourth filter, set the chart data for the second chart
-        //   //@ts-ignore
-        //   setSecondChartData([chartData[0], ...chartData.slice(3, chartData.length-1)]);
-        // }
-
       });
     };
 
     fetchFilter1Data();
-  }, [columnChartType, filter1, filter2, dataset, depVar, indVar, selectedRiding, selectedButton]);
+  }, [columnChartType, dataset, depVar, indVar, selectedRiding, selectedButton]);
 
-
-
-
-
-  //filters
-  // Function to handle filter changes
-  const handleFilterChange = (filterNumber: number, value: string) => {
-    if (filterNumber === 1) {
-      setFilter1(value);
-    } else if (filterNumber === 2) {
-      setFilter2(value);
-    }
-  };
 
   useEffect(() => {
     if (dataset && depVar && selectedButton && indVar) {
@@ -245,7 +214,6 @@ export default function DataAnalysisTool(): JSX.Element {
 
       setTotalCount(totalCount);
       setAverageValue(averageValue);
-      setMultipliedValues(calculatedValues);
     }
   }, [answerIds, data]);
 
