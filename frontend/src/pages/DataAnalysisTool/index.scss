@@ -16,12 +16,22 @@
       flex-direction: column;
     }
 
-
     .filter_container {
       flex-direction: column;
       display: flex;
       margin-left: 2rem;
       margin-right: 2rem;
+      #radio-buttons{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+      }
+      #pdf-button{
+        color: white;
+        background-color: #fbc02d;
+      }
 
       .update_sizing {
         text-overflow: ellipsis;
