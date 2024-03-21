@@ -65,8 +65,8 @@
     "dc22_lr_self"       
   ],
   "surveyYear" : 2022,
-  "variableForAgeBrackets": "dc21_age_in_years",
-  "AskingForBirthYearNotAge?" : false,
+  "variableForAgeBrackets": ["dc22_age_in_years", "dc22_yob"],
+  "AskingForBirthYearNotAge?" : [false, true],
   "DisplayBirthYearsNotAge" : false,
   "maxBirthYear" : 2004,
   "ageBrackets" : [{

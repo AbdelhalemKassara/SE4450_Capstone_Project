@@ -290,7 +290,16 @@ export class ProcessQuestions {
   }
 
   private processAgeBrackets(mappingFile: Mapping, qsfFile: QsfFileFetchWrapper, questionId: string, addToIndVar: Boolean, dataset: DatasetFetchWrapper): void {
-    if(questionId !== qsfFile.getVarForAgeBrac()) {
+    let ageQuestIds = qsfFile.getVarForAgeBrac();
+
+    let index: number = -1;
+    for(let i = 0; i < ageQuestIds.length; i++) {
+      if(questionId === ageQuestIds[i]) {
+        index = i;
+        break;
+      }
+    }
+    if(index === -1) {
       return;
     }
 
@@ -306,7 +315,7 @@ export class ProcessQuestions {
     
     //I think we just need to update the values in the mapping in this case
     //this is wrong these aren't the ages this is remappping the ids
-    if(!qsfFile.getIsBirthYear()) {
+    if(!qsfFile.getIsBirthYear(index)) {
       //convert the dataset from age to birth year
       let surveyYear: number = qsfFile.getSurveyYear();
 
