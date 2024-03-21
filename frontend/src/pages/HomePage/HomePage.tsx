@@ -2,7 +2,6 @@ import CdemHeader from "./Header/CdemHeader";
 import { useNavigate } from 'react-router-dom';
 import "./index.scss";
 import Button from "@mui/material/Button";
-import CDemFooter from "./Footer/CdemFooter";
 import { yellow } from "@mui/material/colors";
 
 const HomePage = () => {
@@ -36,7 +35,6 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      <CDemFooter />
     </div >
   );
 };

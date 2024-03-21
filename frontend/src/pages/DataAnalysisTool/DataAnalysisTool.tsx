@@ -497,7 +497,6 @@ export default function DataAnalysisTool(): JSX.Element {
           </div>
         </div>
       </div>
-      {<CDemFooter />}
     </div>
   );
 }
