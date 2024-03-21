@@ -325,56 +325,58 @@ export default function DataAnalysisTool(): JSX.Element {
 
   function Export() {
     const exportitem = document.getElementById("my-table") as HTMLElement;
-html2canvas(exportitem, {}).then((canvas) => {
-  const imgData = canvas.toDataURL("image/png");
-
-  const pdf = new jsPDF("p", "mm", "a4");
-
-  const PageHeight = 298;
-  const PageWidth = 210;
-
-  const height = (canvas.height * PageHeight) / canvas.width;
-
-  let y = 10; // Initial Y coordinate
-
-  if(dataset){
-  pdf.text(10, y, `DatasetFile: ${JSON.stringify(dataset)}`);
-  y += 10; // Increment Y coordinate
-  }
-
-  if(indVar){
-  pdf.text(10, y, `independent: ${JSON.stringify(indVar)}`);
-  y += 10; // Increment Y coordinate
-  }
-
-  if(selectedButton?.length > 0){
-  pdf.text(10, y, `filterselected: ${JSON.stringify(selectedButton)}`);
-  y += 10; // Increment Y coordinate
-  }
-  else{
-    pdf.text(10, y, `filterselected: all`);
-  y += 10;
-  }
-
-  if(depVar){
-  pdf.text(10, y, `dependent: ${JSON.stringify(depVar)}`);
-  y += 10; // Increment Y coordinate
-  }
-
-  pdf.text(10, y, `averageValue: ${JSON.stringify(averageValue)} `);
-  y += 10; // Increment Y coordinate
-  pdf.text(10, y, `totalCount: ${JSON.stringify(totalCount)}`);
-  y += 10; // Increment Y coordinate
-  pdf.text(10, y, `median: ${JSON.stringify(median)}`);
-  y += 10; // Increment Y coordinate
-  pdf.text(10, y, `standardDeviation: ${JSON.stringify(standardDeviation)}`);
-  y += 10; // Increment Y coordinate
-
-  // Add the image after adding all the text
-  pdf.addImage(imgData, "PNG", 0, y, PageWidth, height);
-
-  pdf.save("data.pdf");
-});
+    html2canvas(exportitem, {}).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+  
+      const pdf = new jsPDF("p", "mm", "a4");
+  
+      const PageHeight = 298;
+      const PageWidth = 210;
+  
+      const height = (canvas.height * PageHeight) / canvas.width;
+  
+      let y = 10; // Initial Y coordinate
+  
+      if (dataset) {
+        pdf.text(10, y, `DatasetFile: ${JSON.stringify(dataset)}`);
+        y += 10; // Increment Y coordinate
+      }
+  
+      if (indVar) {
+        pdf.text(10, y, `independent: ${JSON.stringify(indVar)}`);
+        y += 10; // Increment Y coordinate
+      }
+  
+      if (selectedButton && selectedButton.length > 0) {
+        const selectedButtonChunks = pdf.splitTextToSize(JSON.stringify(selectedButton), PageWidth - 20);
+        selectedButtonChunks.forEach(chunk => {
+          pdf.text(10, y, chunk);
+          y += 10; // Increment Y coordinate
+        });
+      } else {
+        pdf.text(10, y, `filterselected: all`);
+        y += 10;
+      }
+  
+      if (depVar) {
+        pdf.text(10, y, `dependent: ${JSON.stringify(depVar)}`);
+        y += 10; // Increment Y coordinate
+      }
+  
+      pdf.text(10, y, `averageValue: ${JSON.stringify(averageValue)} `);
+      y += 10; // Increment Y coordinate
+      pdf.text(10, y, `totalCount: ${JSON.stringify(totalCount)}`);
+      y += 10; // Increment Y coordinate
+      pdf.text(10, y, `median: ${JSON.stringify(median)}`);
+      y += 10; // Increment Y coordinate
+      pdf.text(10, y, `standardDeviation: ${JSON.stringify(standardDeviation)}`);
+      y += 10; // Increment Y coordinate
+  
+      // Add the image after adding all the text
+      pdf.addImage(imgData, "PNG", 0, y, PageWidth, height);
+  
+      pdf.save("data.pdf");
+    });
   }
 
   function rescaleTo100(sequence: number[]): number[] {
