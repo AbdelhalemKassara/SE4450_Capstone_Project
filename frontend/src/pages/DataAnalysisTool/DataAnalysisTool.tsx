@@ -36,10 +36,10 @@ export default function DataAnalysisTool(): JSX.Element {
   );
 
   const [answerIds, setAnswerIds] = useState<Map<string, number>>(new Map());
-  const [averageValue, setAverageValue] = useState<number>(0);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [median, setMedian] = useState<number>(0);
-  const [standardDeviation, setStandardDeviation] = useState<number>(0);
+  const [averageValue, setAverageValue] = useState<number>(-1);
+  const [totalCount, setTotalCount] = useState<number>(-1);
+  const [median, setMedian] = useState<number>(-1);
+  const [standardDeviation, setStandardDeviation] = useState<number>(-1);
   const [selectedRiding, setSelectedRiding] = useState<number>(0);
 
   const [mapData, setMapData] = useState<FilteredMapData>({
@@ -276,8 +276,12 @@ export default function DataAnalysisTool(): JSX.Element {
         
       }
 
+
       const averageValue =
         totalCount > 0 ? sumOfMultipliedValues / totalCount : 0;
+
+        if(multipliedValuesArray.length > 0){
+
 
       const sortedMultipliedValues = multipliedValuesArray.sort(
         (a, b) => a - b
@@ -291,7 +295,12 @@ export default function DataAnalysisTool(): JSX.Element {
           Math.floor(sortedMultipliedValues.length / 2)
           ];
       setMedian(median);
+          }else{
+            setMedian(-1);
+          }
       //console.log("this is the median " + median)
+
+      if(multipliedValuesArray.length > 0){
 
       // Calculate standard deviation
       const mean = averageValue;
@@ -303,6 +312,10 @@ export default function DataAnalysisTool(): JSX.Element {
         multipliedValuesArray.length;
       const stdDeviation = Math.sqrt(variance);
       setStandardDeviation(stdDeviation);
+
+      }else{
+        setStandardDeviation(-1);
+      }
       //console.log("this is the standard deviation " + stdDeviation)
 
       setTotalCount(totalCount);
@@ -479,22 +492,26 @@ html2canvas(exportitem, {}).then((canvas) => {
           <div className="data_stats">
             <div className="statistic-box">
               <p className="statistic-label">Count:</p>
-              <p className="statistic-value">{totalCount}</p>
+              <p className="statistic-value">
+              {standardDeviation !== -1 || undefined ? totalCount : '---'}
+              </p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Mean:</p>
               <p className="statistic-value">
-                {Math.round(averageValue * 100) / 100}
+              {standardDeviation !== -1 || undefined ? Math.round(averageValue * 100) / 100 : '---'}
               </p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Median:</p>
-              <p className="statistic-value">{median}</p>
+              <p className="statistic-value">
+              {standardDeviation !== -1 || undefined ? median : '---'}
+              </p>
             </div>
             <div className="statistic-box">
               <p className="statistic-label">Standard Deviation:</p>
               <p className="statistic-value">
-                {Math.round(standardDeviation * 100) / 100}
+              {standardDeviation !== -1 || undefined ? Math.round(standardDeviation * 100) / 100 : '---'}
               </p>
             </div>
           </div>
