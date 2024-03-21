@@ -62,6 +62,9 @@ class DatasetQuery {
     return new Map([...independentQuestions, ...dependentQuestions]);
   }
 
+public async getQuestionText(datasetId: string, questionId: string): Promise<string> {
+  return this.fileFetcher.getQuestionText(datasetId, questionId);
+}
 
   //created a function to retrieve the answers: Query5
   public async getAnswersCount(datasetId: string, questionId: string): Promise<Map<AnswerText, Count>> {
