@@ -1,71 +1,70 @@
 .cdem_header {
-    display: grid;
-    grid-template-columns: minmax(min-content, 8em) minmax(10rem, auto);
-    gap: 2rem;
+  display: grid;
+  grid-template-columns: minmax(min-content, 8rem) minmax(10rem, 1fr) minmax(
+      min-content,
+      4rem
+    );
+  gap: 2rem;
+  align-items: center;
+  min-height: 4.5rem;
+  z-index: 999;
+  background: rgb(255, 255, 255);
+  box-shadow: 0px 0px 10px rgb(158, 158, 158);
+  padding: 0.5rem;
+
+  @media screen and (max-width: 900px) {
+    gap: 1rem;
+  }
+  
+  .mapleLeaf_header {
+    display: flex;
     align-items: center;
-    height: 4.5rem;
-    z-index: 9999;
-    background: rgb(255, 255, 255);
-    box-shadow: 0px 0px 10px rgb(158, 158, 158);
+    justify-content: center;
 
     @media screen and (max-width: 600px) {
-        // display: flex;
-        // flex-direction: column;
+      margin: 0rem;
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .mapleLeaf_header:hover {
+    cursor: pointer;
+  }
+
+  .title_header {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #424242;
+    flex-wrap: wrap;
+
+    @media screen and (max-width: 900px) {
+      gap: 0.5rem;
+      font-size: 2rem;
+      justify-content: center;
+      text-align: center;
+
+      @media screen and (max-width: 600px) {
         gap: 0rem;
-        padding: 0.5rem;
-        grid-template-columns: minmax(min-content, 4rem) 1fr;
-
-    }
-
-    .mapleLeaf_header {
-        margin: 0rem 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        @media screen and (max-width: 600px) {
-            margin: 0rem;
+        font-size: 1.5rem;
+        @media screen and (max-width: 450px) {
+          font-size: 1.25rem;
         }
-
-        img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+        > span:nth-child(2) {
+          margin-left: 0.5rem;
         }
+      }
     }
 
-    .mapleLeaf_header:hover {
-        cursor: pointer;
+    > span:nth-child(2) {
+      color: #fbc02d;
     }
-
-    .title_header {
-        display: flex;
-        flex-direction: row;
-        gap: 0.5rem;
-        font-size: 2rem;
-        font-weight: bold;
-        color: #424242;
-
-        @media screen and (max-width: 600px) {
-            flex-wrap: wrap;
-            gap: 0rem;
-            font-size: 1.5rem;
-            justify-content: center;
-            text-align: center;
-
-            >span:nth-child(2) {
-                margin-left: 0.5rem;
-            }
-        }
-
-        >span:nth-child(2) {
-            color: #fbc02d;
-        }
-    }
-
-    .header_menu {
-        margin-right: 1rem;
-        display: flex;
-        justify-content: flex-end;
-    }
+  }
 }
