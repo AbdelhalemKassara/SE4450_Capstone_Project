@@ -401,7 +401,7 @@ export default function DataAnalysisTool(): JSX.Element {
           className="filter_container"
           onClick={() => {
             if (mapType === "riding" && selectedRiding !== 0) {
-              setSelectedRiding(1);
+              setSelectedRiding(0);
             }
           }}
         >
