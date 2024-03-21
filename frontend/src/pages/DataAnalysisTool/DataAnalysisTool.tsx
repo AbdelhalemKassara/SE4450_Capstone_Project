@@ -207,7 +207,7 @@ export default function DataAnalysisTool(): JSX.Element {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
-    setSelectedRiding(1);
+    setSelectedRiding(0);
   };
 
   const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
