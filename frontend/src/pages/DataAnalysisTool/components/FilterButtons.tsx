@@ -20,7 +20,15 @@ export default function FilterButtons({ dataset, indVar, setSelectedButton }: Fi
         val.forEach((_, key) => {
           initialMap.set(key, false);
         });
-        setIndVarAnswrCnt(initialMap);
+
+        // Convert Map to Array and sort numerically
+        const sortedArray = Array.from(initialMap).sort((a, b) => {
+          const keyA = parseFloat(a[0]);
+          const keyB = parseFloat(b[0]);
+          return keyA - keyB;
+        });
+
+        setIndVarAnswrCnt(new Map(sortedArray));
       });
     } else {
       setIndVarAnswrCnt(new Map());
