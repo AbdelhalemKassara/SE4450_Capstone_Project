@@ -1,4 +1,39 @@
 # SE4450_Capstone_Project
+## Info About Certian Parts of The Code
+### DataMapping
+#### paramters.json
+The structure of the file is here:
+```typescript
+export type paramters = {
+  independentVariables : string[];
+  metadata : string[];
+  variablesToIgnore : string[];
+  
+  surveyYear: number;
+  variableForAgeBrackets: string;
+  "AskingForBirthYearNotAge?": boolean;
+  DisplayBirthYearsNotAge : boolean;
+  
+  maxBirthYear: number;
+  ageBrackets: {
+    minBirthYear: number;
+    bracketName: string;
+  }[];
+};
+```
+- The strings in the independentVariables, metadata, variablesToIgnore, and variableForAgeBrackets are the question ids found in the top row of the .csv file.
+- By default all the variables are dependent variables, so in order to have independent variables you would need to add their ids to the independentVariable paramter.
+- The variablesToIgnore is just an array of question ids that won't be added to the mapping file.
+- We didn't find any use of the metadata so currently anything in this list is being removed (i.e. it's not added to the mapping file). 
+- The surveyYear, variableForAgeBrackets, "AskingForBirthyearNotAge?", DisplayBirthYearsNotAge, maxBirthYear, and ageBrackets are all for condensing the question asking for the participants age or birth year.
+- The "AskingForBirthyearNotAge?" indicates if the birth years or the ages are being stored in the .csv file.
+- The maxBirthYear is the upper range of the youngest age bracket.
+- The bracketName is there if you want to attach a custom label to the bracket for example "Baby Boomer" or "Gen Z".
+- The DisplayBirthYearsNotAge is for controlling if you want to display the birth year or the age range for the labels that will be displayed.
+- The format of the lables is "bracketName (lowerBirthYear - upperBirthYear)" or "bracketName (lowerAge - upperAge)" where upperAge and upperBirthYear are the minBirthYear of the next bracket minus 1, or the maxBirthYear minus 1.
+
+
+### Mapping File
 
 ## Deployment Instructions
 There are three main stages for deployment, the first is converting the .dta file to .csv, the second is creating the mapping file and creating the mapping file/breaking up the datset by columns (to improve loading times), and the final stage is building the frontend.
