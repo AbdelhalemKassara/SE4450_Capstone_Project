@@ -157,13 +157,11 @@ class DatasetQuery {
 
     // let proA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'dc22_province');
     // let fedA: (undefined | string)[] = await this.fileFetcher.getColValsFullList(datasetId, 'feduid');
-    //console.log("fuck you " + depAnswer);
     //console.log(depAnswer.length)
     for (let j = 0; j < depAnswer.length; j++) {
       for (let i = 0; i < indAnswers.length; i++) {
         if (indAnswers[i] === depAnswer[j] && depAnswers[i] && (feduid < 10000 || fedUids[i] === feduid.toString())) {
           const id: string = depAnswers[i];
-          //console.log("fuck " + depAnswer[i]);
           const curCount: number | undefined = out.get(id);
 
           if (curCount) {
@@ -186,7 +184,6 @@ class DatasetQuery {
         if ((feduid < 10000 || fedUids[i] === feduid.toString())) {
           //@ts-ignore: Not sure why it's giving an error as i'm checking if it's undefined in the if statement
           const id: string = depAnswers[i];
-          //console.log("fuck " + depAnswer[i]);
           const curCount: number | undefined = out.get(id);
 
           if (curCount) {
