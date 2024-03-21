@@ -323,9 +323,9 @@ export default function DataAnalysisTool(): JSX.Element {
     }
   }, [answerIds, data]);
 
-  function Export() {
+  let Export = async () => {
     const exportitem = document.getElementById("my-table") as HTMLElement;
-    html2canvas(exportitem, {}).then((canvas) => {
+    html2canvas(exportitem, {}).then(async (canvas) => {
       const imgData = canvas.toDataURL("image/png");
   
       const pdf = new jsPDF("p", "mm", "a4");
@@ -342,9 +342,13 @@ export default function DataAnalysisTool(): JSX.Element {
         y += 10; // Increment Y coordinate
       }
   
-      if (indVar) {
-        pdf.text(10, y, `independent: ${JSON.stringify(indVar)}`);
-        y += 10; // Increment Y coordinate
+      if (indVar && dataset) {
+        let text = await datasetQ.getQuestionText(dataset, indVar);
+        const selectedButtonChunks = pdf.splitTextToSize("Independent Question: " + text, PageWidth - 20);
+        selectedButtonChunks.forEach(chunk => {
+          pdf.text(10, y, chunk);
+          y += 10; // Increment Y coordinate
+        });
       }
   
       if (selectedButton && selectedButton.length > 0) {
@@ -358,10 +362,13 @@ export default function DataAnalysisTool(): JSX.Element {
         y += 10;
       }
   
-      if (depVar) {
-        pdf.text(10, y, `dependent: ${JSON.stringify(depVar)}`);
-        y += 10; // Increment Y coordinate
-      }
+      if (depVar && dataset) {
+        let text = await datasetQ.getQuestionText(dataset, depVar);
+        const selectedButtonChunks = pdf.splitTextToSize("Dependent Question: " + text, PageWidth - 20);
+        selectedButtonChunks.forEach(chunk => {
+          pdf.text(10, y, chunk);
+          y += 10; // Increment Y coordinate
+        });      }
   
       pdf.text(10, y, `averageValue: ${JSON.stringify(averageValue)} `);
       y += 10; // Increment Y coordinate
@@ -431,7 +438,7 @@ export default function DataAnalysisTool(): JSX.Element {
           />
           <button
             id="pdf-button"
-            onClick={Export}
+            onClick={() => Export()}
           >
             Export PDF
           </button>
