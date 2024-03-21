@@ -34,6 +34,8 @@ export type paramters = {
 
 
 ### Mapping File
+This files role is to map the answer ids in the dataset to the actual values, as well as contain the question text.
+All of the questions are currently being converted from whatver type they are into a multiple choice like question to make the frontend processing easier.
 
 ## Deployment Instructions
 There are three main stages for deployment, the first is converting the .dta file to .csv, the second is creating the mapping file and creating the mapping file/breaking up the datset by columns (to improve loading times), and the final stage is building the frontend.

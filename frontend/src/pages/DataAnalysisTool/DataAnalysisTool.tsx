@@ -207,7 +207,7 @@ export default function DataAnalysisTool(): JSX.Element {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMapType((event.target as HTMLInputElement).value);
-    setSelectedRiding(0);
+    setSelectedRiding(1);
   };
 
   const handleChartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -399,7 +399,7 @@ html2canvas(exportitem, {}).then((canvas) => {
           className="filter_container"
           onClick={() => {
             if (mapType === "riding" && selectedRiding !== 0) {
-              setSelectedRiding(0);
+              setSelectedRiding(1);
             }
           }}
         >
