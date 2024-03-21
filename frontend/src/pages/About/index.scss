@@ -12,21 +12,19 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    font-size: 2rem;
-    font-weight: bold;
-    color: rgb(255, 255, 255);
+    font-size: 1rem;
+    font-weight: 500;
+    align-items: center;
+    color: rgb(82, 82, 82);
     height: 100%;
     > .background_bar {
       display: flex;
+      flex-direction: column;
+      gap:2rem;
       padding-top: 2rem;
-      justify-content: center;
-      text-align: center;
-      background-image: url("../HomePage/uwo_logo.jpg");
-      background-color: rgb(79, 38, 130);
-      background-position: center;
-      width: 100%;
-      height: 100%;
-      background-repeat: no-repeat;
+      max-width: 60rem;
+      margin-left: 2rem;
+      margin-right: 2rem;
     }
   }
 }
