@@ -50,7 +50,7 @@ export default function DataAnalysisTool(): JSX.Element {
   const [chartType, setChartType] = useState<string>(); // Inside your component function
   const [columnChartType, setColumnChartType] =
     useState<string[][]>("ColumnChart"); // Initialize with default chart type
-  const chartColors = ["#ffd700", "#ffc700", "#ffb700", "#ffa700", "#ff9700"]; //chart colours
+  const chartColors = ["#E5E8E8", "#ABB2B9", "#7F8C8D", "#424949", "#212F3D"]; //chart colours
 
   // Declared filters and chart data
   const [depChartData, setDepChartData] = useState<any[][][]>([]);
@@ -282,11 +282,11 @@ export default function DataAnalysisTool(): JSX.Element {
       const median =
         sortedMultipliedValues.length % 2 === 0
           ? (sortedMultipliedValues[sortedMultipliedValues.length / 2 - 1] +
-              sortedMultipliedValues[sortedMultipliedValues.length / 2]) /
-            2
+            sortedMultipliedValues[sortedMultipliedValues.length / 2]) /
+          2
           : sortedMultipliedValues[
-              Math.floor(sortedMultipliedValues.length / 2)
-            ];
+          Math.floor(sortedMultipliedValues.length / 2)
+          ];
       setMedian(median);
       //console.log("this is the median " + median)
 
@@ -382,48 +382,48 @@ export default function DataAnalysisTool(): JSX.Element {
             Export PDF
           </button>
           <div id="radio-buttons">
-              <FormControl>
-                <FormLabel id="map-control-group">Map Type</FormLabel>
-                <RadioGroup
-                  aria-labelledby="map-control-group"
-                  name="cmap-control-group"
-                  value={mapType}
-                  onChange={handleChange}
-                >
-                  <FormControlLabel
-                    value="province"
-                    control={<Radio />}
-                    label="Province"
-                  />
-                  <FormControlLabel
-                    value="riding"
-                    control={<Radio />}
-                    label="Riding"
-                  />
-                </RadioGroup>
-              </FormControl>
-              <FormControl>
-                <FormLabel id="column-chart-control-group">Chart Type</FormLabel>
-                <RadioGroup
-                  aria-labelledby="column-chart-control-group"
-                  name="column-chart-control-group"
-                  value={columnChartType}
-                  onChange={handleChartChange2}
-                >
-                  {/* Add radio buttons for different column chart types */}
-                  <FormControlLabel
-                    value="ColumnChart"
-                    control={<Radio />}
-                    label="Column"
-                  />
-                  <FormControlLabel
-                    value="PieChart"
-                    control={<Radio />}
-                    label="Pie"
-                  />
-                  {/* Add more options as needed */}
-                </RadioGroup>
-              </FormControl>
+            <FormControl>
+              <FormLabel id="map-control-group">Map Type</FormLabel>
+              <RadioGroup
+                aria-labelledby="map-control-group"
+                name="cmap-control-group"
+                value={mapType}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="province"
+                  control={<Radio />}
+                  label="Province"
+                />
+                <FormControlLabel
+                  value="riding"
+                  control={<Radio />}
+                  label="Riding"
+                />
+              </RadioGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel id="column-chart-control-group">Chart Type</FormLabel>
+              <RadioGroup
+                aria-labelledby="column-chart-control-group"
+                name="column-chart-control-group"
+                value={columnChartType}
+                onChange={handleChartChange2}
+              >
+                {/* Add radio buttons for different column chart types */}
+                <FormControlLabel
+                  value="ColumnChart"
+                  control={<Radio />}
+                  label="Column"
+                />
+                <FormControlLabel
+                  value="PieChart"
+                  control={<Radio />}
+                  label="Pie"
+                />
+                {/* Add more options as needed */}
+              </RadioGroup>
+            </FormControl>
             <FormControl>
               <FormLabel id="chart-control-group"></FormLabel>
               <RadioGroup
@@ -433,7 +433,7 @@ export default function DataAnalysisTool(): JSX.Element {
                 onChange={handleChartChange}
               ></RadioGroup>
             </FormControl>
-            </div>
+          </div>
         </div>
         <div className="data_container">
           <StatsBar dataset={dataset} depVar={depVar} />
