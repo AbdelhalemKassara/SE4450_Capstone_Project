@@ -536,7 +536,6 @@ html2canvas(exportitem, {}).then((canvas) => {
           </div>
         </div>
       </div>
-      {<CDemFooter />}
     </div>
   );
 }
