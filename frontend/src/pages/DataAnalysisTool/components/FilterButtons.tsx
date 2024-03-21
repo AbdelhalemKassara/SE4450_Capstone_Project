@@ -14,26 +14,41 @@ export default function FilterButtons({ dataset, indVar, setSelectedButton }: Fi
 
   useEffect(() => {
     if (dataset && indVar) {
-      datasetQ.getAnswersCount(dataset, indVar).then((val: Map<string, number>) => {
-        const initialMap: Map<string, boolean> = new Map();
-
-        val.forEach((_, key) => {
-          initialMap.set(key, false);
+      datasetQ.getAnswersCount(dataset, indVar)
+        .then((val: Map<string, number>) => {
+          const initialMap: Map<string, boolean> = new Map();
+  
+          console.log("hit ethan, this is the initial map ", initialMap);
+  
+          val.forEach((_, key) => {
+            initialMap.set(key, false);
+          });
+  
+          // Chain the promise to get answerIds
+          return datasetQ.getAnswerIds(dataset, indVar)
+            .then((answerIds: Map<string, number>) => {
+              // Sort the initial map based on answerIds indexes
+              const sortedArray = Array.from(initialMap).sort((a, b) => {
+                const indexA = parseInt(answerIds.get(a[0]) || "0");
+                const indexB = parseInt(answerIds.get(b[0]) || "0");
+                return indexA - indexB;
+              });
+  
+              setIndVarAnswrCnt(new Map(sortedArray));
+  
+              // You can handle answerIds data here if needed
+              console.log("hi ethan, this is the answers ", answerIds);
+            });
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setIndVarAnswrCnt(new Map()); // Reset to empty map if there's an error
         });
-
-        // Convert Map to Array and sort numerically
-        const sortedArray = Array.from(initialMap).sort((a, b) => {
-          const keyA = parseFloat(a[0]);
-          const keyB = parseFloat(b[0]);
-          return keyA - keyB;
-        });
-
-        setIndVarAnswrCnt(new Map(sortedArray));
-      });
     } else {
       setIndVarAnswrCnt(new Map());
     }
-  }, [dataset, indVar]);
+  }, [dataset, indVar, datasetQ]);
+  
 
  const handleButtonClick = (key: string) => {
 let ref;
