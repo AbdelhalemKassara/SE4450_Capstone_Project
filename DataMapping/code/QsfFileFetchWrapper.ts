@@ -177,12 +177,12 @@ export class QsfFileFetchWrapper {
     return this.parametersFile.surveyYear;
   }
 
-  public getVarForAgeBrac(): string {
+  public getVarForAgeBrac(): string[] {
     return this.parametersFile.variableForAgeBrackets;
   }
 
-  public getIsBirthYear(): boolean {
-    return this.parametersFile["AskingForBirthYearNotAge?"];
+  public getIsBirthYear(index: number): boolean {
+    return this.parametersFile["AskingForBirthYearNotAge?"][index];
   }
   
   public getMaxBirthYear(): number {

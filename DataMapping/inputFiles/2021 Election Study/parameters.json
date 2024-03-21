@@ -45,8 +45,8 @@
     "cps21_consent"    
   ],
   "surveyYear" : 2021,
-  "variableForAgeBrackets": "cps21_yob",
-  "AskingForBirthYearNotAge?" : true,
+  "variableForAgeBrackets": ["cps21_yob"],
+  "AskingForBirthYearNotAge?" : [true],
   "DisplayBirthYearsNotAge" : false,
   "maxBirthYear" : 2003,
   "ageBrackets" : [{

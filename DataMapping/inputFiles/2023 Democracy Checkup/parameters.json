@@ -66,8 +66,8 @@
     "dc23_jurisdiction_t_Click_Count"
   ],
   "surveyYear" : 2023,
-  "variableForAgeBrackets": "dc23_age_in_years",
-  "AskingForBirthYearNotAge?" : false,
+  "variableForAgeBrackets": ["dc23_age_in_years", "dc23_yob"],
+  "AskingForBirthYearNotAge?" : [false, true],
   "DisplayBirthYearsNotAge" : false,
   "maxBirthYear" : 2004,
   "ageBrackets" : [{

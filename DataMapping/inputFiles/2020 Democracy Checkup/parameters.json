@@ -70,8 +70,8 @@
     "dc20_jurisdiction_t_Click_Count"    
   ],
   "surveyYear" : 2020,
-  "variableForAgeBrackets": "dc20_yob",
-  "AskingForBirthYearNotAge?" : true,
+  "variableForAgeBrackets": ["dc20_yob"],
+  "AskingForBirthYearNotAge?" : [true],
   "maxBirthYear" : 2002,
   "DisplayBirthYearsNotAge" : false,
   "ageBrackets" : [{
